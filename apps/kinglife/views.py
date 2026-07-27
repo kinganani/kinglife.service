@@ -171,7 +171,10 @@ def cotation_detail(request, cotation_id):
     return render(request, 'kinglife/cotation_detail.html', {'cotation': cotation})
 
 
+from django.contrib.admin.views.decorators import staff_member_required
+
 @login_required
+@staff_member_required
 def cotation_action(request, cotation_id):
     """Accepter ou refuser une cotation"""
     cotation = get_object_or_404(Cotation, id=cotation_id, demande__client=request.user)
@@ -226,15 +229,16 @@ def facture_detail(request, facture_id):
 
 def register(request):
     """Inscription d'un nouveau client"""
+    from .forms import ClientRegistrationForm
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = ClientRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             messages.success(request, 'Votre compte a été créé avec succès.')
-            return redirect('/')
+            return redirect('dashboard')
     else:
-        form = UserCreationForm()
+        form = ClientRegistrationForm()
     return render(request, 'kinglife/register.html', {'form': form})
 
 
@@ -247,7 +251,9 @@ def login_view(request):
             user = form.get_user()
             login(request, user)
             messages.success(request, 'Vous êtes connecté avec succès.')
-            return redirect('/')
+            if user.is_staff or user.is_superuser:
+                return redirect('/admin/')
+            return redirect('dashboard')
     else:
         form = AuthenticationForm()
     return render(request, 'kinglife/login.html', {'form': form})

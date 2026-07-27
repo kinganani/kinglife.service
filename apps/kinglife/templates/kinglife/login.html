@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{% static 'kinglife/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'kinglife/css/auth_contact.css' %}">
     <link rel="stylesheet" href="{% static 'kinglife/css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'kinglife/css/toast.css' %}">
 </head>
 <body>
     <div class="auth-page-wrapper">
@@ -37,12 +38,14 @@
             <div class="auth-right">
                 <h2>Sign in to your account</h2>
                 
-                {% if messages %}
-                    {% for message in messages %}
-                        <div style="background-color: rgba(220, 38, 38, 0.1); color: #dc2626; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center;">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
+
+                
+                {% if form.non_field_errors %}
+                    <div style="background-color: rgba(220, 38, 38, 0.1); color: #dc2626; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
                 {% endif %}
 
                 <form method="post">
@@ -81,5 +84,27 @@
             </div>
         </div>
     </div>
+    
+    <!-- Toast Notifications Container -->
+    {% if messages %}
+    <div class="toast-container">
+        {% for message in messages %}
+        <div class="toast {% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+            <div class="toast-content">
+                <div class="toast-icon">
+                    {% if 'success' in message.tags %}✓
+                    {% elif 'error' in message.tags %}✗
+                    {% elif 'warning' in message.tags %}!
+                    {% else %}i{% endif %}
+                </div>
+                <div class="toast-message">{{ message }}</div>
+            </div>
+            <button class="toast-close">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <script src="{% static 'kinglife/js/toast.js' %}"></script>
 </body>
 </html>

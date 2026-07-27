@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{% static 'kinglife/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'kinglife/css/auth_contact.css' %}">
     <link rel="stylesheet" href="{% static 'kinglife/css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'kinglife/css/toast.css' %}">
 </head>
 <body>
     <div class="auth-page-wrapper">
@@ -37,34 +38,35 @@
             <div class="auth-right">
                 <h2>Create you account</h2>
                 
-                {% if messages %}
-                    {% for message in messages %}
-                        <div style="background-color: rgba(220, 38, 38, 0.1); color: #dc2626; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center;">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
 
                 <form method="post">
                     {% csrf_token %}
-                    <div class="form-v2-group" style="margin-bottom: 16px;">
-                        <label class="form-v2-label">Full name</label>
-                        <input type="text" name="username" class="form-v2-input" placeholder="Enter Full name" required>
-                    </div>
-
-                    <div class="form-v2-group" style="margin-bottom: 16px;">
-                        <label class="form-v2-label">Email</label>
-                        <input type="email" name="email" class="form-v2-input" placeholder="Enter email" required>
-                    </div>
                     
+                    {% if form.non_field_errors %}
+                        <div style="background-color: rgba(220, 38, 38, 0.1); color: #dc2626; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: left;">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form %}
                     <div class="form-v2-group" style="margin-bottom: 16px;">
-                        <label class="form-v2-label">Password</label>
-                        <input type="password" name="password" class="form-v2-input" placeholder="Enter Password" required>
+                        <label class="form-v2-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                                {% for error in field.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
+                    {% endfor %}
 
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; font-size: 13px;">
                         <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; color: var(--color-text-muted); line-height: 1.4;">
-                            <input type="checkbox" required style="margin-top: 2px;"> I agree to the terms and Conditions
+                            <input type="checkbox" required style="margin-top: 2px;"> J'accepte les termes et conditions
                         </label>
                     </div>
 
@@ -85,5 +87,27 @@
             </div>
         </div>
     </div>
+    
+    <!-- Toast Notifications Container -->
+    {% if messages %}
+    <div class="toast-container">
+        {% for message in messages %}
+        <div class="toast {% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">
+            <div class="toast-content">
+                <div class="toast-icon">
+                    {% if 'success' in message.tags %}✓
+                    {% elif 'error' in message.tags %}✗
+                    {% elif 'warning' in message.tags %}!
+                    {% else %}i{% endif %}
+                </div>
+                <div class="toast-message">{{ message }}</div>
+            </div>
+            <button class="toast-close">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <script src="{% static 'kinglife/js/toast.js' %}"></script>
 </body>
 </html>
