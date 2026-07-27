@@ -1,0 +1,17 @@
+[Unit]
+Description=Gunicorn daemon for KINGLIFE SHAL U Web Platform
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/kinglife.dev
+ExecStart=/var/www/kinglife.dev/env/bin/gunicorn \
+          --access-logfile /var/log/gunicorn/access.log \
+          --error-logfile /var/log/gunicorn/error.log \
+          --workers 3 \
+          --bind unix:/run/gunicorn_kinglife.sock \
+          kinglife.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
