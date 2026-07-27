@@ -3,11 +3,14 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-dev-key-change-in-production'
+# ==========================================================================
+# SECURITY — Utiliser des variables d'environnement en production
+# ==========================================================================
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-dev-key-change-in-production')
 
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -49,10 +52,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kinglife.wsgi.application'
 
+# ==========================================================================
+# DATABASE — Supabase (PostgreSQL)
+# Remplissez les variables d'environnement ou les valeurs directement
+# pour les tests locaux. En production, utilisez TOUJOURS des variables
+# d'environnement et ne committez jamais vos identifiants dans Git.
+# ==========================================================================
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('SUPABASE_DB_NAME', 'postgres'),
+        'USER': os.environ.get('SUPABASE_DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('SUPABASE_DB_PASSWORD', 'VOTRE_MOT_DE_PASSE_SUPABASE'),
+        'HOST': os.environ.get('SUPABASE_DB_HOST', 'db.VOTRE_PROJECT_REF.supabase.co'),
+        'PORT': os.environ.get('SUPABASE_DB_PORT', '5432'),
+        'OPTIONS': {
+            # Connexion sécurisée SSL obligatoire pour Supabase
+            'sslmode': 'require',
+        },
     }
 }
 

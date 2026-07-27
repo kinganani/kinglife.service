@@ -22,3 +22,10 @@ venv.bak/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Variables d'environnement (NE JAMAIS COMMITTER)
+.env
+
+# Fichiers statiques collectés
+staticfiles/
+media/
