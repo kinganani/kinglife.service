@@ -1,5 +1,9 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Charger automatiquement le fichier .env (identifiants Supabase & Django)
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -63,12 +67,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('SUPABASE_DB_NAME', 'postgres'),
         'USER': os.environ.get('SUPABASE_DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('SUPABASE_DB_PASSWORD', 'VOTRE_MOT_DE_PASSE_SUPABASE'),
-        'HOST': os.environ.get('SUPABASE_DB_HOST', 'db.VOTRE_PROJECT_REF.supabase.co'),
+        'PASSWORD': os.environ.get('SUPABASE_DB_PASSWORD', ''),
+        'HOST': os.environ.get('SUPABASE_DB_HOST', ''),
         'PORT': os.environ.get('SUPABASE_DB_PORT', '5432'),
         'OPTIONS': {
-            # Connexion sécurisée SSL obligatoire pour Supabase
             'sslmode': 'require',
+            'connect_timeout': 10,
         },
     }
 }
