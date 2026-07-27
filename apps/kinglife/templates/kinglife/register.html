@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - KINGLIFE SHAL U</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom Design System Stylesheet -->
+    <link rel="stylesheet" href="{% static 'kinglife/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'kinglife/css/auth_contact.css' %}">
+    <link rel="stylesheet" href="{% static 'kinglife/css/responsive.css' %}">
+</head>
+<body>
+    <div class="auth-page-wrapper">
+        <div class="auth-card">
+            
+            <!-- Left Side -->
+            <div class="auth-left">
+                <div class="auth-icon-circle">
+                    <span>🚀</span>
+                </div>
+                <h2>Welcome to<br>KINGLIFE</h2>
+                <p>Create your account to unlock premium features and stay updated with the latest maritime news. Join our community and embark on an exciting journey with us!</p>
+                <div style="font-size: 13px; margin-top: auto; letter-spacing: 1px;">
+                    <a href="/login/" style="color: var(--color-white); opacity: 0.8; margin-right: 16px;">CONNECTEZ-VOUS ICI</a> | 
+                    <a href="/" style="color: var(--color-white); opacity: 0.8; margin-left: 16px;">RETOUR ACCUEIL</a>
+                </div>
+            </div>
+
+            <!-- Right Side -->
+            <div class="auth-right">
+                <h2>Create you account</h2>
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div style="background-color: rgba(220, 38, 38, 0.1); color: #dc2626; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-v2-group" style="margin-bottom: 16px;">
+                        <label class="form-v2-label">Full name</label>
+                        <input type="text" name="username" class="form-v2-input" placeholder="Enter Full name" required>
+                    </div>
+
+                    <div class="form-v2-group" style="margin-bottom: 16px;">
+                        <label class="form-v2-label">Email</label>
+                        <input type="email" name="email" class="form-v2-input" placeholder="Enter email" required>
+                    </div>
+                    
+                    <div class="form-v2-group" style="margin-bottom: 16px;">
+                        <label class="form-v2-label">Password</label>
+                        <input type="password" name="password" class="form-v2-input" placeholder="Enter Password" required>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; font-size: 13px;">
+                        <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; color: var(--color-text-muted); line-height: 1.4;">
+                            <input type="checkbox" required style="margin-top: 2px;"> I agree to the terms and Conditions
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-auth">Sign Up</button>
+                </form>
+
+                <div class="social-login-text">Sign Up with</div>
+                
+                <div class="social-icons-row">
+                    <a href="#" class="social-login-btn">f</a>
+                    <a href="#" class="social-login-btn">𝕏</a>
+                    <a href="#" class="social-login-btn">G</a>
+                </div>
+
+                <div style="text-align: center; margin-top: 32px; font-size: 14px; color: var(--color-text-muted);">
+                    Already have an account? <a href="/login/" style="color: #1a56c4; font-weight: 600;">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

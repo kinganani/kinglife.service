@@ -1,0 +1,102 @@
+{% extends 'kinglife/base.html' %}
+{% load static %}
+
+{% block title %}À Propos - KINGLIFE SHAL U{% endblock %}
+
+{% block content %}
+<!-- Page Hero Banner -->
+<section class="page-hero">
+    <div class="container">
+        <h1>À Propos de KINGLIFE SHAL U</h1>
+        <p>Découvrez notre histoire, notre vision, nos engagements de sécurité et notre mission</p>
+    </div>
+</section>
+
+<!-- Main About Section -->
+<section style="padding: 100px 0; background-color: var(--color-light-bg);">
+    <div class="container">
+        <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 60px;">
+            
+            <!-- Historique -->
+            <div style="display: flex; gap: 40px; align-items: stretch; background-color: var(--color-white); border-radius: var(--border-radius-lg); padding: 50px; box-shadow: var(--shadow-md);">
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                    <span style="font-size: 13px; font-weight: 700; color: var(--color-ocean-bright); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Parcours & Fondations</span>
+                    <h2 style="font-size: 34px; color: var(--color-text-dark); margin-bottom: 24px; font-family: var(--font-heading);">Notre Historique</h2>
+                    {% if page_historique %}
+                        <div style="color: var(--color-text-muted); line-height: 1.8; font-size: 16px;">{{ page_historique.contenu|linebreaks }}</div>
+                    {% else %}
+                        <div style="color: var(--color-text-muted); line-height: 1.8; font-size: 16px;">
+                            <p style="margin-bottom: 16px;"><strong>KINGLIFE SHAL U</strong> est une société majeure spécialisée dans les services maritimes, l'avitaillement (Ship Chandler), le transit et l'assistance offshore. Depuis sa création, l'entreprise s'est imposée comme un partenaire stratégique de confiance pour les armateurs, navires marchands et opérateurs du secteur.</p>
+                            <p>Grâce à une maîtrise rigoureuse de la chaîne logistique et à une présence portuaire active, nous assurons des opérations d'assistance 24/7 en garantissant la sécurité et la conformité des interventions.</p>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="about-image-wrapper" style="flex: 1; border-radius: var(--border-radius-md); overflow: hidden; position: relative;">
+                    <img src="https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?w=800&q=80" alt="Notre Historique" style="width: 100%; height: 100%; object-fit: cover; position: absolute;">
+                </div>
+            </div>
+            
+            <!-- Mission & Vision Duo Cards -->
+            <div class="about-duo-cards" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div style="background-color: var(--color-dark-charcoal); color: var(--color-white); border-radius: var(--border-radius-lg); padding: 50px; box-shadow: var(--shadow-lg); transition: var(--transition);" class="about-card-hover">
+                    <span style="font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: block;">Notre Engagement</span>
+                    <h2 style="font-size: 30px; margin-bottom: 20px; font-family: var(--font-heading);">Notre Mission</h2>
+                    {% if page_mission %}
+                        <div style="color: rgba(255,255,255,0.85); line-height: 1.8; font-size: 16px;">{{ page_mission.contenu|linebreaks }}</div>
+                    {% else %}
+                        <p style="color: rgba(255,255,255,0.85); line-height: 1.8; font-size: 16px;">
+                            Fournir des services maritimes et logistiques d'excellence, réactifs et sur-mesure pour chaque navire et escale, en garantissant une réactivité optimale et des normes de sécurité strictes.
+                        </p>
+                    {% endif %}
+                </div>
+
+                <div style="background: linear-gradient(145deg, var(--color-ocean-bright) 0%, var(--color-ocean-dark) 100%); color: var(--color-white); border-radius: var(--border-radius-lg); padding: 50px; box-shadow: var(--shadow-lg); transition: var(--transition);" class="about-card-hover">
+                    <span style="font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: block;">Horizons & Ambition</span>
+                    <h2 style="font-size: 30px; margin-bottom: 20px; font-family: var(--font-heading);">Notre Vision</h2>
+                    {% if page_vision %}
+                        <div style="color: rgba(255,255,255,0.9); line-height: 1.8; font-size: 16px;">{{ page_vision.contenu|linebreaks }}</div>
+                    {% else %}
+                        <p style="color: rgba(255,255,255,0.9); line-height: 1.8; font-size: 16px;">
+                            Devenir la référence incontournable des services maritimes régionaux, reconnue pour son niveau de technicité, sa fiabilité et son engagement en faveur du développement maritime durable.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Valeurs -->
+            <div style="background-color: var(--color-white); border-radius: var(--border-radius-lg); padding: 60px 50px; box-shadow: var(--shadow-md); text-align: center;">
+                <span style="font-size: 13px; font-weight: 700; color: var(--color-ocean-bright); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: block;">Piliers d'Action</span>
+                <h2 style="font-size: 36px; color: var(--color-text-dark); margin-bottom: 40px; font-family: var(--font-heading);">Nos Valeurs Fondamentales</h2>
+                
+                {% if page_valeurs %}
+                    <div style="color: var(--color-text-muted); line-height: 1.8; font-size: 16px; max-width: 800px; margin: 0 auto;">{{ page_valeurs.contenu|linebreaks }}</div>
+                {% else %}
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; text-align: left;">
+                        <div style="background: var(--color-light-bg); padding: 30px; border-radius: var(--border-radius-md); transition: var(--transition);" class="value-card">
+                            <div style="width: 50px; height: 50px; background: var(--color-white); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; box-shadow: var(--shadow-sm);">🎯</div>
+                            <h3 style="color: var(--color-text-dark); font-size: 18px; margin-bottom: 10px;">Excellence</h3>
+                            <p style="font-size: 14px; color: var(--color-text-muted); line-height: 1.6;">Recherche constante de la perfection dans chaque prestation d'avitaillement et de transit.</p>
+                        </div>
+                        <div style="background: var(--color-light-bg); padding: 30px; border-radius: var(--border-radius-md); transition: var(--transition);" class="value-card">
+                            <div style="width: 50px; height: 50px; background: var(--color-white); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; box-shadow: var(--shadow-sm);">🤝</div>
+                            <h3 style="color: var(--color-text-dark); font-size: 18px; margin-bottom: 10px;">Intégrité</h3>
+                            <p style="font-size: 14px; color: var(--color-text-muted); line-height: 1.6;">Transparence absolue, respect des engagements et confiance mutuelle avec nos clients.</p>
+                        </div>
+                        <div style="background: var(--color-light-bg); padding: 30px; border-radius: var(--border-radius-md); transition: var(--transition);" class="value-card">
+                            <div style="width: 50px; height: 50px; background: var(--color-white); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; box-shadow: var(--shadow-sm);">🛡️</div>
+                            <h3 style="color: var(--color-text-dark); font-size: 18px; margin-bottom: 10px;">Sécurité 24/7</h3>
+                            <p style="font-size: 14px; color: var(--color-text-muted); line-height: 1.6;">Respect rigoureux des procédures de sécurité en mer et au port.</p>
+                        </div>
+                        <div style="background: var(--color-light-bg); padding: 30px; border-radius: var(--border-radius-md); transition: var(--transition);" class="value-card">
+                            <div style="width: 50px; height: 50px; background: var(--color-white); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; box-shadow: var(--shadow-sm);">💡</div>
+                            <h3 style="color: var(--color-text-dark); font-size: 18px; margin-bottom: 10px;">Innovation</h3>
+                            <p style="font-size: 14px; color: var(--color-text-muted); line-height: 1.6;">Modernisation continue des outils logistiques et des modes d'intervention.</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

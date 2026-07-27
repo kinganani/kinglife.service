@@ -1,0 +1,83 @@
+{% extends 'kinglife/base.html' %}
+{% load static %}
+
+{% block title %}Catalogue Produits & Prestations - KINGLIFE SHAL U{% endblock %}
+
+{% block content %}
+<!-- Page Hero Banner -->
+<section class="page-hero">
+    <div class="container">
+        <h1>Catalogue des Produits & Prestations</h1>
+        <p>Explorez nos fournitures maritimes, carburants, vivres et équipements certifiés SOLAS/ISO</p>
+    </div>
+</section>
+
+<!-- Catalogue Section -->
+<section style="padding: 90px 0; background-color: var(--color-light-bg);">
+    <div class="container">
+        <!-- Search & Filter Bar -->
+        <div style="background: var(--color-white); padding: 30px; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-sm); margin-bottom: 40px;">
+            <form method="get" style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
+                <div style="flex: 2; min-width: 250px;">
+                    <input type="text" name="q" value="{{ query }}" placeholder="Rechercher un produit, carburant, vivre..." class="form-v2-input" style="width: 100%;">
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <select name="categorie" class="form-v2-input" style="width: 100%;">
+                        <option value="">Toutes les catégories</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if selected_cat == cat.id|stringformat:"i" %}selected{% endif %}>{{ cat.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary" style="padding: 14px 28px;">Filtrer</button>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'demande_cotation' %}" class="btn-pill-dark" style="margin-left: auto;">Demander une Cotation →</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Products Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px;">
+            {% for article in articles %}
+            <div style="background: var(--color-white); border-radius: var(--border-radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: var(--transition); display: flex; flex-direction: column;" class="product-card">
+                <div style="height: 200px; background: #0f172a; position: relative; overflow: hidden;">
+                    {% if article.image %}
+                        <img src="{{ article.image.url }}" alt="{{ article.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=80" alt="{{ article.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% endif %}
+                    <span style="position: absolute; top: 12px; left: 12px; background: var(--color-ocean-dark); color: var(--color-white); padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase;">{{ article.categorie.nom }}</span>
+                </div>
+                <div style="padding: 24px; display: flex; flex-direction: column; flex: 1;">
+                    <h3 style="font-size: 18px; color: var(--color-text-dark); margin-bottom: 8px;">{{ article.nom }}</h3>
+                    <p style="color: var(--color-text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 20px; flex: 1;">{{ article.description }}</p>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border-light); padding-top: 16px; margin-top: auto;">
+                        <div>
+                            {% if article.prix_unitaire %}
+                                <span style="font-size: 18px; font-weight: 800; color: var(--color-ocean-bright);">{{ article.prix_unitaire }} €</span>
+                                <span style="font-size: 12px; color: var(--color-text-light);">/ {{ article.unite }}</span>
+                            {% else %}
+                                <span style="font-size: 14px; font-weight: 600; color: var(--color-text-muted);">Sur devis</span>
+                            {% endif %}
+                        </div>
+                        <a href="{% url 'demande_cotation' %}" style="color: var(--color-ocean-bright); font-size: 13px; font-weight: 700;">Ajouter →</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 60px; background: var(--color-white); border-radius: var(--border-radius-md);">
+                <p style="color: var(--color-text-muted); font-size: 18px;">Aucun produit ne correspond à votre recherche.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'kinglife/base.html' %}
+{% load static %}
+
+{% block title %}Cotation {{ cotation.numero }} - KINGLIFE SHAL U{% endblock %}
+
+{% block content %}
+<!-- Page Hero Banner -->
+<section class="page-hero">
+    <div class="container">
+        <h1>Cotation Officielle {{ cotation.numero }}</h1>
+        <p>Statut : <span style="text-transform: uppercase; font-weight: 700; color: var(--color-electric-blue);">{{ cotation.get_statut_display }}</span></p>
+    </div>
+</section>
+
+<!-- Cotation Detail Section -->
+<section style="padding: 90px 0; background-color: var(--color-light-bg);">
+    <div class="container">
+        <div style="max-width: 900px; margin: 0 auto; background: var(--color-white); padding: 50px; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md);">
+            
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid var(--color-border-light); padding-bottom: 24px;">
+                <div>
+                    <h2 style="font-size: 28px; color: var(--color-ocean-dark); font-family: var(--font-heading);">KINGLIFE SHAL U</h2>
+                    <p style="color: var(--color-text-muted); font-size: 14px;">Zone Portuaire, BP 1420 — Port-Gentil, Gabon<br>Email : contact@kinglife.dev | Tél : +241 01 23 45 67</p>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-size: 20px; font-weight: 800; color: var(--color-ocean-bright); display: block;">{{ cotation.numero }}</span>
+                    <span style="font-size: 14px; color: var(--color-text-muted);">Date : {{ cotation.date_creation|date:"d/m/Y" }}</span>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <h3 style="font-size: 18px; color: var(--color-text-dark); margin-bottom: 12px;">Client Destinataire</h3>
+                <p style="color: var(--color-text-muted); font-size: 15px;"><strong>Client :</strong> {{ cotation.demande.client.username }} ({{ cotation.demande.client.email }})</p>
+                {% if cotation.demande.remarques %}
+                    <p style="color: var(--color-text-muted); font-size: 14px; margin-top: 8px; background: var(--color-light-bg); padding: 12px; border-radius: 6px;"><strong>Spécifications Client :</strong> {{ cotation.demande.remarques }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Table of Lines -->
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                <thead>
+                    <tr style="background: var(--color-ocean-dark); color: var(--color-white); text-align: left;">
+                        <th style="padding: 12px 16px; border-top-left-radius: 8px;">Article / Prestation</th>
+                        <th style="padding: 12px 16px;">Quantité</th>
+                        <th style="padding: 12px 16px; text-align: right; border-top-right-radius: 8px;">Prix Proposé</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ligne in cotation.demande.lignes.all %}
+                    <tr style="border-bottom: 1px solid var(--color-border-light);">
+                        <td style="padding: 14px 16px; color: var(--color-text-dark); font-weight: 600;">{{ ligne.article.nom }}</td>
+                        <td style="padding: 14px 16px; color: var(--color-text-muted);">{{ ligne.quantite }} {{ ligne.article.unite }}</td>
+                        <td style="padding: 14px 16px; color: var(--color-ocean-bright); font-weight: 700; text-align: right;">{{ ligne.prix_propose|default:ligne.article.prix_unitaire }} €</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" style="padding: 16px; text-align: center; color: var(--color-text-muted);">Prestation maritime forfaitaire.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Total Box -->
+            <div style="background: var(--color-light-bg); padding: 24px; border-radius: var(--border-radius-md); display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                <span style="font-size: 18px; font-weight: 700; color: var(--color-text-dark);">Montant Total Forfaitaire HT :</span>
+                <span style="font-size: 28px; font-weight: 800; color: var(--color-ocean-bright);">{{ cotation.montant_total }} €</span>
+            </div>
+
+            <!-- Actions Form -->
+            {% if cotation.statut == 'envoyee' or cotation.statut == 'brouillon' %}
+            <form method="post" action="{% url 'cotation_action' cotation.id %}" style="display: flex; gap: 16px; justify-content: flex-end;">
+                {% csrf_token %}
+                <button type="submit" name="action" value="refuser" class="btn-outline" style="border-color: #dc2626; color: #dc2626;">Refuser la Cotation</button>
+                <button type="submit" name="action" value="accepter" class="btn-primary">Accepter la Cotation & Générer Facture →</button>
+            </form>
+            {% else %}
+            <div style="text-align: right;">
+                <a href="/dashboard/" class="btn-outline">← Retour au tableau de bord</a>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</section>
+{% endblock %}

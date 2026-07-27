@@ -1,0 +1,353 @@
+{% extends 'kinglife/base.html' %}
+{% load static %}
+
+{% block title %}KINGLIFE SHAL U - Services Maritimes, Ship Chandler & Logistique{% endblock %}
+
+{% block content %}
+<!-- ==========================================================================
+     HERO SECTION (FOND MARIN PROFOND, STROKE TITLE & COURBE DECOUPE)
+     ========================================================================== -->
+<section class="hero-section">
+    <span class="hero-subtitle-top">Services Maritimes & Support Logistique</span>
+    <h1 class="hero-title-stroke text-outline">KINGLIFE</h1>
+    <h2 class="hero-main-title">SOLUTIONS ET EXPERTISE MARITIMES EXCELLENTES & INNOVANTES</h2>
+    <p class="hero-description">
+        Spécialiste de l'avitaillement de navires (Ship Chandler), de l'agence maritime, du transit et des opérations logistiques offshore avec des standards de qualité internationaux.
+    </p>
+    <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+        <a href="/contact/" class="btn-primary">Demander une cotation</a>
+        <a href="/services/" class="btn-outline" style="color: #fff; border-color: rgba(255,255,255,0.4);">Explorer nos services</a>
+    </div>
+
+    <!-- Curved Bottom Cutout & Animated Mouse Scroll Indicator -->
+    <div class="hero-curve-divider">
+        <svg class="hero-curve-svg" viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,0 C480,60 960,60 1440,0 L1440,60 L0,60 Z"></path>
+        </svg>
+        <div class="scroll-indicator" title="Défiler vers le bas">
+            <div class="scroll-dot"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================================================
+     SECTION 1: BUSINESS / DOMAINES D'ACTIVITÉ (OVERLAPPING CHARCOAL BOX)
+     ========================================================================== -->
+<section class="business-section">
+    <div class="container">
+        <div class="business-wrapper">
+            <!-- Left Header Info -->
+            <div class="business-header">
+                <span class="business-tag">Secteurs d'Activité</span>
+                <h2 class="business-title">Business</h2>
+                <p class="business-desc">
+                    Nous mettons en œuvre une gamme complète de compétences techniques et de capacités logistiques pour répondre aux besoins exigés par les armateurs et entreprises maritimes.
+                </p>
+                <div class="slider-controls">
+                    <button class="slider-btn slider-btn-prev" aria-label="Précédent">←</button>
+                    <button class="slider-btn slider-btn-next" aria-label="Suivant">→</button>
+                </div>
+            </div>
+
+            <!-- Right Dark Charcoal Box with Floating Cards -->
+            <div class="business-dark-box">
+                <div class="business-cards-grid">
+                    {% for service in services %}
+                    <a href="{% url 'services' %}" class="business-card">
+                        <div class="business-card-img-wrapper">
+                            {% if service.image %}
+                                <img src="{{ service.image.url }}" alt="{{ service.nom }}" class="business-card-img" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1505705694340-019e1e335916?w=800&q=80';">
+                            {% else %}
+                                <img src="https://images.unsplash.com/photo-1505705694340-019e1e335916?w=800&q=80" alt="{{ service.nom }}" class="business-card-img">
+                            {% endif %}
+                            <div class="business-card-overlay"></div>
+                        </div>
+                        <div class="business-card-content">
+                            <div class="business-card-header">
+                                <span class="business-card-badge">Business. 0{{ forloop.counter }}</span>
+                                <span class="business-card-arrow">→</span>
+                            </div>
+                            <h3 class="business-card-title">{{ service.nom }}</h3>
+                            <p class="business-card-text">{{ service.description|truncatewords:12 }}</p>
+                        </div>
+                    </a>
+                    {% empty %}
+                    <!-- Demo Fallback Cards matching Mockup -->
+                    <a href="/services/" class="business-card">
+                        <div class="business-card-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1505705694340-019e1e335916?w=800&q=80" alt="Ship Chandler" class="business-card-img">
+                            <div class="business-card-overlay"></div>
+                        </div>
+                        <div class="business-card-content">
+                            <div class="business-card-header">
+                                <span class="business-card-badge">Business. 01</span>
+                                <span class="business-card-arrow">→</span>
+                            </div>
+                            <h3 class="business-card-title">Avitaillement Maritime</h3>
+                            <p class="business-card-text">Provisions alimentaires, eau douce, matériels techniques et équipements pour équipages.</p>
+                        </div>
+                    </a>
+
+                    <a href="/services/" class="business-card">
+                        <div class="business-card-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80" alt="Shipping Agency" class="business-card-img">
+                            <div class="business-card-overlay"></div>
+                        </div>
+                        <div class="business-card-content">
+                            <div class="business-card-header">
+                                <span class="business-card-badge">Business. 02</span>
+                                <span class="business-card-arrow">→</span>
+                            </div>
+                            <h3 class="business-card-title">Agence Maritime & Transit</h3>
+                            <p class="business-card-text">Consignation de navires, formalités douanières, assistance portuaire et logistique.</p>
+                        </div>
+                    </a>
+
+                    <a href="/services/" class="business-card">
+                        <div class="business-card-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800&q=80" alt="Support Offshore" class="business-card-img">
+                            <div class="business-card-overlay"></div>
+                        </div>
+                        <div class="business-card-content">
+                            <div class="business-card-header">
+                                <span class="business-card-badge">Business. 03</span>
+                                <span class="business-card-arrow">→</span>
+                            </div>
+                            <h3 class="business-card-title">Support Offshore</h3>
+                            <p class="business-card-text">Ravitaillement en carburant, transfert d'équipage et support technique pour plateformes.</p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================================================
+     SECTION 2: 3 CARTEs RACCOURCIS (PILL CARDS BLEU OCÉAN)
+     ========================================================================== -->
+<section class="quick-cards-section">
+    <div class="container">
+        <div class="quick-cards-grid">
+            <a href="/a-propos/" class="quick-card">
+                <div class="quick-card-icon">💧</div>
+                <div class="quick-card-info">
+                    <h3>Présentation & Histoire</h3>
+                    <p>Découvrez notre parcours, nos engagements de qualité et nos valeurs dans le secteur maritime.</p>
+                </div>
+            </a>
+
+            <a href="/services/" class="quick-card">
+                <div class="quick-card-icon">🚢</div>
+                <div class="quick-card-info">
+                    <h3>Technologies & Services</h3>
+                    <p>Accédez à l'ensemble de nos services d'assistance, d'avitaillement et de transit spécialisé.</p>
+                </div>
+            </a>
+
+            <a href="/realisations/" class="quick-card">
+                <div class="quick-card-icon">📊</div>
+                <div class="quick-card-info">
+                    <h3>Réalisations & Références</h3>
+                    <p>Consultez nos projets récents et les témoignages de nos armateurs et partenaires.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================================================
+     SECTION 3: NOTICE / ACTUALITÉS
+     ========================================================================== -->
+<section class="notice-section">
+    <div class="container">
+        <div class="notice-grid">
+            <!-- Left Info Panel -->
+            <div class="notice-left">
+                <div>
+                    <span class="notice-tag">Informations & Annonces</span>
+                    <h2 class="notice-title">Notice</h2>
+                    <p class="notice-desc">Restez informé des dernières actualités, nouvelles accréditations et développements opérationnels de KINGLIFE SHAL U.</p>
+                </div>
+                <div style="margin-top: 24px;">
+                    <a href="/actualites/" class="btn-primary">Toutes les actualités +</a>
+                </div>
+            </div>
+
+            <!-- Right Notice Cards List -->
+            <div class="notice-list">
+                {% for actualite in actualites %}
+                <a href="{% url 'actualite_detail' actualite.id %}" class="notice-card">
+                    <div class="notice-card-header">
+                        <span class="notice-badge">Communiqué</span>
+                        <span class="notice-date">📅 {{ actualite.date_publication|date:"d M Y" }}</span>
+                    </div>
+                    <h3 class="notice-card-title">{{ actualite.titre }}</h3>
+                    <p class="notice-card-text">{{ actualite.resume|default:actualite.contenu|truncatewords:18 }}</p>
+                    <div class="notice-card-footer">
+                        <span class="notice-link-text">Lire l'annonce</span>
+                        <span class="notice-card-arrow">→</span>
+                    </div>
+                </a>
+                {% empty %}
+                <!-- Demo fallback cards -->
+                <a href="/actualites/" class="notice-card">
+                    <div class="notice-card-header">
+                        <span class="notice-badge">Service</span>
+                        <span class="notice-date">📅 15 Juil 2024</span>
+                    </div>
+                    <h3 class="notice-card-title">Excellence opérationnelle : Nouveau service d'avitaillement haute capacité</h3>
+                    <p class="notice-card-text">KINGLIFE SHAL U renforce sa flotte de barges pour le ravitaillement rapide des navires cargo et pétroliers en rade.</p>
+                    <div class="notice-card-footer">
+                        <span class="notice-link-text">Lire l'annonce</span>
+                        <span class="notice-card-arrow">→</span>
+                    </div>
+                </a>
+
+                <a href="/actualites/" class="notice-card">
+                    <div class="notice-card-header">
+                        <span class="notice-badge alt">Certification</span>
+                        <span class="notice-date">📅 28 Juin 2024</span>
+                    </div>
+                    <h3 class="notice-card-title">Obtention des accréditations de sûreté et normes environnementales ISO</h3>
+                    <p class="notice-card-text">Confirmation de la conformité de nos protocoles maritimes aux meilleures exigences de sécurité environnementale.</p>
+                    <div class="notice-card-footer">
+                        <span class="notice-link-text">Lire l'annonce</span>
+                        <span class="notice-card-arrow">→</span>
+                    </div>
+                </a>
+
+                <a href="/actualites/" class="notice-card">
+                    <div class="notice-card-header">
+                        <span class="notice-badge">Assistance</span>
+                        <span class="notice-date">📅 10 Mai 2024</span>
+                    </div>
+                    <h3 class="notice-card-title">Extension des services d'assistance et de relève d'équipage 24h/7j</h3>
+                    <p class="notice-card-text">Une organisation réorganisée pour répondre immédiatement aux demandes imprévues lors des escales maritimes.</p>
+                    <div class="notice-card-footer">
+                        <span class="notice-link-text">Lire l'annonce</span>
+                        <span class="notice-card-arrow">→</span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================================================
+     SECTION 4: INQUIRY & CS CENTER (SPLIT DUO BOX)
+     ========================================================================== -->
+<section class="inquiry-cs-section">
+    <div class="container">
+        <div class="inquiry-cs-grid">
+            <!-- Left Charcoal Inquiry Box -->
+            <div class="inquiry-box">
+                <span class="inquiry-tag">Demande Directe</span>
+                <h2 class="inquiry-title">Inquiry</h2>
+                <p class="inquiry-subtitle">Transmettez-nous vos besoins, nous vous répondrons par email ou directement sur WhatsApp dans les plus brefs délais.</p>
+
+                <form action="/contact/" method="POST" class="inquiry-form" id="inquiry-form-home">
+                    {% csrf_token %}
+                    <div>
+                        <input type="text" name="nom" id="inq_nom" class="inquiry-input" placeholder="Votre Nom *" required>
+                    </div>
+                    <div>
+                        <input type="tel" name="telephone" id="inq_tel" class="inquiry-input" placeholder="Téléphone">
+                    </div>
+                    <div class="form-field-full">
+                        <input type="email" name="email" id="inq_email" class="inquiry-input" placeholder="Adresse Email *" required>
+                    </div>
+                    <div class="form-field-full">
+                        <textarea name="message" id="inq_msg" class="inquiry-textarea" rows="3" placeholder="Détail de votre demande ou navire..." required></textarea>
+                    </div>
+                    <div class="inquiry-checkbox-wrapper">
+                        <input type="checkbox" id="privacy" required checked>
+                        <label for="privacy">J'accepte le traitement de mes informations de contact.</label>
+                    </div>
+                    <div class="form-field-full" style="margin-top: 10px; display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button type="submit" class="btn-pill-dark" style="flex: 1; min-width: 180px;">Envoyer par Email</button>
+                        <button type="button" id="btn-whatsapp-send" class="btn-primary" style="flex: 1; min-width: 180px; background-color: #25D366; border-color: #25D366; color: #fff;">Envoyer sur WhatsApp 💬</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right Cyan CS Center Box -->
+            <div class="cs-box">
+                <div>
+                    <span class="cs-tag">Support Client & Assistance</span>
+                    <h2 class="cs-title">CS center</h2>
+                    <p class="cs-desc">Notre équipe d'assistance maritime est joignable 24/7 par téléphone, email ou WhatsApp pour accompagner vos navires.</p>
+
+                    <div class="cs-phone-group" style="display: flex; flex-direction: column; gap: 16px;">
+                        <a href="https://wa.me/22899501085" target="_blank" class="cs-phone-item" style="text-decoration: none; color: inherit; transition: var(--transition);">
+                            <div class="cs-phone-icon" style="background: rgba(255,255,255,0.2);">📱</div>
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-size: 20px; font-weight: 800;">+228 99 50 10 85</span>
+                                <span style="font-size: 12px; opacity: 0.85;">Discuter sur WhatsApp →</span>
+                            </div>
+                        </a>
+                        <a href="https://wa.me/22890828467" target="_blank" class="cs-phone-item" style="text-decoration: none; color: inherit; transition: var(--transition);">
+                            <div class="cs-phone-icon" style="background: rgba(255,255,255,0.2);">💬</div>
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-size: 20px; font-weight: 800;">+228 90 82 84 67</span>
+                                <span style="font-size: 12px; opacity: 0.85;">Ligne d'assistance 24/7 →</span>
+                            </div>
+                        </a>
+                        <a href="mailto:kinganani20@gmail.com" class="cs-phone-item" style="text-decoration: none; color: inherit; transition: var(--transition);">
+                            <div class="cs-phone-icon" style="background: rgba(255,255,255,0.2);">✉️</div>
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="font-size: 18px; font-weight: 800; word-break: break-all;">kinganani20@gmail.com</span>
+                                <span style="font-size: 12px; opacity: 0.85;">Envoyer un courriel →</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="cs-hours" style="margin-top: 30px;">
+                    <strong>Heures d'ouverture du Centre Client</strong>
+                    <p>Lundi — Vendredi : 08h00 - 18h00 | Samedi : 09h00 - 14h00</p>
+                    <p style="margin-top: 4px; opacity: 0.85;">Service d'urgence maritime disponible 24h/24 et 7j/7.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btnWa = document.getElementById('btn-whatsapp-send');
+    if (btnWa) {
+        btnWa.addEventListener('click', function() {
+            const nom = document.getElementById('inq_nom').value || 'Client';
+            const email = document.getElementById('inq_email').value || '';
+            const tel = document.getElementById('inq_tel').value || '';
+            const msg = document.getElementById('inq_msg').value || '';
+            
+            const fullText = `Bonjour KINGLIFE SHAL U, je souhaite effectuer une demande:\n• Nom: ${nom}\n• Email: ${email}\n• Téléphone: ${tel}\n• Message: ${msg}`;
+            const waUrl = `https://wa.me/22899501085?text=${encodeURIComponent(fullText)}`;
+            window.open(waUrl, '_blank');
+        });
+    }
+});
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const prevBtn = document.querySelector('.slider-btn-prev');
+    const nextBtn = document.querySelector('.slider-btn-next');
+    const grid = document.querySelector('.business-cards-grid');
+
+    if (prevBtn && nextBtn && grid) {
+        nextBtn.addEventListener('click', function() {
+            grid.scrollBy({ left: 320, behavior: 'smooth' });
+        });
+        prevBtn.addEventListener('click', function() {
+            grid.scrollBy({ left: -320, behavior: 'smooth' });
+        });
+    }
+});
+</script>
+{% endblock %}

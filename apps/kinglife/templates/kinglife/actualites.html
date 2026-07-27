@@ -1,0 +1,92 @@
+{% extends 'kinglife/base.html' %}
+{% load static %}
+
+{% block title %}Actualités - KINGLIFE SHAL U{% endblock %}
+
+{% block content %}
+<!-- Page Hero Banner -->
+<section class="page-hero">
+    <div class="container">
+        <h1>Actualités & Communiqués</h1>
+        <p>Restez informé des derniers développements, annonces maritimes et partenariats de KINGLIFE SHAL U</p>
+    </div>
+</section>
+
+<!-- Actualités Section (Blog Grid) -->
+<section style="padding: 100px 0; background-color: var(--color-light-bg);">
+    <div class="container">
+        <div class="blog-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 40px;">
+            {% for actualite in actualites %}
+            <a href="{% url 'actualite_detail' actualite.id %}" class="blog-card" style="display: block; background: var(--color-white); border-radius: var(--border-radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: var(--transition);">
+                <div style="height: 220px; overflow: hidden; position: relative;">
+                    <img src="https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=600&q=80" alt="News Image" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" class="blog-img">
+                    <div style="position: absolute; top: 16px; left: 16px; background: var(--color-electric-blue); color: var(--color-white); padding: 6px 14px; border-radius: 4px; font-size: 12px; font-weight: 700; text-transform: uppercase;">Communiqué</div>
+                </div>
+                <div style="padding: 30px;">
+                    <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-light); font-size: 13px; margin-bottom: 12px;">
+                        <span>📅 {{ actualite.date_publication|date:"d M Y" }}</span>
+                    </div>
+                    <h3 style="font-size: 20px; color: var(--color-text-dark); margin-bottom: 12px; line-height: 1.4; transition: var(--transition);" class="blog-title">{{ actualite.titre }}</h3>
+                    <p style="color: var(--color-text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 20px;">{{ actualite.resume|default:actualite.contenu|truncatewords:20 }}</p>
+                    <div style="display: inline-flex; align-items: center; gap: 6px; color: var(--color-ocean-bright); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Lire la suite <span>→</span>
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+            <!-- Demo Fallback News Cards -->
+            <a href="#" class="blog-card" style="display: block; background: var(--color-white); border-radius: var(--border-radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: var(--transition);">
+                <div style="height: 220px; overflow: hidden; position: relative;">
+                    <img src="https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?w=600&q=80" alt="News Image" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" class="blog-img">
+                    <div style="position: absolute; top: 16px; left: 16px; background: var(--color-electric-blue); color: var(--color-white); padding: 6px 14px; border-radius: 4px; font-size: 12px; font-weight: 700; text-transform: uppercase;">Service</div>
+                </div>
+                <div style="padding: 30px;">
+                    <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-light); font-size: 13px; margin-bottom: 12px;">
+                        <span>📅 15 Juil 2024</span>
+                    </div>
+                    <h3 style="font-size: 20px; color: var(--color-text-dark); margin-bottom: 12px; line-height: 1.4; transition: var(--transition);" class="blog-title">Excellence opérationnelle : Nouveau service d'avitaillement haute capacité</h3>
+                    <p style="color: var(--color-text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 20px;">KINGLIFE SHAL U renforce sa flotte de barges pour le ravitaillement rapide des navires cargo et pétroliers en rade.</p>
+                    <div style="display: inline-flex; align-items: center; gap: 6px; color: var(--color-ocean-bright); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Lire la suite <span>→</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#" class="blog-card" style="display: block; background: var(--color-white); border-radius: var(--border-radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: var(--transition);">
+                <div style="height: 220px; overflow: hidden; position: relative;">
+                    <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80" alt="News Image" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" class="blog-img">
+                    <div style="position: absolute; top: 16px; left: 16px; background: var(--color-electric-blue); color: var(--color-white); padding: 6px 14px; border-radius: 4px; font-size: 12px; font-weight: 700; text-transform: uppercase;">Certification</div>
+                </div>
+                <div style="padding: 30px;">
+                    <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-light); font-size: 13px; margin-bottom: 12px;">
+                        <span>📅 28 Juin 2024</span>
+                    </div>
+                    <h3 style="font-size: 20px; color: var(--color-text-dark); margin-bottom: 12px; line-height: 1.4; transition: var(--transition);" class="blog-title">Obtention des accréditations de sûreté et normes environnementales ISO</h3>
+                    <p style="color: var(--color-text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 20px;">Confirmation de la conformité de nos protocoles maritimes aux meilleures exigences de sécurité environnementale.</p>
+                    <div style="display: inline-flex; align-items: center; gap: 6px; color: var(--color-ocean-bright); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Lire la suite <span>→</span>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="#" class="blog-card" style="display: block; background: var(--color-white); border-radius: var(--border-radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: var(--transition);">
+                <div style="height: 220px; overflow: hidden; position: relative;">
+                    <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=80" alt="News Image" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" class="blog-img">
+                    <div style="position: absolute; top: 16px; left: 16px; background: var(--color-electric-blue); color: var(--color-white); padding: 6px 14px; border-radius: 4px; font-size: 12px; font-weight: 700; text-transform: uppercase;">Assistance</div>
+                </div>
+                <div style="padding: 30px;">
+                    <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-light); font-size: 13px; margin-bottom: 12px;">
+                        <span>📅 10 Mai 2024</span>
+                    </div>
+                    <h3 style="font-size: 20px; color: var(--color-text-dark); margin-bottom: 12px; line-height: 1.4; transition: var(--transition);" class="blog-title">Extension des services d'assistance et de relève d'équipage 24h/7j</h3>
+                    <p style="color: var(--color-text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 20px;">Une organisation réorganisée pour répondre immédiatement aux demandes imprévues lors des escales maritimes.</p>
+                    <div style="display: inline-flex; align-items: center; gap: 6px; color: var(--color-ocean-bright); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Lire la suite <span>→</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

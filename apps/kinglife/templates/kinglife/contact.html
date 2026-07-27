@@ -1,0 +1,106 @@
+{% extends 'kinglife/base.html' %}
+{% load static %}
+
+{% block title %}Contact & Centre Relation Client - KINGLIFE SHAL U{% endblock %}
+
+{% block content %}
+<!-- Contact Hero Banner -->
+<section class="contact-hero-v2">
+    <div class="container">
+        <h1 style="font-size: clamp(36px, 5vw, 48px); margin-bottom: 16px;">Contact us</h1>
+        <p style="font-size: 18px; opacity: 0.9;">KINGLIFE SHAL U is ready to provide the right solution according to your needs</p>
+    </div>
+</section>
+
+<!-- Contact Info & Form Card -->
+<section style="background-color: #f8fafc; padding-bottom: 80px;">
+    <div class="container">
+        <div class="contact-card-v2">
+            <!-- Left Info Side -->
+            <div class="contact-info-side">
+                <h2 class="contact-info-title">Get in touch</h2>
+                <p class="contact-info-desc">N'hésitez pas à nous contacter pour toute demande d'avitaillement, d'assistance portuaire ou de support logistique.</p>
+
+                <div class="contact-detail-item">
+                    <div class="contact-icon-wrapper">📍</div>
+                    <div class="contact-detail-content">
+                        <h4>Head Office</h4>
+                        <p>Zone Portuaire — BP 1420<br>Port-Gentil, Gabon</p>
+                    </div>
+                </div>
+
+                <div class="contact-detail-item">
+                    <div class="contact-icon-wrapper">✉️</div>
+                    <div class="contact-detail-content">
+                        <h4>Email Us</h4>
+                        <p><a href="mailto:kinganani20@gmail.com" style="color: inherit; text-decoration: none;">kinganani20@gmail.com</a></p>
+                    </div>
+                </div>
+
+                <div class="contact-detail-item">
+                    <div class="contact-icon-wrapper">💬</div>
+                    <div class="contact-detail-content">
+                        <h4>WhatsApp & Call Us</h4>
+                        <p>
+                            <a href="https://wa.me/22899501085" target="_blank" style="color: inherit; text-decoration: none;">+228 99 50 10 85 (WhatsApp)</a><br>
+                            <a href="https://wa.me/22890828467" target="_blank" style="color: inherit; text-decoration: none;">+228 90 82 84 67 (WhatsApp)</a>
+                        </p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px;">
+                    <h4 style="font-size: 15px; color: var(--color-text-dark); margin-bottom: 12px;">Follow our social media</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-icon">f</a>
+                        <a href="#" class="social-icon">in</a>
+                        <a href="#" class="social-icon">𝕏</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Form Side -->
+            <div class="contact-form-side">
+                <h2 class="contact-info-title" style="margin-bottom: 30px;">Send us a message</h2>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-v2-grid">
+                        <div class="form-v2-group">
+                            <label class="form-v2-label">Name</label>
+                            <input type="text" name="nom" class="form-v2-input" placeholder="Votre Nom" required>
+                        </div>
+                        <div class="form-v2-group">
+                            <label class="form-v2-label">Company</label>
+                            <input type="text" name="company" class="form-v2-input" placeholder="Votre Société">
+                        </div>
+                        <div class="form-v2-group">
+                            <label class="form-v2-label">Phone</label>
+                            <input type="tel" name="telephone" class="form-v2-input" placeholder="Téléphone">
+                        </div>
+                        <div class="form-v2-group">
+                            <label class="form-v2-label">Email</label>
+                            <input type="email" name="email" class="form-v2-input" placeholder="Adresse Email" required>
+                        </div>
+                        <div class="form-v2-group full-width">
+                            <label class="form-v2-label">Subject</label>
+                            <input type="text" name="sujet" class="form-v2-input" placeholder="Sujet de votre demande" required>
+                        </div>
+                        <div class="form-v2-group full-width">
+                            <label class="form-v2-label">Message</label>
+                            <textarea name="message" class="form-v2-input" rows="5" placeholder="Votre message..." required style="resize: vertical;"></textarea>
+                        </div>
+                        <div class="form-v2-group full-width" style="margin-top: 10px;">
+                            <button type="submit" class="btn-primary" style="width: 100%;">Send Message</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Full Width Map -->
+        <div class="contact-map-wrapper" style="border-radius: var(--border-radius-lg); overflow: hidden; box-shadow: var(--shadow-md);">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.7610052906473!2d8.77531731526487!3d-0.724729135431604!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x107a3c3e2fdb1149%3A0xc3c94d0a1334c9c!2nPort-Gentil%2C%20Gabon!5e0!3m2!1sfr!2sfr!4v1689239851147!5m2!1sfr!2sfr" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </div>
+</section>
+{% endblock %}

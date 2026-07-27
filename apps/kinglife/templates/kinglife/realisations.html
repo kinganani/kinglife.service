@@ -1,0 +1,85 @@
+{% extends 'kinglife/base.html' %}
+{% load static %}
+
+{% block title %}Nos Réalisations - KINGLIFE SHAL U{% endblock %}
+
+{% block content %}
+<!-- Page Hero Banner -->
+<section class="page-hero">
+    <div class="container">
+        <h1>Nos Réalisations & Projets</h1>
+        <p>Un aperçu des opérations maritimes et missions logistiques réussies pour nos partenaires</p>
+    </div>
+</section>
+
+<!-- Realisations Grid Section -->
+<section style="padding: 100px 0; background-color: var(--color-light-bg);">
+    <div class="container">
+        <div class="business-cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 30px;">
+            {% for realisation in realisations %}
+            <div class="realisation-card" style="position: relative; border-radius: var(--border-radius-md); overflow: hidden; height: 420px; box-shadow: var(--shadow-md); transition: var(--transition); display: flex; align-items: flex-end; cursor: pointer;">
+                {% if realisation.image %}
+                    <img src="{{ realisation.image.url }}" alt="{{ realisation.titre }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; z-index: 1;" class="real-img">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?w=600&q=80" alt="{{ realisation.titre }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; z-index: 1;" class="real-img">
+                {% endif %}
+                
+                <!-- Dark Overlay -->
+                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,37,64,0.95) 0%, rgba(10,37,64,0.3) 50%, transparent 100%); z-index: 2; transition: opacity 0.3s ease;"></div>
+                
+                <div style="position: relative; z-index: 3; padding: 40px 30px; width: 100%;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="background: var(--color-ocean-bright); color: var(--color-white); padding: 4px 12px; border-radius: var(--border-radius-pill); font-size: 12px; font-weight: 700; text-transform: uppercase;">{{ realisation.client }}</span>
+                        <span style="color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 600;">{{ realisation.date_realisation|date:"M Y" }}</span>
+                    </div>
+                    <h3 style="font-size: 24px; color: var(--color-white); margin-bottom: 10px; font-family: var(--font-heading);">{{ realisation.titre }}</h3>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 14px; line-height: 1.6; margin-bottom: 0;">{{ realisation.description|truncatewords:15 }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <!-- Demo Cards -->
+            <div class="realisation-card" style="position: relative; border-radius: var(--border-radius-md); overflow: hidden; height: 420px; box-shadow: var(--shadow-md); transition: var(--transition); display: flex; align-items: flex-end; cursor: pointer;">
+                <img src="https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?w=600&q=80" alt="Avitaillement Pétrolier" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; z-index: 1;" class="real-img">
+                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,37,64,0.95) 0%, rgba(10,37,64,0.3) 50%, transparent 100%); z-index: 2;"></div>
+                <div style="position: relative; z-index: 3; padding: 40px 30px; width: 100%;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="background: var(--color-ocean-bright); color: var(--color-white); padding: 4px 12px; border-radius: var(--border-radius-pill); font-size: 12px; font-weight: 700; text-transform: uppercase;">Armateur International</span>
+                        <span style="color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 600;">2024</span>
+                    </div>
+                    <h3 style="font-size: 24px; color: var(--color-white); margin-bottom: 10px; font-family: var(--font-heading);">Avitaillement Pétrolier Haute Mer</h3>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 14px; line-height: 1.6; margin-bottom: 0;">Opération d'avitaillement vivres et eau douce pour un navire pétrolier de 200 000 tonnes en rade.</p>
+                </div>
+            </div>
+
+            <div class="realisation-card" style="position: relative; border-radius: var(--border-radius-md); overflow: hidden; height: 420px; box-shadow: var(--shadow-md); transition: var(--transition); display: flex; align-items: flex-end; cursor: pointer;">
+                <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=600&q=80" alt="Relève Équipage" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; z-index: 1;" class="real-img">
+                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,37,64,0.95) 0%, rgba(10,37,64,0.3) 50%, transparent 100%); z-index: 2;"></div>
+                <div style="position: relative; z-index: 3; padding: 40px 30px; width: 100%;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="background: var(--color-ocean-bright); color: var(--color-white); padding: 4px 12px; border-radius: var(--border-radius-pill); font-size: 12px; font-weight: 700; text-transform: uppercase;">Compagnie Maritime</span>
+                        <span style="color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 600;">2024</span>
+                    </div>
+                    <h3 style="font-size: 24px; color: var(--color-white); margin-bottom: 10px; font-family: var(--font-heading);">Relève Équipage & Transit Cargo</h3>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 14px; line-height: 1.6; margin-bottom: 0;">Prise en charge douanière, hébergement et transfert sécurisé pour la relève de 25 marins.</p>
+                </div>
+            </div>
+
+            <div class="realisation-card" style="position: relative; border-radius: var(--border-radius-md); overflow: hidden; height: 420px; box-shadow: var(--shadow-md); transition: var(--transition); display: flex; align-items: flex-end; cursor: pointer;">
+                <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=80" alt="Support Offshore" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; z-index: 1;" class="real-img">
+                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,37,64,0.95) 0%, rgba(10,37,64,0.3) 50%, transparent 100%); z-index: 2;"></div>
+                <div style="position: relative; z-index: 3; padding: 40px 30px; width: 100%;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="background: var(--color-ocean-bright); color: var(--color-white); padding: 4px 12px; border-radius: var(--border-radius-pill); font-size: 12px; font-weight: 700; text-transform: uppercase;">Opérateur Offshore</span>
+                        <span style="color: rgba(255,255,255,0.7); font-size: 13px; font-weight: 600;">2023</span>
+                    </div>
+                    <h3 style="font-size: 24px; color: var(--color-white); margin-bottom: 10px; font-family: var(--font-heading);">Support Plateforme Offshore</h3>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 14px; line-height: 1.6; margin-bottom: 0;">Ravitaillement régulier en carburant bunker et matériel technique pour site offshore.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}

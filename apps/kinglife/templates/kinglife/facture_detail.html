@@ -1,0 +1,121 @@
+{% extends 'kinglife/base.html' %}
+{% load static %}
+
+{% block title %}Facture {{ facture.numero }} - KINGLIFE SHAL U{% endblock %}
+
+{% block content %}
+<!-- Page Hero Banner (Hidden when printing) -->
+<section class="page-hero no-print">
+    <div class="container">
+        <h1>Facture {{ facture.numero }}</h1>
+        <p>Statut du paiement : <span style="text-transform: uppercase; font-weight: 700; color: var(--color-electric-blue);">{{ facture.get_statut_display }}</span></p>
+    </div>
+</section>
+
+<!-- Invoice Section -->
+<section style="padding: 60px 0; background-color: var(--color-light-bg);">
+    <div class="container">
+        <div style="max-width: 900px; margin: 0 auto; background: var(--color-white); padding: 60px; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md);" id="facture-printable">
+            
+            <!-- Invoice Header -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 50px; border-bottom: 2px solid var(--color-ocean-dark); padding-bottom: 30px;">
+                <div>
+                    <h1 style="font-size: 32px; color: var(--color-ocean-dark); font-family: var(--font-heading); margin-bottom: 6px;">KINGLIFE SHAL U</h1>
+                    <p style="color: var(--color-text-muted); font-size: 14px; line-height: 1.6;">
+                        Services Maritimes, Ship Chandler & Logistics<br>
+                        Zone Portuaire — BP 1420, Port-Gentil (Gabon)<br>
+                        Email : contact@kinglife.dev | Tél : +241 01 23 45 67
+                    </p>
+                </div>
+                <div style="text-align: right;">
+                    <span style="font-size: 24px; font-weight: 800; color: var(--color-ocean-bright); display: block; margin-bottom: 4px;">FACTURE {{ facture.numero }}</span>
+                    <span style="font-size: 14px; color: var(--color-text-muted); display: block;">Date d'émission : {{ facture.date_emission|date:"d/m/Y" }}</span>
+                    <span style="font-size: 14px; color: var(--color-text-muted); display: block;">Échéance : {{ facture.date_echeance|date:"d/m/Y" }}</span>
+                </div>
+            </div>
+
+            <!-- Client Info & Prestation -->
+            <div style="display: flex; justify-content: space-between; gap: 40px; margin-bottom: 40px;">
+                <div style="flex: 1; background: var(--color-light-bg); padding: 20px; border-radius: var(--border-radius-sm);">
+                    <h3 style="font-size: 16px; color: var(--color-ocean-dark); margin-bottom: 8px;">Facturé à (Client)</h3>
+                    <p style="font-size: 15px; color: var(--color-text-dark); font-weight: 700; margin-bottom: 4px;">{{ facture.client.username }}</p>
+                    <p style="font-size: 14px; color: var(--color-text-muted);">Email : {{ facture.client.email }}</p>
+                </div>
+                <div style="flex: 1; background: var(--color-light-bg); padding: 20px; border-radius: var(--border-radius-sm);">
+                    <h3 style="font-size: 16px; color: var(--color-ocean-dark); margin-bottom: 8px;">Détails Prestation</h3>
+                    {% if facture.prestation %}
+                        <p style="font-size: 15px; color: var(--color-text-dark); font-weight: 700; margin-bottom: 4px;">{{ facture.prestation.titre }}</p>
+                        <p style="font-size: 14px; color: var(--color-text-muted);">Statut : {{ facture.prestation.get_statut_display }}</p>
+                    {% else %}
+                        <p style="font-size: 14px; color: var(--color-text-muted);">Prestation maritime directe.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Table breakdown -->
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+                <thead>
+                    <tr style="background: var(--color-ocean-dark); color: var(--color-white); text-align: left;">
+                        <th style="padding: 14px 16px; border-top-left-radius: 8px;">Description des Prestations / Fournitures</th>
+                        <th style="padding: 14px 16px; text-align: right; border-top-right-radius: 8px;">Montant HT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid var(--color-border-light);">
+                        <td style="padding: 18px 16px; color: var(--color-text-dark); font-weight: 600;">
+                            {{ facture.prestation.titre|default:"Fourniture & Prestation Maritime Global" }}
+                            <br><span style="font-size: 13px; color: var(--color-text-muted); font-weight: normal;">{{ facture.prestation.description|default:"Avitaillement, consignation et services logistiques associés" }}</span>
+                        </td>
+                        <td style="padding: 18px 16px; color: var(--color-text-dark); font-weight: 700; text-align: right; font-size: 16px;">{{ facture.montant_ht }} €</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Financial Summary Box -->
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 50px;">
+                <div style="width: 320px; display: flex; flex-direction: column; gap: 12px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 15px; color: var(--color-text-muted);">
+                        <span>Total HT :</span>
+                        <span style="font-weight: 600; color: var(--color-text-dark);">{{ facture.montant_ht }} €</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 15px; color: var(--color-text-muted);">
+                        <span>TVA (18%) :</span>
+                        <span style="font-weight: 600; color: var(--color-text-dark);">{{ facture.montant_tva }} €</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 20px; font-weight: 800; color: var(--color-ocean-bright); border-top: 2px solid var(--color-border-light); padding-top: 12px;">
+                        <span>Total TTC :</span>
+                        <span>{{ facture.montant_ttc }} €</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 14px; color: #16a34a; font-weight: 600; margin-top: 4px;">
+                        <span>Montant Régler :</span>
+                        <span>{{ facture.montant_paye }} €</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer print actions -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border-light); padding-top: 30px;" class="no-print">
+                <a href="/dashboard/" class="btn-outline">← Retour à mon espace</a>
+                <button onclick="window.print()" class="btn-primary">Imprimer / Télécharger la Facture PDF 🖨️</button>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<style>
+@media print {
+    .no-print, header, footer, .main-header, .main-footer {
+        display: none !important;
+    }
+    body, section {
+        background: #ffffff !important;
+        padding: 0 !important;
+    }
+    #facture-printable {
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+}
+</style>
+{% endblock %}
