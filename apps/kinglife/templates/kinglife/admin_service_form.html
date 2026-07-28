@@ -1,0 +1,76 @@
+{% extends base_template %}
+
+{% block title %}{% if service %}Modifier le service{% else %}Nouveau Service{% endif %} - Admin{% endblock %}
+
+{% block page_title %}{% if service %}Modifier : {{ service.nom }}{% else %}Ajouter un Service{% endif %} 🚢{% endblock %}
+{% block page_subtitle %}Remplissez les informations du service.{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'admin_services' %}" class="dash-btn dash-btn-outline" hx-get="{% url 'admin_services' %}" hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">
+    <i class="material-symbols-outlined">arrow_back</i> Retour
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-panel" style="max-width: 800px; margin: 0 auto;">
+    <form method="POST" enctype="multipart/form-data" action="{% if service %}{% url 'admin_service_edit' service.id %}{% else %}{% url 'admin_service_create' %}{% endif %}" style="display: flex; flex-direction: column; gap: 20px;">
+        {% csrf_token %}
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-weight: 600; color: var(--dash-text);">Nom du service *</label>
+                <input type="text" name="nom" required value="{{ service.nom|default:'' }}" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px;">
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-weight: 600; color: var(--dash-text);">Catégorie *</label>
+                <select name="categorie" required style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px; background: white;">
+                    <option value="">-- Sélectionner --</option>
+                    {% for key, value in categories_choices %}
+                        <option value="{{ key }}" {% if service and service.categorie == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: var(--dash-text);">Description *</label>
+            <textarea name="description" required rows="4" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical;">{{ service.description|default:'' }}</textarea>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-weight: 600; color: var(--dash-text);">Icône (Material Symbol)</label>
+                <input type="text" name="icone" value="{{ service.icone|default:'' }}" placeholder="ex: directions_boat" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px;">
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-weight: 600; color: var(--dash-text);">Ordre d'affichage</label>
+                <input type="number" name="ordre" value="{{ service.ordre|default:'0' }}" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px;">
+            </div>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: var(--dash-text);">Image du service</label>
+            {% if service and service.image %}
+            <div style="margin-bottom: 10px;">
+                <img src="{{ service.image.url }}" alt="Image actuelle" style="max-width: 150px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <p style="font-size: 12px; color: #64748b; margin-top: 4px;">Image actuelle</p>
+            </div>
+            {% endif %}
+            <input type="file" name="image" accept="image/*" style="padding: 8px 12px; border: 1px dashed #cbd5e1; border-radius: 8px; width: 100%;">
+        </div>
+        
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none;">
+            <input type="checkbox" name="publie" {% if not service or service.publie %}checked{% endif %} style="width: 18px; height: 18px; accent-color: var(--dash-primary);">
+            <span style="font-weight: 500; color: var(--dash-text);">Publier ce service</span>
+        </label>
+        
+        <div style="margin-top: 10px; padding-top: 20px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end;">
+            <button type="submit" class="dash-btn dash-btn-primary" style="padding: 12px 24px; font-size: 16px;">
+                <i class="material-symbols-outlined">save</i> Enregistrer le service
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

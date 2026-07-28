@@ -1,0 +1,57 @@
+{% extends base_template %}
+
+{% block title %}{% if actualite %}Modifier l'actualité{% else %}Nouvelle Actualité{% endif %} - Admin{% endblock %}
+
+{% block page_title %}{% if actualite %}Modifier : {{ actualite.titre }}{% else %}Ajouter une Actualité{% endif %} 📰{% endblock %}
+{% block page_subtitle %}Rédigez le contenu de votre article.{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'admin_actualites' %}" class="dash-btn dash-btn-outline" hx-get="{% url 'admin_actualites' %}" hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">
+    <i class="material-symbols-outlined">arrow_back</i> Retour
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-panel" style="max-width: 800px; margin: 0 auto;">
+    <form method="POST" enctype="multipart/form-data" action="{% if actualite %}{% url 'admin_actualite_edit' actualite.id %}{% else %}{% url 'admin_actualite_create' %}{% endif %}" style="display: flex; flex-direction: column; gap: 20px;">
+        {% csrf_token %}
+        
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: var(--dash-text);">Titre de l'actualité *</label>
+            <input type="text" name="titre" required value="{{ actualite.titre|default:'' }}" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px;">
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: var(--dash-text);">Résumé (Court)</label>
+            <textarea name="resume" rows="2" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical;">{{ actualite.resume|default:'' }}</textarea>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: var(--dash-text);">Contenu complet *</label>
+            <textarea name="contenu" required rows="10" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical;">{{ actualite.contenu|default:'' }}</textarea>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: var(--dash-text);">Image d'illustration</label>
+            {% if actualite and actualite.image %}
+            <div style="margin-bottom: 10px;">
+                <img src="{{ actualite.image.url }}" alt="Image actuelle" style="max-width: 250px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <p style="font-size: 12px; color: #64748b; margin-top: 4px;">Image actuelle</p>
+            </div>
+            {% endif %}
+            <input type="file" name="image" accept="image/*" style="padding: 8px 12px; border: 1px dashed #cbd5e1; border-radius: 8px; width: 100%;">
+        </div>
+        
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none;">
+            <input type="checkbox" name="publie" {% if not actualite or actualite.publie %}checked{% endif %} style="width: 18px; height: 18px; accent-color: var(--dash-primary);">
+            <span style="font-weight: 500; color: var(--dash-text);">Publier cette actualité</span>
+        </label>
+        
+        <div style="margin-top: 10px; padding-top: 20px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end;">
+            <button type="submit" class="dash-btn dash-btn-primary" style="padding: 12px 24px; font-size: 16px;">
+                <i class="material-symbols-outlined">save</i> Enregistrer l'actualité
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

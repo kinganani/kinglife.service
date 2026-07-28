@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.kinglife',
+    'pwa',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.kinglife.context_processors.notifications',
             ],
         },
     },
@@ -113,3 +115,35 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# PWA Settings
+PWA_APP_NAME = 'Kinglife SHAL U'
+PWA_APP_DESCRIPTION = "Gestion des services maritimes et cotations."
+PWA_APP_THEME_COLOR = '#0f172a' # Couleur Ocean Dark (en-tête du tel)
+PWA_APP_BACKGROUND_COLOR = '#ffffff'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'any'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICONS = [
+    {
+        'src': '/static/kinglife/images/icon-192x192.png',
+        'sizes': '192x192',
+        'type': 'image/png'
+    },
+    {
+        'src': '/static/kinglife/images/icon-512x512.png',
+        'sizes': '512x512',
+        'type': 'image/png'
+    }
+]
+PWA_APP_ICONS_APPLE = [
+    {
+        'src': '/static/kinglife/images/icon-192x192.png',
+        'sizes': '192x192',
+        'type': 'image/png'
+    }
+]
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = 'fr-FR'

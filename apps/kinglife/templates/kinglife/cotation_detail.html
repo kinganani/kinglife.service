@@ -95,11 +95,53 @@
 
             <!-- Actions Form -->
             {% if cotation.statut == 'envoyee' or cotation.statut == 'brouillon' %}
-            <form method="post" action="{% url 'cotation_action' cotation.id %}" style="display: flex; gap: 16px; justify-content: flex-end;">
-                {% csrf_token %}
-                <button type="submit" name="action" value="refuser" class="btn-outline" style="border-color: #dc2626; color: #dc2626;">Refuser la Cotation</button>
-                <button type="submit" name="action" value="accepter" class="btn-primary">Accepter la Cotation & Générer Facture →</button>
-            </form>
+            <div style="display: flex; gap: 16px; justify-content: flex-end;">
+                <!-- Buttons that trigger the modals -->
+                <button type="button" onclick="document.getElementById('modal-refuser').style.display='flex'" class="btn-outline" style="border-color: #dc2626; color: #dc2626;">Refuser la Cotation</button>
+                <button type="button" onclick="document.getElementById('modal-accepter').style.display='flex'" class="btn-primary">Accepter et Valider</button>
+            </div>
+
+            <!-- Modal Accepter -->
+            <div id="modal-accepter" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+                <div style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                    <h3 style="margin-top: 0; color: var(--color-ocean-dark);">Confirmation d'Acceptation</h3>
+                    <p style="color: var(--color-text-muted); font-size: 14px; margin-bottom: 20px;">Veuillez entrer votre mot de passe pour confirmer l'acceptation de la cotation <strong>{{ cotation.numero }}</strong>. Cette action générera la prestation correspondante.</p>
+                    
+                    <form method="post" action="{% url 'cotation_action' cotation.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="accepter">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: var(--color-text-dark);">Votre mot de passe</label>
+                            <input type="password" name="password" required style="width: 100%; padding: 12px; border: 1px solid var(--color-border-dark); border-radius: 6px; font-size: 14px;">
+                        </div>
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <button type="button" onclick="document.getElementById('modal-accepter').style.display='none'" class="btn-outline">Annuler</button>
+                            <button type="submit" class="btn-primary">Confirmer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal Refuser -->
+            <div id="modal-refuser" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+                <div style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                    <h3 style="margin-top: 0; color: #dc2626;">Refus de la Cotation</h3>
+                    <p style="color: var(--color-text-muted); font-size: 14px; margin-bottom: 20px;">Veuillez entrer votre mot de passe pour confirmer le refus définitif de la cotation <strong>{{ cotation.numero }}</strong>.</p>
+                    
+                    <form method="post" action="{% url 'cotation_action' cotation.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="refuser">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: var(--color-text-dark);">Votre mot de passe</label>
+                            <input type="password" name="password" required style="width: 100%; padding: 12px; border: 1px solid var(--color-border-dark); border-radius: 6px; font-size: 14px;">
+                        </div>
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <button type="button" onclick="document.getElementById('modal-refuser').style.display='none'" class="btn-outline">Annuler</button>
+                            <button type="submit" class="btn-primary" style="background: #dc2626;">Confirmer le refus</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
             {% else %}
             <div style="text-align: right;">
                 <a href="/dashboard/" class="btn-outline">← Retour au tableau de bord</a>

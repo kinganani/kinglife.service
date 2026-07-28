@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Count, Q
 from .models import Service, Actualite, Realisation, Page, Contact, CategorieProduit, Article, DemandeCotation, LigneCotation, Cotation, Prestation, Facture, Paiement
+from .utils import creer_notification
 
 
 def home(request):
@@ -89,13 +90,23 @@ def a_propos(request):
 def contact(request):
     """Page de contact"""
     if request.method == 'POST':
+        nom = request.POST.get('nom')
         Contact.objects.create(
-            nom=request.POST.get('nom'),
+            nom=nom,
             email=request.POST.get('email'),
             telephone=request.POST.get('telephone', ''),
             sujet=request.POST.get('sujet'),
             message=request.POST.get('message')
         )
+        
+        creer_notification(
+            titre="Nouveau message de contact",
+            message=f"Vous avez reçu un nouveau message de {nom}.",
+            is_for_admin=True,
+            lien="#",
+            type_notif='info'
+        )
+        
         return render(request, 'kinglife/contact_success.html')
     
     return render(request, 'kinglife/contact.html')
@@ -217,6 +228,16 @@ def demande_cotation(request):
                 
         # Vider le panier
         request.session['cart'] = {}
+        
+        # Notifier les admins
+        creer_notification(
+            titre="Nouvelle demande de cotation",
+            message=f"Le client {request.user.username} a soumis une nouvelle demande de cotation.",
+            is_for_admin=True,
+            lien=f"/admin-cotations/tarifer/{demande.id}/",
+            type_notif='info'
+        )
+        
         messages.success(request, 'Votre demande de cotation a été transmise avec succès. Notre équipe vous répondra avec les tarifs.')
         return redirect('dashboard')
         
@@ -327,23 +348,47 @@ def admin_tarifer_demande(request, demande_id):
         demande.statut = 'envoyee'
         demande.save()
         
+        # Notifier le client
+        creer_notification(
+            titre="Nouvelle cotation reçue",
+            message=f"L'administrateur a répondu à votre demande avec la cotation {cotation.numero}.",
+            utilisateur=demande.client,
+            lien=f"/cotation/{cotation.id}/",
+            type_notif='success'
+        )
+        
         messages.success(request, f'Cotation {cotation.numero} générée et envoyée au client avec succès !')
         return redirect('admin_demandes_list')
         
     return render(request, 'kinglife/admin_tarifer_demande.html', {'demande': demande, 'lignes': lignes})
 
 @login_required
-@staff_member_required
 def cotation_action(request, cotation_id):
     """Accepter ou refuser une cotation"""
     cotation = get_object_or_404(Cotation, id=cotation_id, demande__client=request.user)
-    action = request.POST.get('action')
     
-    if action == 'accepter':
-        cotation.statut = 'acceptee'
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        password = request.POST.get('password')
+        
+        if not password or not request.user.check_password(password):
+            messages.error(request, 'Mot de passe incorrect. Action annulée.')
+            return redirect('cotation_detail', cotation_id=cotation.id)
+        
+        if action == 'accepter':
+            cotation.statut = 'acceptee'
         cotation.save()
         cotation.demande.statut = 'acceptee'
         cotation.demande.save()
+        
+        # Notifier les admins de l'acceptation
+        creer_notification(
+            titre="Cotation acceptée",
+            message=f"Le client {request.user.username} a accepté la cotation {cotation.numero}.",
+            is_for_admin=True,
+            lien="/admin-cotations/",
+            type_notif='success'
+        )
         
         # Création automatique de la Prestation et Facture (Phase 3)
         prestation = Prestation.objects.create(
@@ -374,6 +419,16 @@ def cotation_action(request, cotation_id):
         cotation.save()
         cotation.demande.statut = 'refusee'
         cotation.demande.save()
+        
+        # Notifier les admins du refus
+        creer_notification(
+            titre="Cotation refusée",
+            message=f"Le client {request.user.username} a refusé la cotation {cotation.numero}.",
+            is_for_admin=True,
+            lien="/admin-cotations/",
+            type_notif='warning'
+        )
+        
         messages.info(request, 'Vous avez refusé la cotation.')
         
     return redirect('dashboard')
@@ -616,3 +671,193 @@ def admin_categorie_form(request, categorie_id=None):
         'categorie': categorie,
         'base_template': base_template
     })
+
+# =========================================================================
+# GESTION CMS (Services, Actualités, Réalisations)
+# =========================================================================
+from .models import Service, Actualite, Realisation
+
+@login_required
+@staff_member_required
+def admin_services(request):
+    services = Service.objects.all()
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    return render(request, 'kinglife/admin_services.html', {
+        'services': services,
+        'base_template': base_template
+    })
+
+@login_required
+@staff_member_required
+def admin_service_form(request, service_id=None):
+    service = None
+    if service_id:
+        from django.shortcuts import get_object_or_404
+        service = get_object_or_404(Service, id=service_id)
+        
+    if request.method == 'POST':
+        nom = request.POST.get('nom')
+        categorie = request.POST.get('categorie')
+        description = request.POST.get('description')
+        icone = request.POST.get('icone', '')
+        ordre = request.POST.get('ordre', 0)
+        publie = request.POST.get('publie') == 'on'
+        
+        if not service:
+            service = Service(nom=nom)
+            
+        service.nom = nom
+        service.categorie = categorie
+        service.description = description
+        service.icone = icone
+        service.ordre = ordre
+        service.publie = publie
+        
+        if 'image' in request.FILES:
+            service.image = request.FILES['image']
+            
+        service.save()
+        messages.success(request, "Service enregistré avec succès.")
+        return redirect('admin_services')
+        
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    return render(request, 'kinglife/admin_service_form.html', {
+        'service': service,
+        'categories_choices': Service.CATEGORIES,
+        'base_template': base_template
+    })
+
+@login_required
+@staff_member_required
+def admin_service_delete(request, service_id):
+    if request.method == 'POST':
+        from django.shortcuts import get_object_or_404
+        service = get_object_or_404(Service, id=service_id)
+        service.delete()
+        messages.success(request, "Service supprimé.")
+    return redirect('admin_services')
+
+# ACTUALITES
+@login_required
+@staff_member_required
+def admin_actualites(request):
+    actualites = Actualite.objects.all()
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    return render(request, 'kinglife/admin_actualites.html', {
+        'actualites': actualites,
+        'base_template': base_template
+    })
+
+@login_required
+@staff_member_required
+def admin_actualite_form(request, actualite_id=None):
+    actualite = None
+    if actualite_id:
+        from django.shortcuts import get_object_or_404
+        actualite = get_object_or_404(Actualite, id=actualite_id)
+        
+    if request.method == 'POST':
+        titre = request.POST.get('titre')
+        resume = request.POST.get('resume', '')
+        contenu = request.POST.get('contenu')
+        publie = request.POST.get('publie') == 'on'
+        
+        if not actualite:
+            actualite = Actualite(titre=titre)
+            
+        actualite.titre = titre
+        actualite.resume = resume
+        actualite.contenu = contenu
+        actualite.publie = publie
+        
+        if 'image' in request.FILES:
+            actualite.image = request.FILES['image']
+            
+        actualite.save()
+        messages.success(request, "Actualité enregistrée avec succès.")
+        return redirect('admin_actualites')
+        
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    return render(request, 'kinglife/admin_actualite_form.html', {
+        'actualite': actualite,
+        'base_template': base_template
+    })
+
+@login_required
+@staff_member_required
+def admin_actualite_delete(request, actualite_id):
+    if request.method == 'POST':
+        from django.shortcuts import get_object_or_404
+        actualite = get_object_or_404(Actualite, id=actualite_id)
+        actualite.delete()
+        messages.success(request, "Actualité supprimée.")
+    return redirect('admin_actualites')
+
+# REALISATIONS
+@login_required
+@staff_member_required
+def admin_realisations(request):
+    realisations = Realisation.objects.all()
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    return render(request, 'kinglife/admin_realisations.html', {
+        'realisations': realisations,
+        'base_template': base_template
+    })
+
+@login_required
+@staff_member_required
+def admin_realisation_form(request, realisation_id=None):
+    realisation = None
+    if realisation_id:
+        from django.shortcuts import get_object_or_404
+        realisation = get_object_or_404(Realisation, id=realisation_id)
+        
+    if request.method == 'POST':
+        titre = request.POST.get('titre')
+        client = request.POST.get('client', '')
+        description = request.POST.get('description')
+        date_realisation = request.POST.get('date_realisation')
+        
+        if not realisation:
+            realisation = Realisation(titre=titre)
+            
+        realisation.titre = titre
+        realisation.client = client
+        realisation.description = description
+        if date_realisation:
+            realisation.date_realisation = date_realisation
+        
+        if 'image' in request.FILES:
+            realisation.image = request.FILES['image']
+            
+        realisation.save()
+        messages.success(request, "Réalisation enregistrée avec succès.")
+        return redirect('admin_realisations')
+        
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    return render(request, 'kinglife/admin_realisation_form.html', {
+        'realisation': realisation,
+        'base_template': base_template
+    })
+
+@login_required
+@staff_member_required
+def admin_realisation_delete(request, realisation_id):
+    if request.method == 'POST':
+        from django.shortcuts import get_object_or_404
+        realisation = get_object_or_404(Realisation, id=realisation_id)
+        realisation.delete()
+        messages.success(request, "Réalisation supprimée.")
+    return redirect('admin_realisations')
+
+@login_required
+def marquer_notifications_lues(request):
+    """Marque toutes les notifications de l'utilisateur comme lues"""
+    from django.http import JsonResponse
+    from .models import Notification
+    
+    if request.user.is_staff or request.user.is_superuser:
+        Notification.objects.filter(is_for_admin=True, lue=False).update(lue=True)
+        
+    Notification.objects.filter(utilisateur=request.user, lue=False).update(lue=True)
+    return JsonResponse({'success': True})

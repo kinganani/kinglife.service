@@ -1,0 +1,59 @@
+{% extends base_template %}
+
+{% block title %}{% if realisation %}Modifier la réalisation{% else %}Nouvelle Réalisation{% endif %} - Admin{% endblock %}
+
+{% block page_title %}{% if realisation %}Modifier : {{ realisation.titre }}{% else %}Ajouter une Réalisation{% endif %} 🏆{% endblock %}
+{% block page_subtitle %}Détaillez le projet réalisé pour vos clients.{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'admin_realisations' %}" class="dash-btn dash-btn-outline" hx-get="{% url 'admin_realisations' %}" hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">
+    <i class="material-symbols-outlined">arrow_back</i> Retour
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-panel" style="max-width: 800px; margin: 0 auto;">
+    <form method="POST" enctype="multipart/form-data" action="{% if realisation %}{% url 'admin_realisation_edit' realisation.id %}{% else %}{% url 'admin_realisation_create' %}{% endif %}" style="display: flex; flex-direction: column; gap: 20px;">
+        {% csrf_token %}
+        
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: var(--dash-text);">Titre du projet *</label>
+            <input type="text" name="titre" required value="{{ realisation.titre|default:'' }}" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-weight: 600; color: var(--dash-text);">Client</label>
+                <input type="text" name="client" value="{{ realisation.client|default:'' }}" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px;">
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="font-weight: 600; color: var(--dash-text);">Date de réalisation *</label>
+                <input type="date" name="date_realisation" required value="{{ realisation.date_realisation|date:'Y-m-d' }}" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px;">
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: var(--dash-text);">Description détaillée *</label>
+            <textarea name="description" required rows="6" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical;">{{ realisation.description|default:'' }}</textarea>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: var(--dash-text);">Image d'illustration *</label>
+            {% if realisation and realisation.image %}
+            <div style="margin-bottom: 10px;">
+                <img src="{{ realisation.image.url }}" alt="Image actuelle" style="max-width: 250px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <p style="font-size: 12px; color: #64748b; margin-top: 4px;">Image actuelle</p>
+            </div>
+            {% endif %}
+            <input type="file" name="image" accept="image/*" {% if not realisation %}required{% endif %} style="padding: 8px 12px; border: 1px dashed #cbd5e1; border-radius: 8px; width: 100%;">
+        </div>
+        
+        <div style="margin-top: 10px; padding-top: 20px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end;">
+            <button type="submit" class="dash-btn dash-btn-primary" style="padding: 12px 24px; font-size: 16px;">
+                <i class="material-symbols-outlined">save</i> Enregistrer la réalisation
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

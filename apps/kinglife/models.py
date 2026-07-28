@@ -283,3 +283,30 @@ class Paiement(models.Model):
     
     def __str__(self):
         return f"Paiement {self.montant}€ - {self.facture.numero}"
+
+
+class Notification(models.Model):
+    """Notifications système pour les utilisateurs"""
+    TYPES = [
+        ('info', 'Information'),
+        ('success', 'Succès'),
+        ('warning', 'Alerte'),
+        ('error', 'Erreur'),
+    ]
+    
+    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications', null=True, blank=True)
+    is_for_admin = models.BooleanField(default=False)  # True if the notification is meant for all admins/staff
+    titre = models.CharField(max_length=200)
+    message = models.TextField()
+    lien = models.CharField(max_length=255, blank=True)
+    lue = models.BooleanField(default=False)
+    type_notif = models.CharField(max_length=20, choices=TYPES, default='info')
+    date_creation = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-date_creation']
+        verbose_name = "Notification"
+        verbose_name_plural = "Notifications"
+        
+    def __str__(self):
+        return f"{self.titre} - {'Lue' if self.lue else 'Non lue'}"

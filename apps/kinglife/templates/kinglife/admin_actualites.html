@@ -1,0 +1,86 @@
+{% extends base_template %}
+{% load static %}
+
+{% block title %}Gestion des Actualités - Admin{% endblock %}
+
+{% block page_title %}Actualités 📰{% endblock %}
+{% block page_subtitle %}Gérez les articles de blog et news de l'entreprise.{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'admin_actualite_create' %}" class="dash-btn dash-btn-primary" hx-get="{% url 'admin_actualite_create' %}" hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">
+    <i class="material-symbols-outlined">add</i> Nouvelle Actualité
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-panel" style="margin-bottom: 30px;">
+    <div class="dash-panel-header">
+        <h2 class="dash-panel-title">
+            <span style="width: 12px; height: 12px; border-radius: 50%; background: var(--dash-accent);"></span>
+            Toutes les Actualités ({{ actualites.count }})
+        </h2>
+    </div>
+
+    {% if actualites %}
+    <div style="overflow-x: auto;">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>IMAGE</th>
+                    <th>TITRE</th>
+                    <th>DATE</th>
+                    <th>STATUT</th>
+                    <th style="text-align: right;">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for act in actualites %}
+                <tr>
+                    <td>
+                        {% if act.image %}
+                        <img src="{{ act.image.url }}" alt="{{ act.titre }}" style="width: 50px; height: 40px; object-fit: cover; border-radius: 6px;">
+                        {% else %}
+                        <div style="width: 50px; height: 40px; border-radius: 6px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+                            <span class="material-symbols-outlined" style="font-size: 20px;">image</span>
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td style="font-weight: 600; color: #0f172a;">{{ act.titre }}</td>
+                    <td>{{ act.date_publication|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        {% if act.publie %}
+                        <span style="display: inline-flex; align-items: center; gap: 4px; color: #16a34a; font-weight: 600; font-size: 13px;">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #16a34a;"></span> Publié
+                        </span>
+                        {% else %}
+                        <span style="display: inline-flex; align-items: center; gap: 4px; color: #94a3b8; font-weight: 600; font-size: 13px;">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #94a3b8;"></span> Brouillon
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: right;">
+                        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                            <a href="{% url 'admin_actualite_edit' act.id %}" class="dash-btn dash-btn-outline" style="padding: 6px 12px;" hx-get="{% url 'admin_actualite_edit' act.id %}" hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">
+                                <i class="material-symbols-outlined" style="font-size: 18px;">edit</i>
+                            </a>
+                            <form method="POST" action="{% url 'admin_actualite_delete' act.id %}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette actualité ?');" style="margin:0;">
+                                {% csrf_token %}
+                                <button type="submit" class="dash-btn" style="padding: 6px 12px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5;">
+                                    <i class="material-symbols-outlined" style="font-size: 18px;">delete</i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="padding: 40px 20px; text-align: center; color: #64748b;">
+        <i class="material-symbols-outlined" style="font-size: 48px; margin-bottom: 10px; opacity: 0.5;">feed</i>
+        <p>Aucune actualité n'a encore été publiée.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

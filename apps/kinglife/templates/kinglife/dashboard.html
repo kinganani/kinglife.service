@@ -23,7 +23,7 @@
         </div>
         <div>
             <p class="stat-title">Demandes Enregistrées</p>
-            <h3 class="stat-value">{{ demandes|length }}</h3>
+            <h3 class="stat-value" style="font-size: clamp(20px, 5vw, 32px); word-break: break-word;">{{ demandes|length }}</h3>
         </div>
     </div>
 
@@ -35,7 +35,7 @@
         </div>
         <div>
             <p class="stat-title">Cotations Reçues</p>
-            <h3 class="stat-value">{{ cotations|length }}</h3>
+            <h3 class="stat-value" style="font-size: clamp(20px, 5vw, 32px); word-break: break-word;">{{ cotations|length }}</h3>
         </div>
     </div>
 
@@ -47,7 +47,7 @@
         </div>
         <div>
             <p class="stat-title">Prestations en cours</p>
-            <h3 class="stat-value">{{ prestations|length }}</h3>
+            <h3 class="stat-value" style="font-size: clamp(20px, 5vw, 32px); word-break: break-word;">{{ prestations|length }}</h3>
         </div>
     </div>
 
@@ -58,7 +58,7 @@
         </div>
         <div>
             <p class="stat-title" style="color: rgba(255,255,255,0.7);">Solde Dû (Factures)</p>
-            <h3 class="stat-value" style="color: #ffffff;">{{ solde_du|default:"0.00" }} €</h3>
+            <h3 class="stat-value" style="color: #ffffff; font-size: clamp(20px, 5vw, 32px); word-break: break-word;">{{ solde_du|default:"0.00" }} €</h3>
         </div>
     </div>
 </div>
