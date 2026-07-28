@@ -17,7 +17,8 @@
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <!-- Material Symbols (icons) -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
     <!-- Custom Design System Stylesheet -->
     <link rel="stylesheet" href="{% static 'kinglife/css/style.css' %}">
@@ -32,9 +33,12 @@
     <!-- Header Navigation Bar -->
     <header class="main-header">
         <div class="container header-container">
-            <a href="/" class="brand-logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-                <img src="{% static 'kinglife/images/logo.png' %}" alt="Kinglife Logo" style="height: 36px; width: auto;">
-                <span style="font-size: 20px; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif;">KINGLIFE</span>
+            <a href="/" class="brand-logo"
+                style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                <img src="{% static 'kinglife/images/logo.png' %}" alt="Kinglife Logo"
+                    style="height: 36px; width: auto;">
+                <span
+                    style="font-size: 20px; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif;">KINGLIFE</span>
             </a>
 
             <nav class="nav-menu">
@@ -54,14 +58,16 @@
             <div class="header-actions">
                 {% if user.is_authenticated %}
                 {% if user.is_staff or user.is_superuser %}
-                <a href="/espace-admin/" class="header-btn"><span class="material-symbols-outlined" style="font-size: 18px; margin-right: 4px;">admin_panel_settings</span>Admin</a>
+                <a href="/espace-admin/" class="header-btn"><span class="material-symbols-outlined"
+                        style="font-size: 18px; margin-right: 4px;">admin_panel_settings</span>Admin</a>
                 {% else %}
                 <a href="{% url 'demande_cotation' %}" class="header-btn"
                     style="position: relative; margin-right: 10px;">
                     Panier
                     {% if request.session.cart %}
                     <span
-                        style="background: #dc2626; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; position: absolute; top: -5px; right: -10px; font-weight: bold;">{{ request.session.cart|length }}</span>
+                        style="background: #dc2626; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; position: absolute; top: -5px; right: -10px; font-weight: bold;">{{
+                        request.session.cart|length }}</span>
                     {% endif %}
                 </a>
                 <a href="/dashboard/" class="header-btn">Mon Espace</a>
@@ -114,37 +120,26 @@
     <div id="google_translate_element" style="display:none;"></div>
 
     <script type="text/javascript">
-            function googleTranslateElementInit(                      new google.translate.Translate                {
-                pa                ge: 'fr',
-                includedLangua                ,en,es,pt,zh-CN',
-                      autoDisplay: false
-                       'google_translate_element');
+            function googleTranslateE            Init(                      new google.tr                Translate                                          pa                ge: 'fr                           included                            ,en,es,pt,zh-CN'                                autoDisplay: fals                               'google_translate_element');
+                               function toggleLangWidget()                       const wi             document.getElement ById('            n        gWi        ');
+            widget.classList.toggle('o            ;
               }
 
-        function toggleLangWidget() {
-            const wi             document.getElementById('floatin        gWi        ');
-            widget.classList.toggle('op en');
-              }
-
-        document.addEventListener('click', function (e) {                   const widget = document.getElementByI                ingLangWidget');
-            if (             &        idget        tains(e.target)) {
-                widget.classLis            ve('open');
+        document.addEvent                ('click', function (e) {                               nst w        t = document.getElementByI                ingLangW            );
+            if (             &        idget        tains(e.t                {
+                widget.classLi                     ve('open');
             }
         });
 
-        function changeA                ge(langCode, labelText) {
-                      cument.querySelectorAll('.lang-option-btn').forEach(bt                                 btn.classList.re                ti                                  if (btn.getAttribute('onclick').includes(langCode)) {
-                          btn.classList.add('active'                           }
+        fu                    ngeA                ge(langCo                lT            
+                            cument.querySelectorAll('.lang-option-btn').forEach(bt                                       btn.cl                re                ti                                              if (btn.getAttribute('onclick').includes(langCode))                                           btn.classList.add('active                                    }
             });
 
-                  con            rentLabel = document.getElementById('currentLangLabel')                    if (cu                el && labelText) {
-                        currentLabel.innerText = labelText;
-                  }
-
-                     ar select = document.querySelector('.goog-te-combo');
-                       (select) {
-                select.value = langCode;
-                select.dispatchEvent(new Event('ch                
+                        c                      rentLabel = document.getElementById('currentLangLabel')                            if (cu                el && labelText) {
+                        currentLabel.innerText =                 t;
+                                                      ar select = document.querySelector('.goog-te-combo'                                (select) {
+                      lealue = langCode;
+                select.dispatchEvent(new Event('c          
             } else                               document.cookie = "googtrans=/fr/" + langCode + "; path=/;                         document.cookie = "googtrans=/fr         lode + "; domain=" + window.location.hostname + "; path=/;";
          location.reload();
             }
@@ -215,10 +210,11 @@
     <!-- Main JavaScript File -->
     <script src="{% static 'kinglife/js/main.js' %}"></script>
     <script src="{% static 'kinglife/js/toast.js' %}"></script>
-    
+
     <!-- Instant.page for lightning-fast preloading -->
-    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script>
-    
+    <script src="//instant.page/5.2.0" type="module"
+        integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script>
+
     {% block extra_js %}{% endblock %}
 </body>
 

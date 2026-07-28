@@ -128,19 +128,19 @@ PWA_APP_START_URL = '/'
 PWA_APP_STATUS_BAR_COLOR = 'default'
 PWA_APP_ICONS = [
     {
-        'src': '/static/kinglife/images/icon-192x192.png',
+        'src': '/static/kinglife/images/icon-192x192.png?v=2',
         'sizes': '192x192',
         'type': 'image/png'
     },
     {
-        'src': '/static/kinglife/images/icon-512x512.png',
+        'src': '/static/kinglife/images/icon-512x512.png?v=2',
         'sizes': '512x512',
         'type': 'image/png'
     }
 ]
 PWA_APP_ICONS_APPLE = [
     {
-        'src': '/static/kinglife/images/icon-192x192.png',
+        'src': '/static/kinglife/images/icon-192x192.png?v=2',
         'sizes': '192x192',
         'type': 'image/png'
     }

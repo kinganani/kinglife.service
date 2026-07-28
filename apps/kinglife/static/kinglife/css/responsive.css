@@ -182,7 +182,8 @@
         border: none;
         font-size: 22px;
         cursor: pointer;
-        z-index: 999;
+        position: relative; /* REQUIRED for z-index to work */
+        z-index: 1000;      /* Keep above the nav-menu */
         transition: var(--transition);
     }
 

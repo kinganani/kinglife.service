@@ -73,3 +73,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
+/* PWA Install Prompt Logic */
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const pwaWidget = document.getElementById('pwa-install-widget');
+    if (pwaWidget && !localStorage.getItem('pwa_prompt_dismissed')) {
+        setTimeout(() => {
+            pwaWidget.classList.remove('hidden');
+        }, 2000);
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const pwaWidget = document.getElementById('pwa-install-widget');
+    const installBtn = document.getElementById('pwa-install-btn');
+    const closeBtn = document.getElementById('pwa-close-btn');
+
+    if (installBtn && pwaWidget) {
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                pwaWidget.classList.add('hidden');
+            }
+        });
+    }
+
+    if (closeBtn && pwaWidget) {
+        closeBtn.addEventListener('click', () => {
+            pwaWidget.classList.add('hidden');
+            localStorage.setItem('pwa_prompt_dismissed', 'true');
+        });
+    }
+});
