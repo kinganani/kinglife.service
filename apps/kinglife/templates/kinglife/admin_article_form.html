@@ -2,7 +2,7 @@
 
 {% block title %}{% if article %}Modifier l'article{% else %}Nouvel Article{% endif %} - Admin{% endblock %}
 
-{% block page_title %}{% if article %}Modifier : {{ article.nom }}{% else %}Ajouter un Article{% endif %} 📦{% endblock %}
+{% block page_title %}{% if article %}Modifier : {{ article.nom }}{% else %}Ajouter un Article{% endif %} <span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">inventory_2</span>{% endblock %}
 {% block page_subtitle %}Remplissez les informations du produit pour le catalogue.{% endblock %}
 
 {% block header_actions %}

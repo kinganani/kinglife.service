@@ -148,7 +148,7 @@
     <div class="container">
         <div class="quick-cards-grid">
             <a href="/a-propos/" class="quick-card">
-                <div class="quick-card-icon">💧</div>
+                <div class="quick-card-icon"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">water_drop</span></div>
                 <div class="quick-card-info">
                     <h3>Présentation & Histoire</h3>
                     <p>Découvrez notre parcours, nos engagements de qualité et nos valeurs dans le secteur maritime.</p>
@@ -156,7 +156,7 @@
             </a>
 
             <a href="/services/" class="quick-card">
-                <div class="quick-card-icon">🚢</div>
+                <div class="quick-card-icon"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">directions_boat</span></div>
                 <div class="quick-card-info">
                     <h3>Technologies & Services</h3>
                     <p>Accédez à l'ensemble de nos services d'assistance, d'avitaillement et de transit spécialisé.</p>
@@ -164,7 +164,7 @@
             </a>
 
             <a href="/realisations/" class="quick-card">
-                <div class="quick-card-icon">📊</div>
+                <div class="quick-card-icon"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">bar_chart</span></div>
                 <div class="quick-card-info">
                     <h3>Réalisations & Références</h3>
                     <p>Consultez nos projets récents et les témoignages de nos armateurs et partenaires.</p>
@@ -198,7 +198,7 @@
                 <a href="{% url 'actualite_detail' actualite.id %}" class="notice-card">
                     <div class="notice-card-header">
                         <span class="notice-badge">Communiqué</span>
-                        <span class="notice-date">📅 {{ actualite.date_publication|date:"d M Y" }}</span>
+                        <span class="notice-date"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">calendar_today</span> {{ actualite.date_publication|date:"d M Y" }}</span>
                     </div>
                     <h3 class="notice-card-title">{{ actualite.titre }}</h3>
                     <p class="notice-card-text">{{ actualite.resume|default:actualite.contenu|truncatewords:18 }}</p>
@@ -212,7 +212,7 @@
                 <a href="/actualites/" class="notice-card">
                     <div class="notice-card-header">
                         <span class="notice-badge">Service</span>
-                        <span class="notice-date">📅 15 Juil 2024</span>
+                        <span class="notice-date"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">calendar_today</span> 15 Juil 2024</span>
                     </div>
                     <h3 class="notice-card-title">Excellence opérationnelle : Nouveau service d'avitaillement haute capacité</h3>
                     <p class="notice-card-text">KINGLIFE SHAL U renforce sa flotte de barges pour le ravitaillement rapide des navires cargo et pétroliers en rade.</p>
@@ -225,7 +225,7 @@
                 <a href="/actualites/" class="notice-card">
                     <div class="notice-card-header">
                         <span class="notice-badge alt">Certification</span>
-                        <span class="notice-date">📅 28 Juin 2024</span>
+                        <span class="notice-date"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">calendar_today</span> 28 Juin 2024</span>
                     </div>
                     <h3 class="notice-card-title">Obtention des accréditations de sûreté et normes environnementales ISO</h3>
                     <p class="notice-card-text">Confirmation de la conformité de nos protocoles maritimes aux meilleures exigences de sécurité environnementale.</p>
@@ -238,7 +238,7 @@
                 <a href="/actualites/" class="notice-card">
                     <div class="notice-card-header">
                         <span class="notice-badge">Assistance</span>
-                        <span class="notice-date">📅 10 Mai 2024</span>
+                        <span class="notice-date"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">calendar_today</span> 10 Mai 2024</span>
                     </div>
                     <h3 class="notice-card-title">Extension des services d'assistance et de relève d'équipage 24h/7j</h3>
                     <p class="notice-card-text">Une organisation réorganisée pour répondre immédiatement aux demandes imprévues lors des escales maritimes.</p>
@@ -285,7 +285,7 @@
                     </div>
                     <div class="form-field-full" style="margin-top: 10px; display: flex; gap: 12px; flex-wrap: wrap;">
                         <button type="submit" class="btn-pill-dark" style="flex: 1; min-width: 180px;">Envoyer par Email</button>
-                        <button type="button" id="btn-whatsapp-send" class="btn-primary" style="flex: 1; min-width: 180px; background-color: #25D366; border-color: #25D366; color: #fff;">Envoyer sur WhatsApp 💬</button>
+                        <button type="button" id="btn-whatsapp-send" class="btn-primary" style="flex: 1; min-width: 180px; background-color: #25D366; border-color: #25D366; color: #fff;">Envoyer sur WhatsApp <span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">chat</span></button>
                     </div>
                 </form>
             </div>
@@ -299,21 +299,21 @@
 
                     <div class="cs-phone-group" style="display: flex; flex-direction: column; gap: 16px;">
                         <a href="https://wa.me/22899501085" target="_blank" class="cs-phone-item" style="text-decoration: none; color: inherit; transition: var(--transition);">
-                            <div class="cs-phone-icon" style="background: rgba(255,255,255,0.2);">📱</div>
+                            <div class="cs-phone-icon" style="background: rgba(255,255,255,0.2);"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">smartphone</span></div>
                             <div style="display: flex; flex-direction: column;">
                                 <span style="font-size: 20px; font-weight: 800;">+228 99 50 10 85</span>
                                 <span style="font-size: 12px; opacity: 0.85;">Discuter sur WhatsApp →</span>
                             </div>
                         </a>
                         <a href="https://wa.me/22890828467" target="_blank" class="cs-phone-item" style="text-decoration: none; color: inherit; transition: var(--transition);">
-                            <div class="cs-phone-icon" style="background: rgba(255,255,255,0.2);">💬</div>
+                            <div class="cs-phone-icon" style="background: rgba(255,255,255,0.2);"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">chat</span></div>
                             <div style="display: flex; flex-direction: column;">
                                 <span style="font-size: 20px; font-weight: 800;">+228 90 82 84 67</span>
                                 <span style="font-size: 12px; opacity: 0.85;">Ligne d'assistance 24/7 →</span>
                             </div>
                         </a>
                         <a href="mailto:kinganani20@gmail.com" class="cs-phone-item" style="text-decoration: none; color: inherit; transition: var(--transition);">
-                            <div class="cs-phone-icon" style="background: rgba(255,255,255,0.2);">✉️</div>
+                            <div class="cs-phone-icon" style="background: rgba(255,255,255,0.2);"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">mail</span></div>
                             <div style="display: flex; flex-direction: column;">
                                 <span style="font-size: 18px; font-weight: 800; word-break: break-all;">kinganani20@gmail.com</span>
                                 <span style="font-size: 12px; opacity: 0.85;">Envoyer un courriel →</span>

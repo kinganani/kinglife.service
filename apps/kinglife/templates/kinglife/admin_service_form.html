@@ -2,7 +2,7 @@
 
 {% block title %}{% if service %}Modifier le service{% else %}Nouveau Service{% endif %} - Admin{% endblock %}
 
-{% block page_title %}{% if service %}Modifier : {{ service.nom }}{% else %}Ajouter un Service{% endif %} 🚢{% endblock %}
+{% block page_title %}{% if service %}Modifier : {{ service.nom }}{% else %}Ajouter un Service{% endif %} <span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">directions_boat</span>{% endblock %}
 {% block page_subtitle %}Remplissez les informations du service.{% endblock %}
 
 {% block header_actions %}

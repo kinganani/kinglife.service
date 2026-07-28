@@ -2,7 +2,7 @@
 
 {% block title %}{% if actualite %}Modifier l'actualité{% else %}Nouvelle Actualité{% endif %} - Admin{% endblock %}
 
-{% block page_title %}{% if actualite %}Modifier : {{ actualite.titre }}{% else %}Ajouter une Actualité{% endif %} 📰{% endblock %}
+{% block page_title %}{% if actualite %}Modifier : {{ actualite.titre }}{% else %}Ajouter une Actualité{% endif %} <span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">newspaper</span>{% endblock %}
 {% block page_subtitle %}Rédigez le contenu de votre article.{% endblock %}
 
 {% block header_actions %}

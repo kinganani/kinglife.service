@@ -5,7 +5,7 @@
 <head>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0f172a">
-    <link rel="apple-touch-icon" href="/static/kinglife/images/icon-192x192.png">
+    <link rel="apple-touch-icon" href="/static/kinglife/images/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Tableau de bord - KINGLIFE SHAL U{% endblock %}</title>
@@ -129,8 +129,7 @@
                             <i class="material-symbols-outlined" style="font-size: 28px;">notifications</i>
                             {% if unread_notifications_count > 0 %}
                             <span id="notif-badge"
-                                style="position: absolute; top: 0; right: 0; background: #ef4444; color: white; font-size: 11px; font-weight: bold; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">{{
-                                unread_notifications_count }}</span>
+                                style="position: absolute; top: 0; right: 0; background: #ef4444; color: white; font-size: 11px; font-weight: bold; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">{{ unread_notifications_count }}</span>
                             {% endif %}
                         </button>
 
@@ -240,11 +239,8 @@
 
             if (dropdown && dropdown.style.display === 'block' && !button && !dropdown.contains(event.target)) {
                 dropdown.style.display = 'none';
-
+            }
+        });
     </script>
 </body>
-
-</html>iv>
-</body>
-
 </html>

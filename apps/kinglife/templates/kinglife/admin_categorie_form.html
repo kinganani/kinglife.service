@@ -2,7 +2,7 @@
 
 {% block title %}{% if categorie %}Modifier la catégorie{% else %}Nouvelle Catégorie{% endif %} - Admin{% endblock %}
 
-{% block page_title %}{% if categorie %}Modifier : {{ categorie.nom }}{% else %}Ajouter une Catégorie{% endif %} 📁{% endblock %}
+{% block page_title %}{% if categorie %}Modifier : {{ categorie.nom }}{% else %}Ajouter une Catégorie{% endif %} <span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">folder</span>{% endblock %}
 {% block page_subtitle %}Classez vos articles pour simplifier la navigation client.{% endblock %}
 
 {% block header_actions %}

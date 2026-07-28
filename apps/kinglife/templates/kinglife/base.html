@@ -5,7 +5,7 @@
 <head>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0f172a">
-    <link rel="apple-touch-icon" href="/static/kinglife/images/icon-192x192.png">
+    <link rel="apple-touch-icon" href="/static/kinglife/images/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}KINGLIFE SHAL U - Services Maritimes & Logistiques{% endblock %}</title>
@@ -110,28 +110,28 @@
         <!-- Compact Floating Trigger Button -->
         <button type="button" class="floating-lang-trigger" id="langWidgetTrigger" onclick="toggleLangWidget()"
             title="Changer la langue / Switch language">
-            <span class="lang-trigger-icon">🌐</span>
+            <span class="lang-trigger-icon"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">language</span></span>
             <span class="lang-trigger-label" id="currentLangLabel">FR</span>
             <span class="lang-trigger-arrow">▲</span>
         </button>
 
         <!-- Unfoldable Popover Menu -->
         <div class="floating-lang-popover" id="langWidgetPopover">
-            <div class="popover-header">🌐 Langue / Language</div>
+            <div class="popover-header"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">language</span> Langue / Language</div>
             <button type="button" class="lang-option-btn active" onclick="changeAppLanguage('fr', 'FR')">
-                <span>🇫🇷 Français</span>
+                <span> Français</span>
             </button>
             <button type="button" class="lang-option-btn" onclick="changeAppLanguage('en', 'EN')">
-                <span>🇬🇧 English</span>
+                <span> English</span>
             </button>
             <button type="button" class="lang-option-btn" onclick="changeAppLanguage('es', 'ES')">
-                <span>🇪🇸 Español</span>
+                <span> Español</span>
             </button>
             <button type="button" class="lang-option-btn" onclick="changeAppLanguage('pt', 'PT')">
-                <span>🇵🇹 Português</span>
+                <span> Português</span>
             </button>
             <button type="button" class="lang-option-btn" onclick="changeAppLanguage('zh-CN', 'ZH')">
-                <span>🇨🇳 中文</span>
+                <span> 中文</span>
             </button>
         </div>
     </div>

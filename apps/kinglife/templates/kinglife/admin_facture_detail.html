@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}Facture {{ facture.numero }} - KINGLIFE Admin{% endblock %}
-{% block page_title %}Facture {{ facture.numero }} 🧾{% endblock %}
+{% block page_title %}Facture {{ facture.numero }} <span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">receipt_long</span>{% endblock %}
 {% block page_subtitle %}Client : {{ facture.client.get_full_name|default:facture.client.username }}{% endblock %}
 
 {% block dashboard_content %}
