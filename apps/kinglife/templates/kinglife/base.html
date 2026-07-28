@@ -1,10 +1,11 @@
 {% load static %}
-{% load pwa %}
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
-    {% progressive_web_app_meta %}
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="/static/kinglife/images/icon-192x192.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}KINGLIFE SHAL U - Services Maritimes & Logistiques{% endblock %}</title>
