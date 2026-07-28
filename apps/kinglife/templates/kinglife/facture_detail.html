@@ -105,7 +105,7 @@
             </table>
 
             <!-- Financial Summary Box -->
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 50px;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
                 <div style="width: 320px; display: flex; flex-direction: column; gap: 12px; color: #000;">
                     <div style="display: flex; justify-content: space-between; font-size: 15px;">
                         <span>Total :</span>
@@ -121,6 +121,16 @@
                         <span>Total TTC :</span>
                         <span>{{ facture.montant_ttc }} USD</span>
                     </div>
+                </div>
+            </div>
+
+            <!-- Signature & Stamp Section -->
+            <div style="display: flex; justify-content: center; align-items: flex-end; margin-bottom: 50px; gap: 20px;">
+                <div style="width: 150px; height: 150px; border: 3px solid var(--color-ocean-bright); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--color-ocean-bright); font-weight: 800; transform: rotate(-15deg); opacity: 0.8; flex-shrink: 0;">
+                    <span style="font-size: 12px; line-height: 1.2;">KINGLIFE<br>SARL U<br>★<br>AUTHORIZED</span>
+                </div>
+                <div style="margin-left: -40px; z-index: 10;">
+                    <img src="{% static 'kinglife/images/signature.png' %}" alt="Signature" style="max-height: 120px; width: auto;">
                 </div>
             </div>
 
