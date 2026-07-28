@@ -1,0 +1,153 @@
+{% extends base_template %}
+{% load static %}
+
+{% block title %}Hub d'Administration - KINGLIFE SHAL U{% endblock %}
+
+{% block page_title %}Vue d'ensemble 📊{% endblock %}
+{% block page_subtitle %}Bienvenue dans votre centre de contrôle KINGLIFE.{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-grid">
+    <!-- Stats Cards -->
+    <div class="dash-card">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <div
+                    style="font-size: 13px; color: var(--dash-text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 5px;">
+                    Demandes (Devis)</div>
+                <div style="font-size: 28px; font-weight: 800; color: var(--dash-text-main);">{{ stats.demandes_attente
+                    }}</div>
+            </div>
+            <div
+                style="width: 48px; height: 48px; border-radius: 12px; background: rgba(245, 158, 11, 0.1); color: var(--dash-warning); display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                <span class="material-symbols-outlined">pending_actions</span>
+            </div>
+        </div>
+        <div style="margin-top: 15px; font-size: 13px; color: var(--dash-text-muted);">
+            <a href="{% url 'admin_demandes_list' %}"
+                style="color: var(--dash-warning); font-weight: 600; text-decoration: none;">Gérer les demandes →</a>
+        </div>
+    </div>
+
+    <div class="dash-card">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <div
+                    style="font-size: 13px; color: var(--dash-text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 5px;">
+                    Messages</div>
+                <div style="font-size: 28px; font-weight: 800; color: var(--dash-text-main);">{{ stats.messages_non_lus
+                    }}</div>
+            </div>
+            <div
+                style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.1); color: var(--dash-success); display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                <span class="material-symbols-outlined">mail</span>
+            </div>
+        </div>
+        <div style="margin-top: 15px; font-size: 13px; color: var(--dash-text-muted);">
+            <a href="#" style="color: var(--dash-success); font-weight: 600; text-decoration: none;">Voir la boîte de
+                réception →</a>
+        </div>
+    </div>
+
+    <div class="dash-card">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <div
+                    style="font-size: 13px; color: var(--dash-text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 5px;">
+                    Factures Émises</div>
+                <div style="font-size: 28px; font-weight: 800; color: var(--dash-text-main);">{{ stats.factures_impayees
+                    }}</div>
+            </div>
+            <div
+                style="width: 48px; height: 48px; border-radius: 12px; background: rgba(59, 130, 246, 0.1); color: var(--dash-primary); display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                <span class="material-symbols-outlined">receipt_long</span>
+            </div>
+        </div>
+        <div style="margin-top: 15px; font-size: 13px; color: var(--dash-text-muted);">
+            <a href="#" style="color: var(--dash-primary); font-weight: 600; text-decoration: none;">Suivre les
+                paiements →</a>
+        </div>
+    </div>
+</div>
+
+<div class="dash-grid" style="margin-top: 24px;">
+    <!-- Recent Activity Panel -->
+    <div class="dash-panel" style="grid-column: span 2;">
+        <div class="dash-panel-header">
+            <h2 class="dash-panel-title">Activités Récentes</h2>
+        </div>
+
+        {% if activites %}
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            {% for act in activites %}
+            <div
+                style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 15px; border-bottom: 1px solid var(--dash-border);">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div
+                        style="width: 40px; height: 40px; border-radius: 50%; background: var(--dash-bg); display: flex; align-items: center; justify-content: center; color: var(--dash-primary);">
+                        <span class="material-symbols-outlined">
+                            {% if act.type == 'Nouvelle demande' %}assignment
+                            {% elif act.type == 'Nouveau message' %}forum
+                            {% else %}notifications{% endif %}
+                        </span>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; color: var(--dash-text-main);">{{ act.desc }}</div>
+                        <div style="font-size: 12px; color: var(--dash-text-muted);">{{ act.date|date:"d/m/Y H:i" }}
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ act.url }}" class="dash-btn dash-btn-outline"
+                    style="padding: 6px 12px; font-size: 12px;">Traiter</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="padding: 30px; text-align: center; color: var(--dash-text-muted);">
+            Aucune activité récente.
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Quick Links -->
+    <div class="dash-panel">
+        <div class="dash-panel-header">
+            <h2 class="dash-panel-title">Raccourcis</h2>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <a href="#" class="dash-btn dash-btn-primary"
+                style="width: 100%; justify-content: center; margin-bottom: 5px;">
+                <span class="material-symbols-outlined" style="font-size: 18px; margin-right: 5px;">add</span> Ajouter
+                un Article
+            </a>
+            <a href="#" class="dash-btn dash-btn-outline"
+                style="width: 100%; justify-content: center; margin-bottom: 5px;">
+                <span class="material-symbols-outlined" style="font-size: 18px; margin-right: 5px;">add</span> Nouveau
+                Service
+            </a>
+            <a href="#" class="dash-btn dash-btn-outline" style="width: 100%; justify-content: center;">
+                <span class="material-symbols-outlined" style="font-size: 18px; margin-right: 5px;">edit</span> Publier
+                une Actualité
+            </a>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <div
+                style="font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700; margin-bottom: 10px;">
+                Base de données</div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="color: var(--dash-text-main); font-weight: 500;">Clients</span>
+                <span style="color: var(--dash-text-muted);">{{ stats.total_clients }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span style="color: var(--dash-text-main); font-weight: 500;">Articles Catalogue</span>
+                <span style="color: var(--dash-text-muted);">{{ stats.articles_catalogue }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span style="color: var(--dash-text-main); font-weight: 500;">Services</span>
+                <span style="color: var(--dash-text-muted);">{{ stats.services_actifs }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

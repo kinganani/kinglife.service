@@ -1,0 +1,52 @@
+{% extends base_template %}
+
+{% block title %}{% if categorie %}Modifier la catégorie{% else %}Nouvelle Catégorie{% endif %} - Admin{% endblock %}
+
+{% block page_title %}{% if categorie %}Modifier : {{ categorie.nom }}{% else %}Ajouter une Catégorie{% endif %} 📁{% endblock %}
+{% block page_subtitle %}Classez vos articles pour simplifier la navigation client.{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'admin_catalogue' %}" class="dash-btn dash-btn-outline" hx-get="{% url 'admin_catalogue' %}" hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">
+    <i class="material-symbols-outlined">arrow_back</i> Retour au catalogue
+</a>
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-panel" style="max-width: 600px; margin: 0 auto;">
+    <form method="POST" enctype="multipart/form-data" action="{% if categorie %}{% url 'admin_categorie_edit' categorie.id %}{% else %}{% url 'admin_categorie_create' %}{% endif %}" style="display: flex; flex-direction: column; gap: 20px;">
+        {% csrf_token %}
+        
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: var(--dash-text);">Nom de la catégorie *</label>
+            <input type="text" name="nom" required value="{{ categorie.nom|default:'' }}" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px;">
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: var(--dash-text);">Description</label>
+            <textarea name="description" rows="3" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 15px; resize: vertical;">{{ categorie.description|default:'' }}</textarea>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: var(--dash-text);">Ordre d'affichage</label>
+            <input type="number" name="ordre" value="{{ categorie.ordre|default:'0' }}" style="padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit;">
+            <small style="color: #64748b; font-size: 12px;">Plus le chiffre est petit, plus la catégorie apparaîtra haut.</small>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <label style="font-weight: 600; color: var(--dash-text);">Image de catégorie</label>
+            {% if categorie and categorie.image %}
+                <div style="margin-bottom: 10px;">
+                    <img src="{{ categorie.image.url }}" alt="Image actuelle" style="width: 100px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                </div>
+            {% endif %}
+            <input type="file" name="image" accept="image/*" style="padding: 10px; border: 1px dashed #cbd5e1; border-radius: 8px; background: #f8fafc;">
+        </div>
+        
+        <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+            <button type="submit" class="dash-btn dash-btn-primary" style="padding: 12px 24px; font-size: 16px;">
+                <i class="material-symbols-outlined">save</i> Enregistrer la catégorie
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

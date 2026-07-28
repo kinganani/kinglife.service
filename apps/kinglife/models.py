@@ -197,7 +197,15 @@ class Cotation(models.Model):
     date_envoi = models.DateTimeField(null=True, blank=True)
     date_validite = models.DateField(null=True, blank=True)
     statut = models.CharField(max_length=20, choices=STATUT_CHOICES, default='brouillon')
-    montant_total = models.DecimalField(max_digits=12, decimal_places=2)
+    
+    # Financial details
+    montant_sous_total = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    remise_pourcentage = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    montant_remise = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    montant_apres_remise = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    frais_bateau = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    montant_total = models.DecimalField(max_digits=12, decimal_places=2) # GRAND TOTAL
+    
     conditions = models.TextField(blank=True)
     
     class Meta:

@@ -171,9 +171,12 @@
 .auth-card {
     max-width: 1000px;
     width: 100%;
-    background: var(--color-white);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: var(--border-radius-lg);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
     display: flex;
     overflow: hidden;
     min-height: 650px;
@@ -181,7 +184,9 @@
 
 .auth-left {
     width: 45%;
-    background-color: #1a56c4; /* Blue inspired by Image 3 */
+    background: linear-gradient(135deg, rgba(26, 86, 196, 0.7) 0%, rgba(10, 37, 64, 0.8) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     color: var(--color-white);
     padding: 60px 40px;
     display: flex;

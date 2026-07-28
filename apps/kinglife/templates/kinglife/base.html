@@ -1,16 +1,21 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}KINGLIFE SHAL U - Services Maritimes & Logistiques{% endblock %}</title>
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Material Symbols (icons) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
     <!-- Custom Design System Stylesheet -->
     <link rel="stylesheet" href="{% static 'kinglife/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'kinglife/css/auth_contact.css' %}">
@@ -18,14 +23,16 @@
     <link rel="stylesheet" href="{% static 'kinglife/css/toast.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
+
 <body>
 
     <!-- Header Navigation Bar -->
     <header class="main-header">
         <div class="container header-container">
             <a href="/" class="brand-logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                 </svg>
                 <span>KINGLIFE</span>
             </a>
@@ -33,30 +40,37 @@
             <nav class="nav-menu">
                 <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Accueil</a>
                 <a href="/a-propos/" class="nav-link {% if '/a-propos/' in request.path %}active{% endif %}">Société</a>
-                <a href="/services/" class="nav-link {% if '/services/' in request.path %}active{% endif %}">Services</a>
-                <a href="/catalogue/" class="nav-link {% if '/catalogue/' in request.path %}active{% endif %}">Catalogue</a>
-                <a href="/realisations/" class="nav-link {% if '/realisations/' in request.path %}active{% endif %}">Réalisations</a>
-                <a href="/actualites/" class="nav-link {% if '/actualites/' in request.path %}active{% endif %}">Actualités</a>
+                <a href="/services/"
+                    class="nav-link {% if '/services/' in request.path %}active{% endif %}">Services</a>
+                <a href="/catalogue/"
+                    class="nav-link {% if '/catalogue/' in request.path %}active{% endif %}">Catalogue</a>
+                <a href="/realisations/"
+                    class="nav-link {% if '/realisations/' in request.path %}active{% endif %}">Réalisations</a>
+                <a href="/actualites/"
+                    class="nav-link {% if '/actualites/' in request.path %}active{% endif %}">Actualités</a>
                 <a href="/contact/" class="nav-link {% if '/contact/' in request.path %}active{% endif %}">Contact</a>
             </nav>
 
             <div class="header-actions">
                 {% if user.is_authenticated %}
-                    {% if user.is_staff or user.is_superuser %}
-                        <a href="/admin/" class="header-btn">Espace Admin</a>
-                    {% else %}
-                        <a href="{% url 'demande_cotation' %}" class="header-btn" style="position: relative; margin-right: 10px;">
-                            Panier 
-                            {% if request.session.cart %}
-                                <span style="background: #dc2626; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; position: absolute; top: -5px; right: -10px; font-weight: bold;">{{ request.session.cart|length }}</span>
-                            {% endif %}
-                        </a>
-                        <a href="/dashboard/" class="header-btn">Mon Espace</a>
-                    {% endif %}
-                    <a href="/logout/" class="header-btn">Déconnexion</a>
+                {% if user.is_staff or user.is_superuser %}
+                <a href="/espace-admin/" class="header-btn"><span class="material-symbols-outlined" style="font-size: 18px; margin-right: 4px;">admin_panel_settings</span>Admin</a>
                 {% else %}
-                    <a href="/login/" class="header-btn">Connexion</a>
-                    <a href="/register/" class="btn-primary" style="padding: 8px 20px; font-size: 14px;">Inscription</a>
+                <a href="{% url 'demande_cotation' %}" class="header-btn"
+                    style="position: relative; margin-right: 10px;">
+                    Panier
+                    {% if request.session.cart %}
+                    <span
+                        style="background: #dc2626; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; position: absolute; top: -5px; right: -10px; font-weight: bold;">{{
+                        request.session.cart|length }}</span>
+                    {% endif %}
+                </a>
+                <a href="/dashboard/" class="header-btn">Mon Espace</a>
+                {% endif %}
+                <a href="/logout/" class="header-btn">Déconnexion</a>
+                {% else %}
+                <a href="/login/" class="header-btn">Connexion</a>
+                <a href="/register/" class="btn-primary" style="padding: 8px 20px; font-size: 14px;">Inscription</a>
                 {% endif %}
             </div>
 
@@ -69,7 +83,8 @@
     <!-- Collapsible AI-Style Floating Language Widget -->
     <div class="floating-lang-widget" id="floatingLangWidget">
         <!-- Compact Floating Trigger Button -->
-        <button type="button" class="floating-lang-trigger" id="langWidgetTrigger" onclick="toggleLangWidget()" title="Changer la langue / Switch language">
+        <button type="button" class="floating-lang-trigger" id="langWidgetTrigger" onclick="toggleLangWidget()"
+            title="Changer la langue / Switch language">
             <span class="lang-trigger-icon">🌐</span>
             <span class="lang-trigger-label" id="currentLangLabel">FR</span>
             <span class="lang-trigger-arrow">▲</span>
@@ -100,54 +115,47 @@
     <div id="google_translate_element" style="display:none;"></div>
 
     <script type="text/javascript">
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'fr',
-        includedLanguages: 'fr,en,es,pt,zh-CN',
-        autoDisplay: false
-      }, 'google_translate_element');
-    }
+            function googleTranslateElementInit(                      new google.translate.Translate                {
+                pa                ge: 'fr',
+                includedLangua                ,en,es,pt,zh-CN',
+                      autoDisplay: false
+                       'google_translate_element');
+              }
 
-    function toggleLangWidget() {
-      const widget = document.getElementById('floatingLangWidget');
-      widget.classList.toggle('open');
-    }
+        function toggleLangWidget() {
+            const wi             document.getElementById('floatin        gWi        ');
+            widget.classList.toggle('op en');
+              }
 
-    document.addEventListener('click', function(e) {
-      const widget = document.getElementById('floatingLangWidget');
-      if (widget && !widget.contains(e.target)) {
-        widget.classList.remove('open');
-      }
-    });
+        document.addEventListener('click', function (e) {                   const widget = document.getElementByI                ingLangWidget');
+            if (             &        idget        tains(e.target)) {
+                widget.classLis            ve('open');
+            }
+        });
 
-    function changeAppLanguage(langCode, labelText) {
-      document.querySelectorAll('.lang-option-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.getAttribute('onclick').includes(langCode)) {
-          btn.classList.add('active');
+        function changeA                ge(langCode, labelText) {
+                      cument.querySelectorAll('.lang-option-btn').forEach(bt                                 btn.classList.re                ti                                  if (btn.getAttribute('onclick').includes(langCode)) {
+                          btn.classList.add('active'                           }
+            });
+
+                  con            rentLabel = document.getElementById('currentLangLabel')                    if (cu                el && labelText) {
+                        currentLabel.innerText = labelText;
+                  }
+
+                     ar select = document.querySelector('.goog-te-combo');
+                       (select) {
+                select.value = langCode;
+                select.dispatchEvent(new Event('ch                
+            } else                               document.cookie = "googtrans=/fr/" + langCode + "; path=/;                         document.cookie = "googtrans=/fr         lode + "; domain=" + window.location.hostname + "; path=/;";
+         location.reload();
+            }
+
+            const widget = document.getElementById('floatingLangWidget');
+            if (widget) widget.classList.remove('open');
         }
-      });
-
-      const currentLabel = document.getElementById('currentLangLabel');
-      if (currentLabel && labelText) {
-        currentLabel.innerText = labelText;
-      }
-
-      var select = document.querySelector('.goog-te-combo');
-      if (select) {
-        select.value = langCode;
-        select.dispatchEvent(new Event('change'));
-      } else {
-        document.cookie = "googtrans=/fr/" + langCode + "; path=/;";
-        document.cookie = "googtrans=/fr/" + langCode + "; domain=" + window.location.hostname + "; path=/;";
-        location.reload();
-      }
-
-      const widget = document.getElementById('floatingLangWidget');
-      if (widget) widget.classList.remove('open');
-    }
     </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script type="text/javascript"
+        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <!-- Main Content Container -->
     <main>
@@ -168,8 +176,12 @@
             </div>
 
             <div class="footer-info">
-                <p><strong>KINGLIFE SHAL U SARL</strong> — Société spécialisée dans l'avitaillement maritime (Ship Chandler), le transit, l'assistance aux navires et le support logistique offshore.</p>
-                <p>WhatsApp & Tél : <a href="https://wa.me/22899501085" target="_blank" style="color: inherit;">+228 99 50 10 85</a> / <a href="https://wa.me/22890828467" target="_blank" style="color: inherit;">+228 90 82 84 67</a> | Email : <a href="mailto:kinganani20@gmail.com" style="color: inherit;">kinganani20@gmail.com</a></p>
+                <p><strong>KINGLIFE SHAL U SARL</strong> — Société spécialisée dans l'avitaillement maritime (Ship
+                    Chandler), le transit, l'assistance aux navires et le support logistique offshore.</p>
+                <p>WhatsApp & Tél : <a href="https://wa.me/22899501085" target="_blank" style="color: inherit;">+228 99
+                        50 10 85</a> / <a href="https://wa.me/22890828467" target="_blank" style="color: inherit;">+228
+                        90 82 84 67</a> | Email : <a href="mailto:kinganani20@gmail.com"
+                        style="color: inherit;">kinganani20@gmail.com</a></p>
             </div>
 
             <div class="footer-bottom">
@@ -204,6 +216,11 @@
     <!-- Main JavaScript File -->
     <script src="{% static 'kinglife/js/main.js' %}"></script>
     <script src="{% static 'kinglife/js/toast.js' %}"></script>
+    
+    <!-- Instant.page for lightning-fast preloading -->
+    <script src="//instant.page/5.2.0" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z"></script>
+    
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>

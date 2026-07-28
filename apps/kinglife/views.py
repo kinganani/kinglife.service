@@ -4,6 +4,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Count, Q
 from .models import Service, Actualite, Realisation, Page, Contact, CategorieProduit, Article, DemandeCotation, LigneCotation, Cotation, Prestation, Facture, Paiement
 
 
@@ -107,36 +108,70 @@ def page_detail(request, slug):
 
 
 def catalogue(request):
-    """Catalogue produits et prestations pour les clients"""
-    categories = CategorieProduit.objects.all()
-    query = request.GET.get('q', '')
-    cat_id = request.GET.get('categorie', '')
+    """Page 1 : Grille des catégories — le client choisit sa catégorie"""
+    categories = CategorieProduit.objects.annotate(
+        nb_articles=Count('articles', filter=Q(articles__publie=True))
+    ).filter(nb_articles__gt=0).order_by('ordre', 'nom')
     
-    articles = Article.objects.filter(publie=True)
+    cart_count = len(request.session.get('cart', {}))
+    
+    return render(request, 'kinglife/catalogue.html', {
+        'categories': categories,
+        'cart_count': cart_count,
+    })
+
+
+def catalogue_categorie(request, cat_id):
+    """Page 2 : Tableau Excel des articles d'une catégorie"""
+    categorie = get_object_or_404(CategorieProduit, id=cat_id)
+    toutes_categories = CategorieProduit.objects.annotate(
+        nb_articles=Count('articles', filter=Q(articles__publie=True))
+    ).filter(nb_articles__gt=0).order_by('ordre', 'nom')
+    
+    query = request.GET.get('q', '')
+    articles = Article.objects.filter(publie=True, categorie=categorie)
     if query:
         articles = articles.filter(nom__icontains=query)
-    if cat_id:
-        articles = articles.filter(categorie_id=cat_id)
-        
-    context = {
-        'categories': categories,
+    
+    # Cart state for this page
+    cart = request.session.get('cart', {})
+    cart_count = len(cart)
+    cart_ids = list(cart.keys())  # which articles are already in cart
+    
+    return render(request, 'kinglife/catalogue_categorie.html', {
+        'categorie': categorie,
+        'toutes_categories': toutes_categories,
         'articles': articles,
         'query': query,
-        'selected_cat': cat_id,
-    }
-    return render(request, 'kinglife/catalogue.html', context)
+        'cart_count': cart_count,
+        'cart_ids': cart_ids,
+    })
+
 
 
 @login_required
 def add_to_cart(request, article_id):
-    """Ajouter un article au panier (en session)"""
+    """Ajouter un article au panier — supporte AJAX, quantité personnalisée"""
+    from django.http import JsonResponse
     cart = request.session.get('cart', {})
     article_id_str = str(article_id)
+    
+    # Support custom quantity from request
+    try:
+        qty = max(1, int(request.GET.get('qty', 1)))
+    except (ValueError, TypeError):
+        qty = 1
+    
     if article_id_str not in cart:
-        cart[article_id_str] = 1 # Quantité par défaut
+        cart[article_id_str] = qty
     else:
-        cart[article_id_str] += 1
+        cart[article_id_str] += qty
     request.session['cart'] = cart
+    
+    # AJAX response
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'success': True, 'cart_count': len(cart)})
+    
     messages.success(request, 'Article ajouté au panier de cotation.')
     return redirect(request.META.get('HTTP_REFERER', 'catalogue'))
 
@@ -218,9 +253,12 @@ def admin_demandes_list(request):
     demandes_attente = DemandeCotation.objects.filter(statut='en_attente').order_by('date_demande')
     demandes_traitees = DemandeCotation.objects.exclude(statut='en_attente').order_by('-date_demande')[:50]
     
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    
     return render(request, 'kinglife/admin_demandes_list.html', {
         'demandes_attente': demandes_attente,
-        'demandes_traitees': demandes_traitees
+        'demandes_traitees': demandes_traitees,
+        'base_template': base_template,
     })
 
 @login_required
@@ -231,7 +269,7 @@ def admin_tarifer_demande(request, demande_id):
     lignes = demande.lignes.all()
     
     if request.method == 'POST':
-        montant_total = Decimal('0.00')
+        montant_sous_total = Decimal('0.00')
         
         for ligne in lignes:
             prix = request.POST.get(f'prix_{ligne.id}')
@@ -240,10 +278,26 @@ def admin_tarifer_demande(request, demande_id):
                     prix_decimal = Decimal(prix.replace(',', '.'))
                     ligne.prix_propose = prix_decimal
                     ligne.save()
-                    montant_total += prix_decimal * Decimal(ligne.quantite)
+                    montant_sous_total += prix_decimal * Decimal(ligne.quantite)
                 except:
                     pass
                     
+        # Extract discount and boat fees
+        try:
+            remise_pourcentage = Decimal(request.POST.get('remise', '0').replace(',', '.'))
+        except:
+            remise_pourcentage = Decimal('0')
+            
+        try:
+            frais_bateau = Decimal(request.POST.get('frais_bateau', '0').replace(',', '.'))
+        except:
+            frais_bateau = Decimal('0')
+            
+        # Calculate totals
+        montant_remise = montant_sous_total * (remise_pourcentage / Decimal('100'))
+        montant_apres_remise = montant_sous_total - montant_remise
+        montant_total = montant_apres_remise + frais_bateau
+        
         # Générer la Cotation officielle
         import uuid
         numero_cotation = f"COT-{uuid.uuid4().hex[:6].upper()}"
@@ -251,11 +305,21 @@ def admin_tarifer_demande(request, demande_id):
             demande=demande,
             defaults={
                 'numero': numero_cotation,
+                'montant_sous_total': montant_sous_total,
+                'remise_pourcentage': remise_pourcentage,
+                'montant_remise': montant_remise,
+                'montant_apres_remise': montant_apres_remise,
+                'frais_bateau': frais_bateau,
                 'montant_total': montant_total,
                 'statut': 'envoyee'
             }
         )
         if not created:
+            cotation.montant_sous_total = montant_sous_total
+            cotation.remise_pourcentage = remise_pourcentage
+            cotation.montant_remise = montant_remise
+            cotation.montant_apres_remise = montant_apres_remise
+            cotation.frais_bateau = frais_bateau
             cotation.montant_total = montant_total
             cotation.statut = 'envoyee'
             cotation.save()
@@ -347,7 +411,7 @@ def login_view(request):
             login(request, user)
             messages.success(request, 'Vous êtes connecté avec succès.')
             if user.is_staff or user.is_superuser:
-                return redirect('/admin/')
+                return redirect('admin_hub')
             return redirect('dashboard')
     else:
         form = AuthenticationForm()
@@ -385,3 +449,170 @@ def dashboard(request):
         'solde_du': solde_du,
     }
     return render(request, 'kinglife/dashboard.html', context)
+
+
+@login_required
+def admin_hub(request):
+    """Hub principal de l'administration personnalisée"""
+    if not (request.user.is_staff or request.user.is_superuser):
+        messages.error(request, 'Accès refusé.')
+        return redirect('/')
+        
+    from django.contrib.auth.models import User
+    
+    # Statistiques globales
+    stats = {
+        'total_clients': User.objects.filter(is_staff=False).count(),
+        'demandes_attente': DemandeCotation.objects.filter(statut='en_attente').count(),
+        'factures_impayees': Facture.objects.filter(statut='emise').count(),
+        'articles_catalogue': Article.objects.filter(publie=True).count(),
+        'services_actifs': Service.objects.filter(publie=True).count(),
+        'messages_non_lus': Contact.objects.filter(traite=False).count(),
+    }
+    
+    # Activités récentes
+    activites = []
+    # Demandes récentes
+    recent_demandes = DemandeCotation.objects.order_by('-date_demande')[:3]
+    for d in recent_demandes:
+        activites.append({
+            'date': d.date_demande,
+            'type': 'Nouvelle demande',
+            'desc': f"Demande #{d.id} de {d.client.username}",
+            'url': f"/admin-cotations/tarifer/{d.id}/"
+        })
+    # Contacts récents
+    recent_contacts = Contact.objects.order_by('-date_envoi')[:3]
+    for c in recent_contacts:
+        activites.append({
+            'date': c.date_envoi,
+            'type': 'Nouveau message',
+            'desc': f"Message de {c.nom}",
+            'url': "#"
+        })
+    
+    activites.sort(key=lambda x: x['date'], reverse=True)
+    
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    
+    context = {
+        'stats': stats,
+        'activites': activites[:5],
+        'base_template': base_template,
+    }
+    return render(request, 'kinglife/admin_hub.html', context)
+
+@login_required
+def admin_catalogue(request):
+    if not (request.user.is_staff or request.user.is_superuser):
+        messages.error(request, "Accès refusé.")
+        return redirect('dashboard')
+        
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'delete_article':
+            article_id = request.POST.get('article_id')
+            Article.objects.filter(id=article_id).delete()
+            messages.success(request, "Article supprimé.")
+        elif action == 'delete_categorie':
+            categorie_id = request.POST.get('categorie_id')
+            CategorieProduit.objects.filter(id=categorie_id).delete()
+            messages.success(request, "Catégorie supprimée.")
+        return redirect('admin_catalogue')
+            
+    categories = CategorieProduit.objects.all()
+    articles = Article.objects.all().select_related('categorie')
+    
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    
+    context = {
+        'categories': categories,
+        'articles': articles,
+        'base_template': base_template,
+    }
+    return render(request, 'kinglife/admin_catalogue.html', context)
+
+@login_required
+def admin_article_form(request, article_id=None):
+    if not (request.user.is_staff or request.user.is_superuser):
+        return redirect('dashboard')
+        
+    article = None
+    if article_id:
+        from django.shortcuts import get_object_or_404
+        article = get_object_or_404(Article, id=article_id)
+        
+    if request.method == 'POST':
+        nom = request.POST.get('nom')
+        description = request.POST.get('description')
+        categorie_id = request.POST.get('categorie')
+        prix_unitaire = request.POST.get('prix_unitaire')
+        unite = request.POST.get('unite')
+        stock = request.POST.get('stock')
+        publie = request.POST.get('publie') == 'on'
+        
+        categorie = CategorieProduit.objects.get(id=categorie_id)
+        
+        if not article:
+            article = Article(nom=nom, description=description, categorie=categorie)
+        else:
+            article.nom = nom
+            article.description = description
+            article.categorie = categorie
+            
+        article.prix_unitaire = prix_unitaire if prix_unitaire else None
+        article.unite = unite
+        article.stock = stock
+        article.publie = publie
+        
+        if 'image' in request.FILES:
+            article.image = request.FILES['image']
+            
+        article.save()
+        messages.success(request, "Article enregistré.")
+        return redirect('admin_catalogue')
+        
+    categories = CategorieProduit.objects.all()
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    
+    return render(request, 'kinglife/admin_article_form.html', {
+        'article': article,
+        'categories': categories,
+        'base_template': base_template
+    })
+
+@login_required
+def admin_categorie_form(request, categorie_id=None):
+    if not (request.user.is_staff or request.user.is_superuser):
+        return redirect('dashboard')
+        
+    categorie = None
+    if categorie_id:
+        from django.shortcuts import get_object_or_404
+        categorie = get_object_or_404(CategorieProduit, id=categorie_id)
+        
+    if request.method == 'POST':
+        nom = request.POST.get('nom')
+        description = request.POST.get('description')
+        ordre = request.POST.get('ordre', 0)
+        
+        if not categorie:
+            categorie = CategorieProduit(nom=nom)
+            
+        categorie.nom = nom
+        categorie.description = description
+        categorie.ordre = ordre
+        
+        if 'image' in request.FILES:
+            categorie.image = request.FILES['image']
+            
+        categorie.save()
+        messages.success(request, "Catégorie enregistrée.")
+        return redirect('admin_catalogue')
+        
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    
+    return render(request, 'kinglife/admin_categorie_form.html', {
+        'categorie': categorie,
+        'base_template': base_template
+    })

@@ -1,83 +1,369 @@
 {% extends 'kinglife/base.html' %}
 {% load static %}
 
-{% block title %}Catalogue Produits & Prestations - KINGLIFE SHAL U{% endblock %}
+{% block title %}Catalogue — KINGLIFE SHAL U{% endblock %}
+{% block meta_description %}Parcourez notre catalogue de fournitures maritimes par catégorie et demandez une cotation.{% endblock %}
 
 {% block content %}
-<!-- Page Hero Banner -->
-<section class="page-hero">
-    <div class="container">
-        <h1>Catalogue des Produits & Prestations</h1>
-        <p>Explorez nos fournitures maritimes, carburants, vivres et équipements certifiés SOLAS/ISO</p>
+
+<!-- ====== HERO ====== -->
+<section class="cat-hero">
+    <div class="cat-hero-overlay"></div>
+    <div class="container cat-hero-content">
+        <div class="cat-hero-badge">📦 Catalogue Officiel</div>
+        <h1 class="cat-hero-title">Fournitures Maritimes<br><span>Certifiées SOLAS / ISO</span></h1>
+        <p class="cat-hero-sub">Sélectionnez une catégorie pour consulter nos articles et composer votre demande de cotation</p>
+        {% if cart_count > 0 %}
+        <a href="{% url 'demande_cotation' %}" class="cat-hero-cart-btn">
+            <span class="material-symbols-outlined">shopping_cart</span>
+            {{ cart_count }} article{{ cart_count|pluralize }} — Demander une cotation →
+        </a>
+        {% endif %}
     </div>
 </section>
 
-<!-- Catalogue Section -->
-<section style="padding: 90px 0; background-color: var(--color-light-bg);">
+<!-- ====== CATEGORIES GRID ====== -->
+<section class="cat-main">
     <div class="container">
-        <!-- Search & Filter Bar -->
-        <div style="background: var(--color-white); padding: 30px; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-sm); margin-bottom: 40px;">
-            <form method="get" style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
-                <div style="flex: 2; min-width: 250px;">
-                    <input type="text" name="q" value="{{ query }}" placeholder="Rechercher un produit, carburant, vivre..." class="form-v2-input" style="width: 100%;">
-                </div>
-                <div style="flex: 1; min-width: 200px;">
-                    <select name="categorie" class="form-v2-input" style="width: 100%;">
-                        <option value="">Toutes les catégories</option>
-                        {% for cat in categories %}
-                            <option value="{{ cat.id }}" {% if selected_cat == cat.id|stringformat:"i" %}selected{% endif %}>{{ cat.nom }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <button type="submit" class="btn-primary" style="padding: 14px 28px;">Filtrer</button>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'demande_cotation' %}" class="btn-pill-dark" style="margin-left: auto;">Demander une Cotation →</a>
-                {% endif %}
-            </form>
+
+        {% if not categories %}
+        <div class="cat-empty-state">
+            <div class="cat-empty-icon">📭</div>
+            <h3>Catalogue en construction</h3>
+            <p>Les produits seront disponibles très prochainement.</p>
+        </div>
+        {% else %}
+
+        <div class="cat-section-label">
+            <span class="cat-section-line"></span>
+            <span class="cat-section-text">Nos catégories</span>
+            <span class="cat-section-line"></span>
         </div>
 
-        <!-- Products Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px;">
-            {% for article in articles %}
-            <div style="background: var(--color-white); border-radius: var(--border-radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: var(--transition); display: flex; flex-direction: column;" class="product-card">
-                <div style="height: 200px; background: #0f172a; position: relative; overflow: hidden;">
-                    {% if article.image %}
-                        <img src="{{ article.image.url }}" alt="{{ article.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    {% else %}
-                        <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&q=80" alt="{{ article.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
+        <div class="cat-grid">
+            {% for cat in categories %}
+            <!-- GRADIENT PALETTES: cycle through 6 color themes -->
+            {% with forloop.counter0|divisibleby:6 as _ %}
+            <a href="{% url 'catalogue_categorie' cat.id %}" class="cat-card cat-theme-{{ forloop.counter0|add:1|stringformat:'d' }}" id="catcard-{{ cat.id }}">
+
+                <!-- Category image / icon zone -->
+                <div class="cat-card-visual">
+                    {% if cat.image %}
+                        <img src="{{ cat.image.url }}" alt="{{ cat.nom }}" class="cat-card-bg-img">
                     {% endif %}
-                    <span style="position: absolute; top: 12px; left: 12px; background: var(--color-ocean-dark); color: var(--color-white); padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase;">{{ article.categorie.nom }}</span>
+                    <div class="cat-card-gradient-overlay"></div>
+
+                    <!-- Article count badge -->
+                    <div class="cat-card-meta">
+                        <span class="cat-card-count">{{ cat.nb_articles }} article{{ cat.nb_articles|pluralize }}</span>
+                    </div>
+
+                    <!-- Big centered icon (shown if no image) -->
+                    {% if not cat.image %}
+                    <div class="cat-card-default-icon">
+                        <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                            <path d="M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/>
+                        </svg>
+                    </div>
+                    {% endif %}
                 </div>
-                <div style="padding: 24px; display: flex; flex-direction: column; flex: 1;">
-                    <h3 style="font-size: 18px; color: var(--color-text-dark); margin-bottom: 8px;">{{ article.nom }}</h3>
-                    <p style="color: var(--color-text-muted); font-size: 14px; line-height: 1.5; margin-bottom: 20px; flex: 1;">{{ article.description }}</p>
-                    
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border-light); padding-top: 16px; margin-top: auto;">
-                        <div>
-                            {% if article.prix_unitaire %}
-                                <span style="font-size: 18px; font-weight: 800; color: var(--color-ocean-bright);">{{ article.prix_unitaire }} €</span>
-                                <span style="font-size: 12px; color: var(--color-text-light);">/ {{ article.unite }}</span>
-                            {% else %}
-                                <span style="font-size: 14px; font-weight: 600; color: var(--color-text-muted);">Sur devis</span>
-                            {% endif %}
-                        </div>
-                        <a href="{% url 'add_to_cart' article.id %}" style="color: var(--color-ocean-bright); font-size: 13px; font-weight: 700;">Ajouter au panier →</a>
+
+                <!-- Text info -->
+                <div class="cat-card-body">
+                    <h2 class="cat-card-name">{{ cat.nom }}</h2>
+                    {% if cat.description %}
+                    <p class="cat-card-desc">{{ cat.description|truncatechars:72 }}</p>
+                    {% endif %}
+                    <div class="cat-card-btn">
+                        <span>Voir les articles</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </div>
                 </div>
-            </div>
-            {% empty %}
-            <div style="grid-column: 1 / -1; text-align: center; padding: 60px; background: var(--color-white); border-radius: var(--border-radius-md);">
-                <p style="color: var(--color-text-muted); font-size: 18px;">Aucun produit ne correspond à votre recherche.</p>
-            </div>
+            </a>
+            {% endwith %}
             {% endfor %}
         </div>
+
+        {% endif %}
     </div>
 </section>
 
 <style>
-.product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-md);
+/* ===================== HERO ===================== */
+.cat-hero {
+    position: relative;
+    background: linear-gradient(135deg, #0a1628 0%, #0f2744 50%, #0a1628 100%);
+    padding: 100px 0 80px;
+    overflow: hidden;
+    text-align: center;
+}
+.cat-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(14,165,233,0.15) 0%, transparent 70%);
+}
+.cat-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 20% 80%, rgba(56,189,248,0.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(99,102,241,0.06) 0%, transparent 50%);
+}
+.cat-hero-content {
+    position: relative;
+    z-index: 2;
+}
+.cat-hero-badge {
+    display: inline-block;
+    background: rgba(14,165,233,0.15);
+    border: 1px solid rgba(14,165,233,0.3);
+    color: #38bdf8;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 6px 18px;
+    border-radius: 999px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(8px);
+}
+.cat-hero-title {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900;
+    color: #fff;
+    margin: 0 0 20px;
+    line-height: 1.15;
+    font-family: var(--font-heading, 'Outfit', sans-serif);
+}
+.cat-hero-title span {
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.cat-hero-sub {
+    color: #94a3b8;
+    font-size: 17px;
+    max-width: 600px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+}
+.cat-hero-cart-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #0284c7, #6366f1);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    padding: 14px 32px;
+    border-radius: 999px;
+    text-decoration: none;
+    box-shadow: 0 8px 32px rgba(2,132,199,0.4);
+    transition: all 0.3s;
+}
+.cat-hero-cart-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(2,132,199,0.5);
+}
+
+/* ===================== MAIN SECTION ===================== */
+.cat-main {
+    background: #f1f5f9;
+    padding: 70px 0 100px;
+}
+.cat-section-label {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+.cat-section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+}
+.cat-section-text {
+    font-size: 12px;
+    font-weight: 800;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    white-space: nowrap;
+}
+
+/* ===================== CARDS GRID ===================== */
+.cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+/* ===================== CARD ===================== */
+.cat-card {
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+    transition: transform 0.3s cubic-bezier(.22,.61,.36,1), box-shadow 0.3s;
+    position: relative;
+}
+.cat-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.14);
+}
+.cat-card:hover .cat-card-bg-img { transform: scale(1.08); }
+
+/* Visual zone */
+.cat-card-visual {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+}
+.cat-card-bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+.cat-card-gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.55) 100%);
+}
+.cat-card-default-icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cat-card-meta {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+}
+.cat-card-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* Card gradient themes (applied to .cat-card-visual background) */
+.cat-theme-1 .cat-card-visual { background: linear-gradient(135deg, #0f2744, #1d4ed8); }
+.cat-theme-2 .cat-card-visual { background: linear-gradient(135deg, #064e3b, #0f766e); }
+.cat-theme-3 .cat-card-visual { background: linear-gradient(135deg, #1e1b4b, #7c3aed); }
+.cat-theme-4 .cat-card-visual { background: linear-gradient(135deg, #7f1d1d, #b45309); }
+.cat-theme-5 .cat-card-visual { background: linear-gradient(135deg, #0c4a6e, #0891b2); }
+.cat-theme-6 .cat-card-visual { background: linear-gradient(135deg, #14532d, #15803d); }
+/* Repeat for more */
+.cat-theme-7 .cat-card-visual { background: linear-gradient(135deg, #0f2744, #1d4ed8); }
+.cat-theme-8 .cat-card-visual { background: linear-gradient(135deg, #064e3b, #0f766e); }
+.cat-theme-9 .cat-card-visual { background: linear-gradient(135deg, #1e1b4b, #7c3aed); }
+
+/* Card text body */
+.cat-card-body {
+    padding: 22px 22px 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 6px;
+}
+.cat-card-name {
+    font-size: 19px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    line-height: 1.25;
+    font-family: var(--font-heading, 'Outfit', sans-serif);
+}
+.cat-card-desc {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.55;
+    flex: 1;
+}
+
+/* ===== CTA BUTTON ===== */
+.cat-card-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 18px -22px 0;
+    padding: 15px 22px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    border-radius: 0 0 24px 24px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+.cat-card-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #0284c7, #6366f1);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.cat-card-btn span, .cat-card-btn svg {
+    position: relative;
+    z-index: 1;
+}
+.cat-card-btn svg {
+    transition: transform 0.3s;
+}
+.cat-card:hover .cat-card-btn::before { opacity: 1; }
+.cat-card:hover .cat-card-btn svg { transform: translateX(5px); }
+
+/* Empty state */
+.cat-empty-state {
+    text-align: center;
+    padding: 100px 20px;
+}
+.cat-empty-icon { font-size: 64px; margin-bottom: 20px; }
+.cat-empty-state h3 { font-size: 24px; color: #1e293b; margin: 0 0 10px; }
+.cat-empty-state p { color: #64748b; font-size: 16px; }
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 768px) {
+    .cat-hero { padding: 70px 0 60px; }
+    .cat-hero-title { font-size: 28px; }
+    .cat-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .cat-card-visual { height: 150px; }
+    .cat-card-body { padding: 14px 14px 0; gap: 4px; }
+    .cat-card-name { font-size: 14px; }
+    .cat-card-desc { display: none; }
+    .cat-card-btn { margin: 12px -14px 0; padding: 12px 14px; font-size: 12px; border-radius: 0 0 20px 20px; }
+}
+@media (max-width: 480px) {
+    .cat-grid { grid-template-columns: 1fr; gap: 16px; }
+    .cat-card-visual { height: 210px; }
+    .cat-card-desc { display: block; }
+    .cat-card-body { padding: 18px 18px 0; }
+    .cat-card-btn { margin: 14px -18px 0; padding: 14px 18px; border-radius: 0 0 24px 24px; font-size: 14px; }
 }
 </style>
+
 {% endblock %}

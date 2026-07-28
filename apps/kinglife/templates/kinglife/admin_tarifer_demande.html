@@ -1,119 +1,176 @@
-{% extends 'kinglife/base.html' %}
+{% extends 'kinglife/dashboard_base.html' %}
 {% load static %}
 
 {% block title %}Tarification de Cotation - Admin{% endblock %}
 
-{% block content %}
-<section style="padding: 90px 0; background-color: var(--color-light-bg); min-height: calc(100vh - 80px);">
-    <div class="container">
-        
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <div>
-                <a href="{% url 'admin_demandes_list' %}" style="color: var(--color-text-muted); font-size: 14px; text-decoration: none; margin-bottom: 8px; display: inline-block;">← Retour à la liste</a>
-                <h1 style="font-size: 28px; color: var(--color-ocean-dark);">Tarification Demande #{{ demande.id }}</h1>
-            </div>
-            <div style="background: white; padding: 10px 20px; border-radius: 8px; box-shadow: var(--shadow-sm);">
-                <p style="margin: 0; font-size: 13px; color: var(--color-text-muted);">Client / Navire :</p>
-                <p style="margin: 0; font-weight: bold; color: var(--color-ocean-dark);">{{ demande.client.first_name }} {{ demande.client.last_name }}</p>
-            </div>
-        </div>
+{% block page_title %}Demande #{{ demande.id }}{% endblock %}
+{% block page_subtitle %}Client: {{ demande.client.first_name }} {{ demande.client.last_name }}{% endblock %}
 
-        {% if demande.remarques %}
-        <div style="background: #fffbeb; border-left: 4px solid #f59e0b; padding: 15px 20px; margin-bottom: 30px; border-radius: 4px;">
-            <h4 style="margin-top: 0; color: #b45309; font-size: 14px;">Remarques du client :</h4>
-            <p style="margin: 0; font-size: 14px; color: #78350f;">{{ demande.remarques|linebreaksbr }}</p>
-        </div>
-        {% endif %}
+{% block header_actions %}
+<a href="{% url 'admin_demandes_list' %}" class="dash-btn dash-btn-outline">
+    ← Retour
+</a>
+{% endblock %}
 
-        <div style="background: var(--color-white); padding: 30px; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-sm);">
-            <form method="post" id="tarification-form">
-                {% csrf_token %}
-                
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; font-family: monospace, sans-serif;">
-                        <thead>
-                            <tr style="background: #f1f5f9; text-align: left; border-bottom: 2px solid #cbd5e1;">
-                                <th style="padding: 12px; font-weight: 600; color: #334155; width: 40%;">ITEMS</th>
-                                <th style="padding: 12px; font-weight: 600; color: #334155; width: 15%;">UNIT</th>
-                                <th style="padding: 12px; font-weight: 600; color: #334155; width: 10%; text-align: center;">QTY</th>
-                                <th style="padding: 12px; font-weight: 600; color: #334155; width: 15%;">PRICE (USD)</th>
-                                <th style="padding: 12px; font-weight: 600; color: #334155; width: 20%; text-align: right;">AMOUNT</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for ligne in lignes %}
-                            <tr style="border-bottom: 1px solid #e2e8f0;">
-                                <td style="padding: 12px; color: #0f172a; font-weight: 500;">
-                                    {{ ligne.article.nom }}
-                                </td>
-                                <td style="padding: 12px; color: #64748b;">
-                                    {{ ligne.article.unite }}
-                                </td>
-                                <td style="padding: 12px; text-align: center; font-weight: bold;">
-                                    {{ ligne.quantite }}
-                                    <input type="hidden" id="qty_{{ ligne.id }}" value="{{ ligne.quantite }}">
-                                </td>
-                                <td style="padding: 8px;">
-                                    <input type="number" step="0.01" name="prix_{{ ligne.id }}" id="prix_{{ ligne.id }}" 
-                                        value="{{ ligne.prix_propose|default_if_none:'' }}"
-                                        class="price-input" data-id="{{ ligne.id }}"
-                                        style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-family: inherit; font-size: 14px;"
-                                        placeholder="0.00" required>
-                                </td>
-                                <td style="padding: 12px; text-align: right; font-weight: 600; color: #0f172a;" id="amount_{{ ligne.id }}">
-                                    0.00
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            
-                            <!-- TOTAL ROW -->
-                            <tr style="background: #f8fafc; border-top: 2px solid #cbd5e1;">
-                                <td colspan="4" style="padding: 15px 12px; text-align: right; font-weight: bold; font-size: 18px; color: #334155;">TOTAL AMOUNT (USD):</td>
-                                <td style="padding: 15px 12px; text-align: right; font-weight: bold; font-size: 20px; color: #dc2626;" id="total_amount">
-                                    0.00
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+{% block dashboard_content %}
+{% if demande.remarques %}
+<div class="dash-panel" style="background: #fffbeb; border: 1px solid #fcd34d; padding: 25px; margin-bottom: 30px;">
+    <h4 style="margin: 0 0 10px 0; color: #b45309; font-size: 15px; display: flex; align-items: center; gap: 8px;">
+        <span>📝</span> Remarques du client
+    </h4>
+    <p style="margin: 0; font-size: 14px; color: #78350f; line-height: 1.6;">{{ demande.remarques|linebreaksbr }}</p>
+</div>
+{% endif %}
 
-                <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
-                    <button type="submit" class="btn-primary" style="padding: 16px 32px; font-size: 16px;">Générer et Envoyer la Cotation →</button>
-                </div>
-            </form>
-        </div>
+<div class="dash-panel">
+    <div class="dash-panel-header">
+        <h2 class="dash-panel-title">Grille de Tarification</h2>
     </div>
-</section>
+
+    <form method="post" id="tarification-form">
+        {% csrf_token %}
+        
+        <div style="overflow-x: auto;">
+            <table class="dash-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Articles</th>
+                        <th style="width: 15%;">Unité</th>
+                        <th style="width: 10%; text-align: center;">Qté</th>
+                        <th style="width: 15%;">Prix Unitaire (€)</th>
+                        <th style="width: 20%; text-align: right;">Total (€)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ligne in lignes %}
+                    <tr>
+                        <td style="font-weight: 600;">{{ ligne.article.nom }}</td>
+                        <td style="color: var(--dash-text-muted);">{{ ligne.article.unite }}</td>
+                        <td style="text-align: center; font-weight: 700; color: var(--dash-primary);">
+                            {{ ligne.quantite }}
+                            <input type="hidden" id="qty_{{ ligne.id }}" value="{{ ligne.quantite }}">
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" name="prix_{{ ligne.id }}" id="prix_{{ ligne.id }}" 
+                                value="{{ ligne.prix_propose|default_if_none:'' }}"
+                                class="price-input" data-id="{{ ligne.id }}"
+                                style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; background: #ffffff; color: var(--dash-primary); font-family: inherit; font-size: 14px; font-weight: 600; outline: none; transition: border 0.3s ease;"
+                                placeholder="0.00" required>
+                        </td>
+                        <td style="text-align: right; font-weight: 700; font-size: 16px; color: var(--dash-accent);" id="amount_{{ ligne.id }}">
+                            0.00
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                    <!-- SUB TOTAL ROW -->
+                    <tr style="background: transparent;">
+                        <td colspan="4" style="text-align: right; font-weight: 700; font-size: 14px; color: var(--dash-text-main); background: transparent;">TOTAL AMOUNT (Sous-total) :</td>
+                        <td style="text-align: right; font-weight: 700; font-size: 16px; color: var(--dash-text-main); background: transparent;" id="total_amount">
+                            0.00
+                        </td>
+                    </tr>
+                    
+                    <!-- DISCOUNT ROW -->
+                    <tr style="background: transparent;">
+                        <td colspan="4" style="text-align: right; font-weight: 700; font-size: 14px; color: var(--dash-text-main); background: transparent;">
+                            DISCOUNT (%) : 
+                            <input type="number" step="0.01" name="remise" id="remise_input" value="0" style="width: 80px; padding: 6px; border: 1px solid #e2e8f0; border-radius: 6px; text-align: center; margin-left: 10px;">
+                        </td>
+                        <td style="text-align: right; font-weight: 700; font-size: 16px; color: var(--dash-danger); background: transparent;" id="discount_amount">
+                            - 0.00
+                        </td>
+                    </tr>
+                    
+                    <!-- TOTAL AFTER DISCOUNT -->
+                    <tr style="background: transparent;">
+                        <td colspan="4" style="text-align: right; font-weight: 700; font-size: 14px; color: var(--dash-text-main); background: transparent;">TOTAL AMOUNT GALLEY/DECK :</td>
+                        <td style="text-align: right; font-weight: 700; font-size: 16px; color: var(--dash-text-main); background: transparent;" id="total_after_discount">
+                            0.00
+                        </td>
+                    </tr>
+                    
+                    <!-- BOAT FEES ROW -->
+                    <tr style="background: transparent;">
+                        <td colspan="4" style="text-align: right; font-weight: 700; font-size: 14px; color: var(--dash-text-main); background: transparent;">
+                            BOAT FEES : 
+                        </td>
+                        <td style="text-align: right;">
+                            <input type="number" step="0.01" name="frais_bateau" id="frais_bateau_input" value="0" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; text-align: right; font-weight: 700; color: var(--dash-text-main);">
+                        </td>
+                    </tr>
+                    
+                    <!-- GRAND TOTAL ROW -->
+                    <tr style="background: transparent;">
+                        <td colspan="4" style="text-align: right; font-weight: 800; font-size: 18px; color: var(--dash-primary); background: transparent;">GRAND TOTAL USD :</td>
+                        <td style="text-align: right; font-weight: 800; font-size: 24px; color: var(--dash-primary); background: transparent;" id="grand_total">
+                            0.00
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: 40px;">
+            <button type="submit" class="dash-btn dash-btn-primary" style="padding: 16px 40px; font-size: 16px;">
+                Générer la Cotation →
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+.price-input:focus { border-color: var(--dash-accent) !important; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const priceInputs = document.querySelectorAll('.price-input');
+    const remiseInput = document.getElementById('remise_input');
+    const fraisBateauInput = document.getElementById('frais_bateau_input');
+    
     const totalAmountEl = document.getElementById('total_amount');
+    const discountAmountEl = document.getElementById('discount_amount');
+    const totalAfterDiscountEl = document.getElementById('total_after_discount');
+    const grandTotalEl = document.getElementById('grand_total');
     
     function calculateTotals() {
-        let grandTotal = 0;
+        let subTotal = 0;
         
+        // Calculate items sum
         priceInputs.forEach(input => {
             const id = input.getAttribute('data-id');
             const qty = parseFloat(document.getElementById('qty_' + id).value) || 0;
             const price = parseFloat(input.value) || 0;
+            const lineTotal = qty * price;
             
-            const amount = qty * price;
-            document.getElementById('amount_' + id).textContent = amount.toFixed(2);
-            
-            grandTotal += amount;
+            document.getElementById('amount_' + id).innerText = lineTotal.toFixed(2);
+            subTotal += lineTotal;
         });
         
-        totalAmountEl.textContent = grandTotal.toFixed(2);
+        // Calculate discounts and fees
+        const remisePercent = parseFloat(remiseInput.value) || 0;
+        const discountAmount = subTotal * (remisePercent / 100);
+        const totalAfterDiscount = subTotal - discountAmount;
+        const boatFees = parseFloat(fraisBateauInput.value) || 0;
+        const grandTotal = totalAfterDiscount + boatFees;
+        
+        // Update DOM
+        totalAmountEl.innerText = subTotal.toFixed(2);
+        discountAmountEl.innerText = '- ' + discountAmount.toFixed(2);
+        totalAfterDiscountEl.innerText = totalAfterDiscount.toFixed(2);
+        grandTotalEl.innerText = grandTotal.toFixed(2);
     }
-    
-    // Calculate on init (in case of re-edit)
-    calculateTotals();
-    
-    // Calculate on change
+
     priceInputs.forEach(input => {
         input.addEventListener('input', calculateTotals);
     });
+    
+    if(remiseInput) remiseInput.addEventListener('input', calculateTotals);
+    if(fraisBateauInput) fraisBateauInput.addEventListener('input', calculateTotals);
+    
+    // Initial calculation
+    calculateTotals();
 });
 </script>
 {% endblock %}

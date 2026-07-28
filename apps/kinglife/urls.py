@@ -12,6 +12,7 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('page/<slug:slug>/', views.page_detail, name='page_detail'),
     path('catalogue/', views.catalogue, name='catalogue'),
+    path('catalogue/<int:cat_id>/', views.catalogue_categorie, name='catalogue_categorie'),
     path('panier/ajouter/<int:article_id>/', views.add_to_cart, name='add_to_cart'),
     path('panier/retirer/<int:article_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('demande-cotation/', views.demande_cotation, name='demande_cotation'),
@@ -24,4 +25,12 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('espace-admin/', views.admin_hub, name='admin_hub'),
+    
+    # Gestion Catalogue
+    path('espace-admin/catalogue/', views.admin_catalogue, name='admin_catalogue'),
+    path('espace-admin/catalogue/article/nouveau/', views.admin_article_form, name='admin_article_create'),
+    path('espace-admin/catalogue/article/editer/<int:article_id>/', views.admin_article_form, name='admin_article_edit'),
+    path('espace-admin/catalogue/categorie/nouvelle/', views.admin_categorie_form, name='admin_categorie_create'),
+    path('espace-admin/catalogue/categorie/editer/<int:categorie_id>/', views.admin_categorie_form, name='admin_categorie_edit'),
 ]

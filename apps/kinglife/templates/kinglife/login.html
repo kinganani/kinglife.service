@@ -52,12 +52,26 @@
                     {% csrf_token %}
                     <div class="form-v2-group" style="margin-bottom: 16px;">
                         <label class="form-v2-label">Username</label>
-                        <input type="text" name="username" class="form-v2-input" placeholder="Enter username" required>
+                        <input type="text" name="username" class="form-v2-input" placeholder="Enter username" value="{{ form.username.value|default_if_none:'' }}" required>
+                        {% if form.username.errors %}
+                            <div style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                                {% for error in form.username.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     
                     <div class="form-v2-group" style="margin-bottom: 16px;">
                         <label class="form-v2-label">Password</label>
                         <input type="password" name="password" class="form-v2-input" placeholder="Enter password" required>
+                        {% if form.password.errors %}
+                            <div style="color: #dc2626; font-size: 12px; margin-top: 4px;">
+                                {% for error in form.password.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
 
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; font-size: 13px;">
