@@ -5,3 +5,5 @@ pillow>=9.5.0
 python-dotenv>=1.0.0
 whitenoise>=6.5.0
 django-pwa>=2.0.1
+cloudinary>=1.41.0
+django-cloudinary-storage>=0.3.0
