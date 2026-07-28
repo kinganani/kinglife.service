@@ -111,3 +111,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Preloader logic
+    const preloader = document.getElementById('kinglife-preloader');
+    if (preloader) {
+        // Fallback for welcoming message transition
+        const message = document.querySelector('.kl-preloader-message');
+        if (message) {
+            setTimeout(() => {
+                message.textContent = "Préparation de votre espace...";
+            }, 1000);
+        }
+        
+        setTimeout(() => {
+            preloader.style.opacity = '0';
+            preloader.style.visibility = 'hidden';
+            
+            // Trigger PWA widget after preloader finishes
+            const pwaWidget = document.getElementById('pwa-install-widget');
+            if (pwaWidget && !localStorage.getItem('pwa_prompt_dismissed')) {
+                setTimeout(() => {
+                    pwaWidget.classList.remove('hidden');
+                }, 1000);
+            }
+        }, 2500); // Wait 2.5 seconds for preloader
+    }
+});
