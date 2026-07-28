@@ -176,6 +176,7 @@ img {
     width: 100%;
     z-index: 100;
     padding: 24px 0;
+    background-color: var(--color-ocean-dark);
     transition: var(--transition);
 }
 
@@ -215,6 +216,8 @@ img {
     display: flex;
     align-items: center;
     gap: 36px;
+    background-color: var(--color-navy-dark);
+
 }
 
 .nav-link {
@@ -1336,7 +1339,7 @@ body {
     right: 20px;
     background: var(--color-white);
     border-radius: var(--border-radius-md);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     padding: 15px 20px;
     z-index: 9999;
     display: flex;
@@ -1362,7 +1365,7 @@ body {
     height: 48px;
     border-radius: 12px;
     object-fit: cover;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .pwa-widget-text h4 {
@@ -1392,12 +1395,14 @@ body {
     justify-content: center;
     font-size: 16px;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     color: var(--color-text-muted);
 }
+
 .pwa-close-btn:hover {
     color: var(--color-ocean-dark);
 }
+
 @media (max-width: 768px) {
     .pwa-widget {
         bottom: 20px;
@@ -1410,7 +1415,10 @@ body {
 /* --- KINGLIFE PRELOADER --- */
 .kl-preloader {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 999999;
     display: flex;
     justify-content: center;
@@ -1418,24 +1426,36 @@ body {
     background: radial-gradient(circle at center, #1e3a5f 0%, #0f172a 100%);
     transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
 }
+
 .kl-preloader-bg {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 25 30 50 50 T 100 50' stroke='rgba(255,255,255,0.05)' fill='none' stroke-width='2'/%3E%3C/svg%3E");
     background-size: 200px 200px;
     animation: waveMove 10s linear infinite;
     opacity: 0.5;
 }
+
 @keyframes waveMove {
-    from { background-position: 0 0; }
-    to { background-position: 200px 200px; }
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 200px 200px;
+    }
 }
+
 .kl-preloader-content {
     position: relative;
     text-align: center;
     z-index: 2;
     animation: float 3s ease-in-out infinite;
 }
+
 .kl-preloader-logo {
     width: 120px;
     height: auto;
@@ -1443,28 +1463,47 @@ body {
     filter: drop-shadow(0 0 20px rgba(0, 191, 255, 0.6));
     animation: pulseGlow 2s infinite alternate;
 }
+
 .kl-preloader-title {
     font-size: 3rem;
     font-weight: 800;
     color: #fff;
     margin: 0;
     letter-spacing: 4px;
-    text-shadow: 0 0 10px rgba(255,255,255,0.5), 0 0 20px rgba(0, 191, 255, 0.8), 0 0 30px rgba(0, 191, 255, 0.6);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(0, 191, 255, 0.8), 0 0 30px rgba(0, 191, 255, 0.6);
 }
+
 .kl-preloader-message {
     font-size: 1.1rem;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255, 255, 255, 0.8);
     margin-top: 15px;
     font-weight: 300;
 }
+
 @keyframes pulseGlow {
-    from { filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.4)); transform: scale(1); }
-    to { filter: drop-shadow(0 0 30px rgba(0, 191, 255, 0.8)); transform: scale(1.05); }
+    from {
+        filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.4));
+        transform: scale(1);
+    }
+
+    to {
+        filter: drop-shadow(0 0 30px rgba(0, 191, 255, 0.8));
+        transform: scale(1.05);
+    }
 }
+
 @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
 }
 
 
@@ -1484,11 +1523,13 @@ body {
     border-left: 4px solid var(--color-electric-blue);
     overflow: hidden;
 }
+
 .pwa-widget.hidden {
     transform: translateY(150px);
     opacity: 0;
     pointer-events: none;
 }
+
 .pwa-widget-content {
     display: flex;
     flex-wrap: wrap;
@@ -1496,23 +1537,26 @@ body {
     position: relative;
     gap: 12px;
 }
+
 .pwa-widget-icon {
     flex: 0 0 40px;
     display: flex;
     align-items: flex-start;
 }
+
 .pwa-widget-icon img {
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
 .pwa-widget-text {
     flex: 1;
     font-size: 13px;
     color: var(--color-space-cadet);
     padding-right: 15px;
 }
-.pwa-widget-text strong {
-}
+
+.pwa-widget-text strong {}
 
 /* PWA Install Widget */
 .pwa-widget {
@@ -1521,7 +1565,7 @@ body {
     right: 20px;
     background: var(--color-white);
     border-radius: var(--border-radius-md);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     padding: 15px 20px;
     z-index: 9999;
     display: flex;
@@ -1547,7 +1591,7 @@ body {
     height: 48px;
     border-radius: 12px;
     object-fit: cover;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .pwa-widget-text h4 {
@@ -1577,12 +1621,14 @@ body {
     justify-content: center;
     font-size: 16px;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     color: var(--color-text-muted);
 }
+
 .pwa-close-btn:hover {
     color: var(--color-ocean-dark);
 }
+
 @media (max-width: 768px) {
     .pwa-widget {
         bottom: 20px;
@@ -1595,7 +1641,10 @@ body {
 /* --- KINGLIFE PRELOADER --- */
 .kl-preloader {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 999999;
     display: flex;
     justify-content: center;
@@ -1603,24 +1652,36 @@ body {
     background: radial-gradient(circle at center, #1e3a5f 0%, #0f172a 100%);
     transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
 }
+
 .kl-preloader-bg {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q 25 30 50 50 T 100 50' stroke='rgba(255,255,255,0.05)' fill='none' stroke-width='2'/%3E%3C/svg%3E");
     background-size: 200px 200px;
     animation: waveMove 10s linear infinite;
     opacity: 0.5;
 }
+
 @keyframes waveMove {
-    from { background-position: 0 0; }
-    to { background-position: 200px 200px; }
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 200px 200px;
+    }
 }
+
 .kl-preloader-content {
     position: relative;
     text-align: center;
     z-index: 2;
     animation: float 3s ease-in-out infinite;
 }
+
 .kl-preloader-logo {
     width: 120px;
     height: auto;
@@ -1628,35 +1689,55 @@ body {
     filter: drop-shadow(0 0 20px rgba(0, 191, 255, 0.6));
     animation: pulseGlow 2s infinite alternate;
 }
+
 .kl-preloader-title {
     font-size: 3rem;
     font-weight: 800;
     color: #fff;
     margin: 0;
     letter-spacing: 4px;
-    text-shadow: 0 0 10px rgba(255,255,255,0.5), 0 0 20px rgba(0, 191, 255, 0.8), 0 0 30px rgba(0, 191, 255, 0.6);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(0, 191, 255, 0.8), 0 0 30px rgba(0, 191, 255, 0.6);
 }
+
 .kl-preloader-message {
     font-size: 1.1rem;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255, 255, 255, 0.8);
     margin-top: 15px;
     font-weight: 300;
 }
+
 @keyframes pulseGlow {
-    from { filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.4)); transform: scale(1); }
-    to { filter: drop-shadow(0 0 30px rgba(0, 191, 255, 0.8)); transform: scale(1.05); }
-}
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
+    from {
+        filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.4));
+        transform: scale(1);
+    }
+
+    to {
+        filter: drop-shadow(0 0 30px rgba(0, 191, 255, 0.8));
+        transform: scale(1.05);
+    }
 }
 
-    display: block;
-    font-size: 14px;
-    color: var(--color-prussian-blue);
-    margin-bottom: 3px;
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
 }
+
+display: block;
+font-size: 14px;
+color: var(--color-prussian-blue);
+margin-bottom: 3px;
+}
+
 /* WhatsApp-Style PWA Notification Banner */
 .pwa-notification-widget {
     position: fixed;

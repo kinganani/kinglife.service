@@ -134,22 +134,39 @@ PWA_APP_START_URL = '/'
 PWA_APP_STATUS_BAR_COLOR = 'default'
 PWA_APP_ICONS = [
     {
-        'src': '/static/kinglife/images/icon-192x192.png?v=2',
-        'sizes': '192x192',
+        'src': '/static/kinglife/images/logo.png',
+        'sizes': '512x512',
         'type': 'image/png'
     },
     {
-        'src': '/static/kinglife/images/icon-512x512.png?v=2',
-        'sizes': '512x512',
+        'src': '/static/kinglife/images/logo.png',
+        'sizes': '192x192',
         'type': 'image/png'
     }
 ]
 PWA_APP_ICONS_APPLE = [
     {
-        'src': '/static/kinglife/images/icon-192x192.png?v=2',
+        'src': '/static/kinglife/images/logo.png',
         'sizes': '192x192',
         'type': 'image/png'
     }
 ]
 PWA_APP_DIR = 'ltr'
 PWA_APP_LANG = 'fr-FR'
+
+# --- Google Social Login ---
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+
+# --- Email (SMTP) Configuration ---
+# Fallback to console backend in development if SMTP is not configured
+if os.environ.get('EMAIL_HOST'):
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = os.environ.get('EMAIL_HOST')
+    EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+    EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+    DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = 'webmaster@localhost'

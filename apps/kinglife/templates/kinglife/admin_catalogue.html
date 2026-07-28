@@ -3,15 +3,18 @@
 
 {% block title %}Gestion du Catalogue - Admin{% endblock %}
 
-{% block page_title %}Catalogue & Produits <span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">inventory_2</span>{% endblock %}
+{% block page_title %}Catalogue & Produits <span class="material-symbols-outlined"
+    style="vertical-align: middle; font-size: inherit;">inventory_2</span>{% endblock %}
 {% block page_subtitle %}Gérez les articles de votre boutique et leurs catégories.{% endblock %}
 
 {% block header_actions %}
 <div style="display: flex; gap: 15px;">
-    <a href="{% url 'admin_categorie_create' %}" class="dash-btn dash-btn-outline" hx-get="{% url 'admin_categorie_create' %}" hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">
+    <a href="{% url 'admin_categorie_create' %}" class="dash-btn dash-btn-outline"
+        hx-get="{% url 'admin_categorie_create' %}" hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">
         <i class="material-symbols-outlined">add_circle</i> Nouvelle Catégorie
     </a>
-    <a href="{% url 'admin_article_create' %}" class="dash-btn dash-btn-primary" hx-get="{% url 'admin_article_create' %}" hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">
+    <a href="{% url 'admin_article_create' %}" class="dash-btn dash-btn-primary"
+        hx-get="{% url 'admin_article_create' %}" hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">
         <i class="material-symbols-outlined">add</i> Nouvel Article
     </a>
 </div>
@@ -45,9 +48,11 @@
                 <tr>
                     <td>
                         {% if article.image %}
-                        <img src="{{ article.image.url }}" alt="{{ article.nom }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
+                        <img src="{{ article.image.url }}" alt="{{ article.nom }}"
+                            style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;">
                         {% else %}
-                        <div style="width: 40px; height: 40px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+                        <div
+                            style="width: 40px; height: 40px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
                             <i class="material-symbols-outlined" style="font-size: 20px;">image</i>
                         </div>
                         {% endif %}
@@ -56,34 +61,39 @@
                     <td><span class="dash-badge badge-neutral">{{ article.categorie.nom }}</span></td>
                     <td>
                         {% if article.prix_unitaire %}
-                            {{ article.prix_unitaire }} / {{ article.unite }}
+                        {{ article.prix_unitaire }} / {{ article.unite }}
                         {% else %}
-                            <span style="color: var(--dash-text-light);">Sur devis</span>
+                        <span style="color: var(--dash-text-light);">Sur devis</span>
                         {% endif %}
                     </td>
                     <td>
                         {% if article.stock > 0 %}
-                            <span style="color: var(--dash-success); font-weight: 600;">{{ article.stock }}</span>
+                        <span style="color: var(--dash-success); font-weight: 600;">{{ article.stock }}</span>
                         {% else %}
-                            <span style="color: var(--dash-danger); font-weight: 600;">Rupture</span>
+                        <span style="color: var(--dash-danger); font-weight: 600;">Rupture</span>
                         {% endif %}
                     </td>
                     <td>
                         {% if article.publie %}
-                            <span class="dash-badge badge-success">En ligne</span>
+                        <span class="dash-badge badge-success">En ligne</span>
                         {% else %}
-                            <span class="dash-badge badge-neutral">Brouillon</span>
+                        <span class="dash-badge badge-neutral">Brouillon</span>
                         {% endif %}
                     </td>
                     <td style="text-align: right; display: flex; justify-content: flex-end; gap: 10px;">
-                        <a href="{% url 'admin_article_edit' article.id %}" class="dash-btn dash-btn-outline" style="padding: 6px 12px; font-size: 13px;" hx-get="{% url 'admin_article_edit' article.id %}" hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">
+                        <a href="{% url 'admin_article_edit' article.id %}" class="dash-btn dash-btn-outline"
+                            style="padding: 6px 12px; font-size: 13px;"
+                            hx-get="{% url 'admin_article_edit' article.id %}" hx-target="#dashboard-main"
+                            hx-swap="innerHTML" hx-push-url="true">
                             <i class="material-symbols-outlined" style="font-size: 16px;">edit</i> Éditer
                         </a>
-                        <form method="POST" style="display: inline;" onsubmit="return confirm('Supprimer cet article définitivement ?');">
+                        <form method="POST" style="display: inline;"
+                            onsubmit="return confirm('Supprimer cet article définitivement ?');">
                             {% csrf_token %}
                             <input type="hidden" name="action" value="delete_article">
                             <input type="hidden" name="article_id" value="{{ article.id }}">
-                            <button type="submit" class="dash-btn" style="padding: 6px 12px; font-size: 13px; color: white; background: var(--dash-danger); border: none; cursor: pointer;">
+                            <button type="submit" class="dash-btn"
+                                style="padding: 6px 12px; font-size: 13px; color: white; background: var(--dash-danger); border: none; cursor: pointer;">
                                 <i class="material-symbols-outlined" style="font-size: 16px;">delete</i>
                             </button>
                         </form>
@@ -95,9 +105,12 @@
     </div>
     {% else %}
     <div style="text-align: center; padding: 40px; color: var(--dash-text-light);">
-        <i class="material-symbols-outlined" style="font-size: 48px; color: #cbd5e1; margin-bottom: 10px;">inventory_2</i>
+        <i class="material-symbols-outlined"
+            style="font-size: 48px; color: #cbd5e1; margin-bottom: 10px;">inventory_2</i>
         <p>Aucun article dans le catalogue.</p>
-        <a href="{% url 'admin_article_create' %}" class="dash-btn dash-btn-primary" style="margin-top: 15px;" hx-get="{% url 'admin_article_create' %}" hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">Ajouter un article</a>
+        <a href="{% url 'admin_article_create' %}" class="dash-btn dash-btn-primary" style="margin-top: 15px;"
+            hx-get="{% url 'admin_article_create' %}" hx-target="#dashboard-main" hx-swap="innerHTML"
+            hx-push-url="true">Ajouter un article</a>
     </div>
     {% endif %}
 </div>
@@ -128,14 +141,18 @@
                     <td><strong>{{ cat.nom }}</strong></td>
                     <td><span class="dash-badge badge-neutral">{{ cat.articles.count }} articles</span></td>
                     <td style="text-align: right; display: flex; justify-content: flex-end; gap: 10px;">
-                        <a href="{% url 'admin_categorie_edit' cat.id %}" class="dash-btn dash-btn-outline" style="padding: 6px 12px; font-size: 13px;" hx-get="{% url 'admin_categorie_edit' cat.id %}" hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">
+                        <a href="{% url 'admin_categorie_edit' cat.id %}" class="dash-btn dash-btn-outline"
+                            style="padding: 6px 12px; font-size: 13px;" hx-get="{% url 'admin_categorie_edit' cat.id %}"
+                            hx-target="#dashboard-main" hx-swap="innerHTML" hx-push-url="true">
                             <i class="material-symbols-outlined" style="font-size: 16px;">edit</i> Éditer
                         </a>
-                        <form method="POST" style="display: inline;" onsubmit="return confirm('Attention : Supprimer une catégorie va supprimer TOUS les articles qu\'elle contient ! Continuer ?');">
+                        <form method="POST" style="display: inline;"
+                            onsubmit="return confirm('Attention : Supprimer une catégorie va supprimer TOUS les articles qu\'elle contient ! Continuer ?');">
                             {% csrf_token %}
                             <input type="hidden" name="action" value="delete_categorie">
                             <input type="hidden" name="categorie_id" value="{{ cat.id }}">
-                            <button type="submit" class="dash-btn" style="padding: 6px 12px; font-size: 13px; color: white; background: var(--dash-danger); border: none; cursor: pointer;">
+                            <button type="submit" class="dash-btn"
+                                style="padding: 6px 12px; font-size: 13px; color: white; background: var(--dash-danger); border: none; cursor: pointer;">
                                 <i class="material-symbols-outlined" style="font-size: 16px;">delete</i>
                             </button>
                         </form>

@@ -22,6 +22,7 @@ urlpatterns = [
     path('cotation/<int:cotation_id>/action/', views.cotation_action, name='cotation_action'),
     path('facture/<int:facture_id>/', views.facture_detail, name='facture_detail'),
     path('register/', views.register, name='register'),
+    path('google-login/', views.google_login_api, name='google_login_api'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dashboard, name='dashboard'),

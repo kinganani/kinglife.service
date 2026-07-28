@@ -3,10 +3,14 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib import messages
+from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 from django.db.models import Count, Q
 from .models import Service, Actualite, Realisation, Page, Contact, CategorieProduit, Article, DemandeCotation, LigneCotation, Cotation, Prestation, Facture, Paiement
-from .utils import creer_notification
+from .utils import creer_notification, send_html_email
 
 
 def home(request):
@@ -272,13 +276,25 @@ from django.contrib.admin.views.decorators import staff_member_required
 def admin_demandes_list(request):
     """Tableau de bord Admin pour voir toutes les demandes de cotation"""
     demandes_attente = DemandeCotation.objects.filter(statut='en_attente').order_by('date_demande')
-    demandes_traitees = DemandeCotation.objects.exclude(statut='en_attente').order_by('-date_demande')[:50]
+    demandes_traitees = DemandeCotation.objects.exclude(statut='en_attente').order_by('-date_demande')
+    
+    search_query = request.GET.get('q', '')
+    if search_query:
+        demandes_traitees = demandes_traitees.filter(
+            Q(client__username__icontains=search_query) | 
+            Q(client__email__icontains=search_query)
+        )
+        
+    paginator = Paginator(demandes_traitees, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
     base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
     
     return render(request, 'kinglife/admin_demandes_list.html', {
         'demandes_attente': demandes_attente,
-        'demandes_traitees': demandes_traitees,
+        'demandes_traitees': page_obj,
+        'search_query': search_query,
         'base_template': base_template,
     })
 
@@ -357,6 +373,20 @@ def admin_tarifer_demande(request, demande_id):
             type_notif='success'
         )
         
+        # Envoyer l'email SMTP
+        if demande.client.email:
+            site_url = request.build_absolute_uri('/')[:-1]
+            send_html_email(
+                subject=f"Votre devis KINGLIFE N° {cotation.numero} est prêt !",
+                template_name='kinglife/email_cotation.html',
+                context={
+                    'client': demande.client,
+                    'cotation': cotation,
+                    'site_url': site_url
+                },
+                recipient_list=[demande.client.email]
+            )
+            
         messages.success(request, f'Cotation {cotation.numero} générée et envoyée au client avec succès !')
         return redirect('admin_demandes_list')
         
@@ -453,7 +483,44 @@ def register(request):
             return redirect('dashboard')
     else:
         form = ClientRegistrationForm()
-    return render(request, 'kinglife/register.html', {'form': form})
+        
+    return render(request, 'kinglife/register.html', {
+        'form': form,
+        'GOOGLE_CLIENT_ID': settings.GOOGLE_CLIENT_ID
+    })
+
+
+@csrf_exempt
+def google_login_api(request):
+    import json
+    from google.oauth2 import id_token
+    from google.auth.transport import requests as google_requests
+    from django.conf import settings
+    from django.contrib.auth import login
+    from django.contrib.auth.models import User
+    
+    if request.method == 'POST':
+        try:
+            body = json.loads(request.body)
+            token = body.get('credential')
+            
+            idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), settings.GOOGLE_CLIENT_ID)
+            email = idinfo['email']
+            first_name = idinfo.get('given_name', '')
+            last_name = idinfo.get('family_name', '')
+            
+            user, created = User.objects.get_or_create(username=email, defaults={
+                'email': email,
+                'first_name': first_name,
+                'last_name': last_name
+            })
+            
+            login(request, user)
+            return JsonResponse({'status': 'success', 'redirect_url': '/dashboard/'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid method'})
+
 
 
 def login_view(request):
@@ -578,11 +645,20 @@ def admin_catalogue(request):
     categories = CategorieProduit.objects.all()
     articles = Article.objects.all().select_related('categorie')
     
+    search_query = request.GET.get('q', '')
+    if search_query:
+        articles = articles.filter(Q(nom__icontains=search_query) | Q(description__icontains=search_query))
+        
+    paginator = Paginator(articles, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
     base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
     
     context = {
         'categories': categories,
-        'articles': articles,
+        'articles': page_obj,
+        'search_query': search_query,
         'base_template': base_template,
     }
     return render(request, 'kinglife/admin_catalogue.html', context)
@@ -894,8 +970,12 @@ def admin_factures(request):
 
     base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
     
+    paginator = Paginator(factures, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
     return render(request, 'kinglife/admin_factures.html', {
-        'factures': factures,
+        'factures': page_obj,
         'stats': stats,
         'statut_filter': statut_filter,
         'client_filter': client_filter,
