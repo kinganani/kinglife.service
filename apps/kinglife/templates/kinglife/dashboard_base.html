@@ -1,10 +1,11 @@
 {% load static %}
-{% load pwa %}
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
-    {% progressive_web_app_meta %}
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="/static/kinglife/images/icon-192x192.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Tableau de bord - KINGLIFE SHAL U{% endblock %}</title>
@@ -30,6 +31,11 @@
             <img src="{% static 'kinglife/images/logo.png' %}" alt="Kinglife Logo" class="kl-preloader-logo">
             <h1 class="kl-preloader-title">KING LIFE</h1>
             <p class="kl-preloader-message">Bienvenue dans l'excellence maritime...</p>
+            
+            <!-- PWA Install Button directly in Preloader -->
+            <button id="preloader-pwa-install-btn" class="btn-primary" style="margin-top: 25px; display: none; background: #00b4d8; border: none; box-shadow: 0 4px 15px rgba(0,180,216,0.4);">
+                Installer l'Application
+            </button>
         </div>
     </div>
 

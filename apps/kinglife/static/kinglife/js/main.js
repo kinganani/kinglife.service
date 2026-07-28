@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileToggle = document.querySelector('.mobile-toggle');
     const navMenu = document.querySelector('.nav-menu');
     const headerActions = document.querySelector('.header-actions');
-    
+
     if (mobileToggle && navMenu) {
         mobileToggle.addEventListener('click', () => {
             const isOpen = navMenu.classList.toggle('active');
@@ -80,11 +80,19 @@ let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
+    
+    // Show standard widget
     const pwaWidget = document.getElementById('pwa-install-widget');
     if (pwaWidget && !localStorage.getItem('pwa_prompt_dismissed')) {
         setTimeout(() => {
             pwaWidget.classList.remove('hidden');
         }, 2000);
+    }
+
+    // Show button directly in preloader
+    const preloaderInstallBtn = document.getElementById('preloader-pwa-install-btn');
+    if (preloaderInstallBtn) {
+        preloaderInstallBtn.style.display = 'inline-block';
     }
 });
 
@@ -92,12 +100,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const pwaWidget = document.getElementById('pwa-install-widget');
     const installBtn = document.getElementById('pwa-install-btn');
     const closeBtn = document.getElementById('pwa-close-btn');
+    const preloaderInstallBtn = document.getElementById('preloader-pwa-install-btn');
 
+    // Preloader Install Button
+    if (preloaderInstallBtn) {
+        preloaderInstallBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                preloaderInstallBtn.style.display = 'none';
+                
+                // Instantly hide preloader after they decide
+                const preloader = document.getElementById('kinglife-preloader');
+                if (preloader) {
+                    preloader.style.opacity = '0';
+                    setTimeout(() => { preloader.style.display = 'none'; }, 500);
+                }
+            }
+        });
+    }
+
+    // Standard Widget Install Button
     if (installBtn && pwaWidget) {
         installBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
+                await deferredPrompt.userChoice;
                 deferredPrompt = null;
                 pwaWidget.classList.add('hidden');
             }
@@ -116,25 +145,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Preloader logic
     const preloader = document.getElementById('kinglife-preloader');
     if (preloader) {
-        // Fallback for welcoming message transition
-        const message = document.querySelector('.kl-preloader-message');
-        if (message) {
-            setTimeout(() => {
-                message.textContent = "Préparation de votre espace...";
-            }, 1000);
-        }
-        
-        setTimeout(() => {
-            preloader.style.opacity = '0';
-            preloader.style.visibility = 'hidden';
-            
-            // Trigger PWA widget after preloader finishes
-            const pwaWidget = document.getElementById('pwa-install-widget');
-            if (pwaWidget && !localStorage.getItem('pwa_prompt_dismissed')) {
+        if (!sessionStorage.getItem('kinglife_preloader_shown')) {
+            const message = document.querySelector('.kl-preloader-message');
+            if (message) {
                 setTimeout(() => {
-                    pwaWidget.classList.remove('hidden');
-                }, 1000);
+                    message.textContent = "Préparation de votre espace...";
+                }, 800);
             }
-        }, 2500); // Wait 2.5 seconds for preloader
+            
+            setTimeout(() => {
+                // If button is showing, user is probably deciding. But after 5 seconds, fade it anyway
+                if (preloader.style.display !== 'none') {
+                    preloader.style.opacity = '0';
+                    setTimeout(() => { preloader.style.display = 'none'; }, 500);
+                }
+                
+                sessionStorage.setItem('kinglife_preloader_shown', 'true');
+            }, 5000); // 5 seconds wait to give time to install PWA inside preloader
+        } else {
+            preloader.style.display = 'none';
+        }
     }
 });

@@ -3,7 +3,6 @@
 <html lang="fr">
 
 <head>
-    {% progressive_web_app_meta %}
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0f172a">
     <link rel="apple-touch-icon" href="/static/kinglife/images/icon-192x192.png">
@@ -30,6 +29,20 @@
 </head>
 
 <body>
+    <!-- Custom Preloader / Splash Screen -->
+    <div id="kinglife-preloader" class="kl-preloader">
+        <div class="kl-preloader-bg"></div>
+        <div class="kl-preloader-content">
+            <img src="{% static 'kinglife/images/logo.png' %}" alt="Kinglife Logo" class="kl-preloader-logo">
+            <h1 class="kl-preloader-title">KING LIFE</h1>
+            <p class="kl-preloader-message">Bienvenue dans l'excellence maritime...</p>
+            
+            <!-- PWA Install Button directly in Preloader -->
+            <button id="preloader-pwa-install-btn" class="btn-primary" style="margin-top: 25px; display: none; background: #00b4d8; border: none; box-shadow: 0 4px 15px rgba(0,180,216,0.4);">
+                Installer l'Application
+            </button>
+        </div>
+    </div>
 
     <!-- Header Navigation Bar -->
     <header class="main-header">
