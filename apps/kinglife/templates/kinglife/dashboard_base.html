@@ -10,6 +10,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Tableau de bord - KINGLIFE SHAL U{% endblock %}</title>
 
+    <!-- VAPID public key for WebPush notifications -->
+    <meta name="vapid-key"
+        content="BJ4iNXUZBrhY_hjNW0gaiSGhDrYb1ARJAk-Q7ezyiyHyPeuZxtPPob-zuxeuUAhQxlqHgETkmwkN8w2Qh5kRPFk">
+
     <!-- Include main site variables and fonts to keep the ecosystem -->
     <link rel="stylesheet" href="{% static 'kinglife/css/style.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
@@ -24,22 +28,9 @@
 </head>
 
 <body class="dashboard-body">
-    <!-- Custom Preloader / Splash Screen -->
-    <div id="kinglife-preloader" class="kl-preloader">
-        <div class="kl-preloader-bg"></div>
-        <div class="kl-preloader-content">
-            <img src="{% static 'kinglife/images/logo.png' %}" alt="Kinglife Logo" class="kl-preloader-logo">
-            <h1 class="kl-preloader-title">KING LIFE</h1>
-            <p class="kl-preloader-message">Bienvenue dans l'excellence maritime...</p>
-            
-            <!-- PWA Install Button directly in Preloader -->
-            <button id="preloader-pwa-install-btn" class="btn-primary" style="margin-top: 25px; display: none; background: #00b4d8; border: none; box-shadow: 0 4px 15px rgba(0,180,216,0.4);">
-                Installer l'Application
-            </button>
-        </div>
-    </div>
 
     <div class="dashboard-container">
+
         <!-- Sidebar -->
         <aside class="dashboard-sidebar">
             <a href="/" class="sidebar-logo"
@@ -90,6 +81,14 @@
                     hx-get="{% url 'admin_realisations' %}" hx-target="#dashboard-main" hx-swap="innerHTML"
                     hx-push-url="true">
                     <i class="material-symbols-outlined">workspace_premium</i> <span>Réalisations</span>
+                </a>
+                <a href="{% url 'admin_factures' %}"
+                    class="nav-item {% if '/espace-admin/factures' in request.path and 'achats' not in request.path %}active{% endif %}">
+                    <i class="material-symbols-outlined">receipt_long</i> <span>Factures</span>
+                </a>
+                <a href="{% url 'admin_soldes_clients' %}"
+                    class="nav-item {% if '/espace-admin/comptabilite/soldes' in request.path %}active{% endif %}">
+                    <i class="material-symbols-outlined">account_balance_wallet</i> <span>Comptabilité</span>
                 </a>
                 <a href="{% url 'admin_demandes_list' %}"
                     class="nav-item {% if '/admin-cotations/' in request.path %}active{% endif %}">
@@ -192,7 +191,7 @@
     </div>
 
     <script>
-        // Get CSRF Token from cookie
+ t CSRF Token from cookie
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -241,9 +240,11 @@
 
             if (dropdown && dropdown.style.display === 'block' && !button && !dropdown.contains(event.target)) {
                 dropdown.style.display = 'none';
-            }
-        });
+
     </script>
+</body>
+
+</html>iv>
 </body>
 
 </html>

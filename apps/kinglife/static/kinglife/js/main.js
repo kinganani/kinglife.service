@@ -80,13 +80,16 @@ let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    
+
     // Show standard widget
     const pwaWidget = document.getElementById('pwa-install-widget');
     if (pwaWidget && !localStorage.getItem('pwa_prompt_dismissed')) {
         setTimeout(() => {
             pwaWidget.classList.remove('hidden');
-        }, 2000);
+            // Force reflow
+            void pwaWidget.offsetWidth;
+            pwaWidget.classList.add('show');
+        }, 2000); // 2 seconds after visiting
     }
 
     // Show button directly in preloader
@@ -110,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 await deferredPrompt.userChoice;
                 deferredPrompt = null;
                 preloaderInstallBtn.style.display = 'none';
-                
+
                 // Instantly hide preloader after they decide
                 const preloader = document.getElementById('kinglife-preloader');
                 if (preloader) {
@@ -126,16 +129,25 @@ document.addEventListener('DOMContentLoaded', () => {
         installBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
-                await deferredPrompt.userChoice;
+                const choiceResult = await deferredPrompt.userChoice;
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the A2HS prompt');
+                } else {
+                    console.log('User dismissed the A2HS prompt');
+                }
                 deferredPrompt = null;
-                pwaWidget.classList.add('hidden');
+                
+                // Hide banner
+                pwaWidget.classList.remove('show');
+                setTimeout(() => pwaWidget.classList.add('hidden'), 400);
             }
         });
     }
 
     if (closeBtn && pwaWidget) {
         closeBtn.addEventListener('click', () => {
-            pwaWidget.classList.add('hidden');
+            pwaWidget.classList.remove('show');
+            setTimeout(() => pwaWidget.classList.add('hidden'), 400);
             localStorage.setItem('pwa_prompt_dismissed', 'true');
         });
     }
@@ -152,16 +164,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     message.textContent = "Préparation de votre espace...";
                 }, 800);
             }
-            
+
             setTimeout(() => {
                 // If button is showing, user is probably deciding. But after 5 seconds, fade it anyway
                 if (preloader.style.display !== 'none') {
                     preloader.style.opacity = '0';
                     setTimeout(() => { preloader.style.display = 'none'; }, 500);
                 }
-                
+
                 sessionStorage.setItem('kinglife_preloader_shown', 'true');
-            }, 5000); // 5 seconds wait to give time to install PWA inside preloader
+            }, 1000); // 20 seconds wait to give time to install PWA inside preloader
         } else {
             preloader.style.display = 'none';
         }

@@ -52,4 +52,13 @@ urlpatterns = [
     path('espace-admin/realisations/nouvelle/', views.admin_realisation_form, name='admin_realisation_create'),
     path('espace-admin/realisations/editer/<int:realisation_id>/', views.admin_realisation_form, name='admin_realisation_edit'),
     path('espace-admin/realisations/supprimer/<int:realisation_id>/', views.admin_realisation_delete, name='admin_realisation_delete'),
+
+    # Gestion Factures
+    path('espace-admin/factures/', views.admin_factures, name='admin_factures'),
+    path('espace-admin/factures/<int:facture_id>/', views.admin_facture_detail, name='admin_facture_detail'),
+    path('espace-admin/factures/<int:facture_id>/paiement/', views.admin_facture_paiement, name='admin_facture_paiement'),
+    path('espace-admin/factures/<int:facture_id>/achats/', views.admin_facture_liste_achats, name='admin_facture_liste_achats'),
+    
+    # Comptabilité / Soldes
+    path('espace-admin/comptabilite/soldes/', views.admin_soldes_clients, name='admin_soldes_clients'),
 ]

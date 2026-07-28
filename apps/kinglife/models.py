@@ -269,6 +269,60 @@ class Facture(models.Model):
     def __str__(self):
         return f"Facture {self.numero}"
 
+    @property
+    def reste_a_payer(self):
+        return self.montant_ttc - self.montant_paye
+
+    @property
+    def est_en_retard(self):
+        from django.utils import timezone
+        if self.statut in ['payee', 'annulee', 'brouillon']:
+            return False
+        return self.date_echeance < timezone.now().date()
+        
+    def mettre_a_jour_totaux(self):
+        """Met à jour les totaux de la facture à partir de ses lignes."""
+        from decimal import Decimal
+        montant_ht = sum(ligne.get_total() for ligne in self.lignes.all())
+        # Exemple de TVA à 18% par défaut, à adapter si nécessaire
+        tva_taux = Decimal('0.18') 
+        self.montant_ht = montant_ht
+        self.montant_tva = montant_ht * tva_taux
+        self.montant_ttc = self.montant_ht + self.montant_tva
+        self.save()
+
+    def enregistrer_paiement(self, montant):
+        """Enregistre un paiement et met à jour le statut."""
+        from decimal import Decimal
+        montant = Decimal(str(montant))
+        self.montant_paye += montant
+        if self.montant_paye >= self.montant_ttc:
+            self.montant_paye = self.montant_ttc # Cap it
+            self.statut = 'payee'
+        elif self.montant_paye > 0:
+            self.statut = 'partiellement_payee'
+        self.save()
+
+
+class LigneFacture(models.Model):
+    """Ligne individuelle d'une facture, modifiable par l'admin"""
+    facture = models.ForeignKey(Facture, on_delete=models.CASCADE, related_name='lignes')
+    article_catalogue = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True, blank=True)
+    description = models.CharField(max_length=255)
+    quantite_demandee = models.DecimalField(max_digits=10, decimal_places=2)
+    quantite_livree = models.DecimalField(max_digits=10, decimal_places=2)
+    unite = models.CharField(max_length=50, default='Unité')
+    prix_unitaire = models.DecimalField(max_digits=12, decimal_places=2)
+    
+    class Meta:
+        ordering = ['id']
+        
+    def get_total(self):
+        return self.quantite_livree * self.prix_unitaire
+
+    def __str__(self):
+        return f"{self.description} ({self.facture.numero})"
+
 
 class Paiement(models.Model):
     """Paiements"""

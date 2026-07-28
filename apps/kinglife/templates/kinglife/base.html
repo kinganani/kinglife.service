@@ -9,6 +9,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}KINGLIFE SHAL U - Services Maritimes & Logistiques{% endblock %}</title>
+    <!-- VAPID public key for WebPush notifications -->
+    <meta name="vapid-key" content="BJ4iNXUZBrhY_hjNW0gaiSGhDrYb1ARJAk-Q7ezyiyHyPeuZxtPPob-zuxeuUAhQxlqHgETkmwkN8w2Qh5kRPFk">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,18 +31,22 @@
 </head>
 
 <body>
-    <!-- Custom Preloader / Splash Screen -->
-    <div id="kinglife-preloader" class="kl-preloader">
-        <div class="kl-preloader-bg"></div>
-        <div class="kl-preloader-content">
-            <img src="{% static 'kinglife/images/logo.png' %}" alt="Kinglife Logo" class="kl-preloader-logo">
-            <h1 class="kl-preloader-title">KING LIFE</h1>
-            <p class="kl-preloader-message">Bienvenue dans l'excellence maritime...</p>
-            
-            <!-- PWA Install Button directly in Preloader -->
-            <button id="preloader-pwa-install-btn" class="btn-primary" style="margin-top: 25px; display: none; background: #00b4d8; border: none; box-shadow: 0 4px 15px rgba(0,180,216,0.4);">
-                Installer l'Application
-            </button>
+    {% block preloader %}{% endblock %}
+
+    <!-- PWA Install Notification Banner (WhatsApp Style) -->
+    <div id="pwa-install-widget" class="pwa-notification-widget hidden">
+        <div class="pwa-notification-content">
+            <div class="pwa-notification-icon">
+                <img src="{% static 'kinglife/images/logo.png' %}" alt="App Icon">
+            </div>
+            <div class="pwa-notification-text">
+                <h4>Kinglife SHAL U</h4>
+                <p>Installez l'application pour un accès rapide et des notifications.</p>
+            </div>
+        </div>
+        <div class="pwa-notification-actions">
+            <button type="button" id="pwa-close-btn" class="pwa-btn pwa-btn-secondary">Plus tard</button>
+            <button type="button" id="pwa-install-btn" class="pwa-btn pwa-btn-primary">Installer</button>
         </div>
     </div>
 
@@ -134,32 +140,59 @@
     <div id="google_translate_element" style="display:none;"></div>
 
     <script type="text/javascript">
-        function googleTranslateE            Init(new google.tr                Translate                                          pa                ge: 'fr                           included                            ,en,es,pt,zh-CN'                                autoDisplay: fals                               'google_translate_element');
-        function toggleLangWidget()                       const wi             document.getElement ById('            n        gWi        ');
-        widget.classList.toggle('o            ;
-              }
-
-            document.addEvent('click', function (e) {                               nst w        t = document.getElementByI                ingLangW            );
-        if (             & idget        tains(e.t                {
-            widget.classLi                     ve('open');
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'fr',
+                includedLanguages: 'fr,en,es,pt,zh-CN',
+                autoDisplay: false
+            }, 'google_translate_element');
         }
+
+        function toggleLangWidget() {
+            const widget = document.getElementById('floatingLangWidget');
+            if (widget) {
+                widget.classList.toggle('open');
+            }
+        }
+
+        // Close widget if clicking outside
+        document.addEventListener('click', function (e) {
+            const widget = document.getElementById('floatingLangWidget');
+            if (widget && !widget.contains(e.target)) {
+                widget.classList.remove('open');
+            }
         });
 
-        fu                    ngeA                ge(langCo                lT            
-                            cument.querySelectorAll('.lang-option-btn').forEach(bt                                       btn.cl                re                ti                                              if (btn.getAttribute('onclick').includes(langCode)) btn.classList.add('active                                    }
+        function changeAppLanguage(langCode, labelText) {
+            // Update UI buttons
+            document.querySelectorAll('.lang-option-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick').includes(langCode)) {
+                    btn.classList.add('active');
+                }
             });
 
-                        c                      rentLabel = document.getElementById('currentLangLabel')                            if (cu                el && labelText) {
-            currentLabel.innerText = t;
-                                                      ar select = document.querySelector('.goog-te-combo'(select) {
-                lealue = langCode;
-                select.dispatchEvent(new Event('c          
-            } else document.cookie = "googtrans=/fr/" + langCode + "; path=/;                         document.cookie = "googtrans = /fr         lode + "; domain=" + window.location.hostname + "; path=/; ";
-            location.reload();
-        }
+            // Update Label
+            const currentLabel = document.getElementById('currentLangLabel');
+            if (currentLabel && labelText) {
+                currentLabel.innerText = labelText;
+            }
 
-        const widget = document.getElementById('floatingLangWidget');
-        if (widget) widget.classList.remove('open');
+            // Trigger Google Translate
+            const select = document.querySelector('.goog-te-combo');
+            if (select) {
+                select.value = langCode;
+                select.dispatchEvent(new Event('change'));
+            } else {
+                // Fallback via cookies if widget hasn't fully loaded
+                document.cookie = "googtrans=/fr/" + langCode + "; path=/;";
+                document.cookie = "googtrans=/fr/" + langCode + "; domain=" + window.location.hostname + "; path=/;";
+                location.reload();
+            }
+
+            // Close the widget
+            const widget = document.getElementById('floatingLangWidget');
+            if (widget) widget.classList.remove('open');
         }
     </script>
     <script type="text/javascript"
@@ -231,5 +264,7 @@
 
     {% block extra_js %}{% endblock %}
 </body>
+
+</html>
 
 </html>

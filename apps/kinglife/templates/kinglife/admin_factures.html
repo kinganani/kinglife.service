@@ -1,0 +1,142 @@
+{% extends base_template %}
+{% load static %}
+
+{% block title %}Gestion des Factures - KINGLIFE Admin{% endblock %}
+{% block page_title %}Gestion des Factures 🧾{% endblock %}
+{% block page_subtitle %}Suivez, modifiez et finalisez toutes les factures clients.{% endblock %}
+
+{% block dashboard_content %}
+
+<!-- Stats rapides -->
+<div class="dash-grid" style="margin-bottom: 24px;">
+    <div class="dash-card" style="border-top: 3px solid var(--dash-text-muted);">
+        <div style="font-size: 12px; color: var(--dash-text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Brouillons</div>
+        <div style="font-size: 28px; font-weight: 800;">{{ stats.brouillon }}</div>
+    </div>
+    <div class="dash-card" style="border-top: 3px solid var(--dash-primary);">
+        <div style="font-size: 12px; color: var(--dash-text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Émises</div>
+        <div style="font-size: 28px; font-weight: 800; color: var(--dash-primary);">{{ stats.emises }}</div>
+    </div>
+    <div class="dash-card" style="border-top: 3px solid #f59e0b;">
+        <div style="font-size: 12px; color: var(--dash-text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Partiellement payées</div>
+        <div style="font-size: 28px; font-weight: 800; color: #f59e0b;">{{ stats.partielles }}</div>
+    </div>
+    <div class="dash-card" style="border-top: 3px solid var(--dash-success);">
+        <div style="font-size: 12px; color: var(--dash-text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Payées</div>
+        <div style="font-size: 28px; font-weight: 800; color: var(--dash-success);">{{ stats.payees }}</div>
+    </div>
+</div>
+
+<!-- Résumé financier -->
+<div class="dash-panel" style="margin-bottom: 24px;">
+    <div class="dash-panel-header">
+        <h2 class="dash-panel-title">Résumé Financier</h2>
+    </div>
+    <div style="display: flex; gap: 30px; flex-wrap: wrap; padding: 10px 0;">
+        <div>
+            <div style="font-size: 12px; color: var(--dash-text-muted); text-transform: uppercase; font-weight: 700;">Montant total facturé</div>
+            <div style="font-size: 22px; font-weight: 800; color: var(--dash-primary);">{{ stats.montant_total|floatformat:0 }} FCFA</div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: var(--dash-text-muted); text-transform: uppercase; font-weight: 700;">Montant perçu</div>
+            <div style="font-size: 22px; font-weight: 800; color: var(--dash-success);">{{ stats.montant_percu|floatformat:0 }} FCFA</div>
+        </div>
+        <div style="margin-left: auto;">
+            <a href="{% url 'admin_soldes_clients' %}" class="dash-btn dash-btn-primary" style="padding: 10px 20px; background: linear-gradient(135deg, #10b981, #059669);">
+                Voir le Bilan par Client →
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filtres -->
+<div class="dash-panel" style="margin-bottom: 24px;">
+    <form method="get" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;">
+        <div>
+            <label style="font-size: 12px; font-weight: 600; color: var(--dash-text-muted); display: block; margin-bottom: 4px;">Statut</label>
+            <select name="statut" style="padding: 8px 12px; border: 1px solid var(--dash-border); border-radius: 8px; background: var(--dash-bg); color: var(--dash-text-main); font-size: 14px;">
+                <option value="">Tous les statuts</option>
+                {% for val, label in statut_choices %}
+                <option value="{{ val }}" {% if statut_filter == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label style="font-size: 12px; font-weight: 600; color: var(--dash-text-muted); display: block; margin-bottom: 4px;">Client</label>
+            <input type="text" name="client" value="{{ client_filter }}" placeholder="Nom du client..."
+                style="padding: 8px 12px; border: 1px solid var(--dash-border); border-radius: 8px; background: var(--dash-bg); color: var(--dash-text-main); font-size: 14px;">
+        </div>
+        <button type="submit" class="dash-btn dash-btn-primary" style="padding: 9px 18px;">Filtrer</button>
+        {% if statut_filter or client_filter %}
+        <a href="{% url 'admin_factures' %}" class="dash-btn dash-btn-outline" style="padding: 9px 18px;">Réinitialiser</a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Table des factures -->
+<div class="dash-panel">
+    <div class="dash-panel-header">
+        <h2 class="dash-panel-title">{{ stats.total }} Facture{% if stats.total > 1 %}s{% endif %}</h2>
+    </div>
+
+    {% if factures %}
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--dash-border);">
+                    <th style="padding: 12px 10px; text-align: left; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">N° Facture</th>
+                    <th style="padding: 12px 10px; text-align: left; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Client</th>
+                    <th style="padding: 12px 10px; text-align: left; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Date</th>
+                    <th style="padding: 12px 10px; text-align: left; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Échéance</th>
+                    <th style="padding: 12px 10px; text-align: right; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Montant TTC</th>
+                    <th style="padding: 12px 10px; text-align: right; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Payé</th>
+                    <th style="padding: 12px 10px; text-align: center; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Statut</th>
+                    <th style="padding: 12px 10px; text-align: center; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for facture in factures %}
+                <tr style="border-bottom: 1px solid var(--dash-border); transition: background 0.15s;" onmouseover="this.style.background='var(--dash-bg)'" onmouseout="this.style.background=''">
+                    <td style="padding: 14px 10px; font-weight: 700; font-family: monospace; color: var(--dash-primary);">{{ facture.numero }}</td>
+                    <td style="padding: 14px 10px;">
+                        <div style="font-weight: 600;">{{ facture.client.get_full_name|default:facture.client.username }}</div>
+                        <div style="font-size: 12px; color: var(--dash-text-muted);">{{ facture.client.email }}</div>
+                    </td>
+                    <td style="padding: 14px 10px; font-size: 13px; color: var(--dash-text-muted);">{{ facture.date_emission|date:"d/m/Y" }}</td>
+                    <td style="padding: 14px 10px; font-size: 13px; color: {% if facture.statut == 'emise' %}var(--dash-warning){% else %}var(--dash-text-muted){% endif %}; font-weight: {% if facture.statut == 'emise' %}700{% else %}400{% endif %};">
+                        {{ facture.date_echeance|date:"d/m/Y" }}
+                    </td>
+                    <td style="padding: 14px 10px; text-align: right; font-weight: 700;">{{ facture.montant_ttc|floatformat:0 }} FCFA</td>
+                    <td style="padding: 14px 10px; text-align: right; font-size: 13px; color: var(--dash-success);">{{ facture.montant_paye|floatformat:0 }} FCFA</td>
+                    <td style="padding: 14px 10px; text-align: center;">
+                        {% if facture.statut == 'brouillon' %}
+                            <span style="background: rgba(148,163,184,0.15); color: #94a3b8; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Brouillon</span>
+                        {% elif facture.statut == 'emise' %}
+                            <span style="background: rgba(59,130,246,0.15); color: var(--dash-primary); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Émise</span>
+                        {% elif facture.statut == 'payee' %}
+                            <span style="background: rgba(16,185,129,0.15); color: var(--dash-success); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">✓ Payée</span>
+                        {% elif facture.statut == 'partiellement_payee' %}
+                            <span style="background: rgba(245,158,11,0.15); color: #f59e0b; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Partielle</span>
+                        {% elif facture.statut == 'annulee' %}
+                            <span style="background: rgba(239,68,68,0.15); color: var(--dash-danger); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Annulée</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 14px 10px; text-align: center;">
+                        <a href="{% url 'admin_facture_detail' facture.id %}" class="dash-btn dash-btn-primary" style="padding: 6px 14px; font-size: 13px;">
+                            <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">edit</span> Gérer
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="padding: 50px; text-align: center; color: var(--dash-text-muted);">
+        <span class="material-symbols-outlined" style="font-size: 48px; opacity: 0.3;">receipt_long</span>
+        <p style="margin-top: 10px;">Aucune facture trouvée.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

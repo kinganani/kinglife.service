@@ -1,0 +1,200 @@
+{% extends base_template %}
+{% load static %}
+
+{% block title %}Facture {{ facture.numero }} - KINGLIFE Admin{% endblock %}
+{% block page_title %}Facture {{ facture.numero }} 🧾{% endblock %}
+{% block page_subtitle %}Client : {{ facture.client.get_full_name|default:facture.client.username }}{% endblock %}
+
+{% block dashboard_content %}
+
+<!-- Barre d'actions rapides -->
+<div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; align-items: center;">
+    <a href="{% url 'admin_factures' %}" class="dash-btn dash-btn-outline" style="padding: 8px 16px;">
+        ← Retour à la liste
+    </a>
+    
+    <a href="{% url 'admin_facture_liste_achats' facture.id %}" target="_blank" class="dash-btn" style="padding: 8px 16px; background: #f8fafc; border: 1px solid var(--dash-border); border-radius: 8px; font-weight: 600; color: var(--dash-text-main); display: flex; align-items: center; gap: 5px;">
+        <span class="material-symbols-outlined" style="font-size: 18px;">print</span> Liste d'achats (Marché)
+    </a>
+
+    <div style="flex-grow: 1;"></div>
+    
+    {% if facture.statut == 'brouillon' %}
+    <form method="post" action="{% url 'admin_facture_paiement' facture.id %}" style="margin: 0;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="emettre">
+        <button type="submit" class="dash-btn dash-btn-primary" style="background: var(--dash-primary); padding: 8px 16px;">
+            <span class="material-symbols-outlined" style="font-size: 18px; margin-right: 5px;">send</span> Émettre la facture
+        </button>
+    </form>
+    {% elif facture.statut in 'emise,partiellement_payee' %}
+    <button onclick="document.getElementById('modal-paiement').style.display='flex'" class="dash-btn" style="background: var(--dash-success); color: white; padding: 8px 16px; border: none; font-weight: 600;">
+        <span class="material-symbols-outlined" style="font-size: 18px; margin-right: 5px;">payments</span> Enregistrer un paiement
+    </button>
+    {% endif %}
+</div>
+
+<div class="dash-grid" style="grid-template-columns: 2fr 1fr; align-items: start;">
+    
+    <!-- Détail des articles (Lignes) -->
+    <div class="dash-panel">
+        <div class="dash-panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="dash-panel-title">Lignes de la facture</h2>
+            {% if facture.statut == 'brouillon' %}
+            <span style="font-size: 12px; color: var(--dash-primary); background: rgba(59,130,246,0.1); padding: 4px 8px; border-radius: 4px;">
+                Mode Édition (Quantités et Prix modifiables)
+            </span>
+            {% endif %}
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--dash-border);">
+                        <th style="padding: 10px; text-align: left; font-size: 12px; color: var(--dash-text-muted);">Article / Service</th>
+                        <th style="padding: 10px; text-align: center; font-size: 12px; color: var(--dash-text-muted);">Unité</th>
+                        <th style="padding: 10px; text-align: center; font-size: 12px; color: var(--dash-text-muted);">Qté Demandée</th>
+                        <th style="padding: 10px; text-align: center; font-size: 12px; color: var(--dash-text-muted); width: 120px;">Qté Livrée</th>
+                        <th style="padding: 10px; text-align: right; font-size: 12px; color: var(--dash-text-muted); width: 140px;">Prix Unitaire</th>
+                        <th style="padding: 10px; text-align: right; font-size: 12px; color: var(--dash-text-muted);">Total Ligne</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ligne in facture.lignes.all %}
+                    <tr style="border-bottom: 1px solid var(--dash-border);">
+                        <td style="padding: 12px 10px; font-weight: 500;">
+                            {{ ligne.description }}
+                            {% if ligne.article_catalogue %}
+                            <br><small style="color: var(--dash-text-muted);">Catalogue</small>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 12px 10px; text-align: center; color: var(--dash-text-muted);">{{ ligne.unite }}</td>
+                        <td style="padding: 12px 10px; text-align: center;">{{ ligne.quantite_demandee }}</td>
+                        
+                        {% if facture.statut == 'brouillon' %}
+                        <!-- Formulaire pour modifier la ligne -->
+                        <form method="post" action="{% url 'admin_facture_detail' facture.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="ligne_id" value="{{ ligne.id }}">
+                            <td style="padding: 12px 10px; text-align: center;">
+                                <input type="number" step="0.01" name="quantite_livree" value="{{ ligne.quantite_livree|stringformat:'s' }}" 
+                                    style="width: 80px; text-align: center; padding: 6px; border: 1px solid var(--dash-primary); border-radius: 4px; font-weight: bold;">
+                            </td>
+                            <td style="padding: 12px 10px; text-align: right;">
+                                <input type="number" step="0.01" name="prix_unitaire" value="{{ ligne.prix_unitaire|stringformat:'s' }}" 
+                                    style="width: 100px; text-align: right; padding: 6px; border: 1px solid var(--dash-border); border-radius: 4px;">
+                            </td>
+                            <td style="padding: 12px 10px; text-align: right; font-weight: 700;">
+                                {{ ligne.get_total|floatformat:0 }}
+                                <button type="submit" style="background: none; border: none; color: var(--dash-primary); cursor: pointer; margin-left: 5px; vertical-align: middle;" title="Mettre à jour">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                                </button>
+                            </td>
+                        </form>
+                        {% else %}
+                        <!-- Affichage statique si facture émise/payée -->
+                        <td style="padding: 12px 10px; text-align: center; font-weight: bold;">{{ ligne.quantite_livree }}</td>
+                        <td style="padding: 12px 10px; text-align: right;">{{ ligne.prix_unitaire|floatformat:0 }} FCFA</td>
+                        <td style="padding: 12px 10px; text-align: right; font-weight: 700;">{{ ligne.get_total|floatformat:0 }} FCFA</td>
+                        {% endif %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 20px; color: var(--dash-text-muted);">Aucune ligne associée à cette facture.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 2px dashed var(--dash-border); text-align: right;">
+            <div style="font-size: 14px; color: var(--dash-text-muted); margin-bottom: 5px;">Total HT : {{ facture.montant_ht|floatformat:0 }} FCFA</div>
+            <div style="font-size: 14px; color: var(--dash-text-muted); margin-bottom: 5px;">TVA ({{ facture.tva_taux }}%) : {{ facture.montant_tva|floatformat:0 }} FCFA</div>
+            <div style="font-size: 22px; font-weight: 800; color: var(--dash-primary); margin-top: 10px;">Total TTC : {{ facture.montant_ttc|floatformat:0 }} FCFA</div>
+        </div>
+    </div>
+
+    <!-- Informations Générales et Paiements -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div class="dash-panel">
+            <div class="dash-panel-header">
+                <h2 class="dash-panel-title">Statut & Infos</h2>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <div style="font-size: 12px; color: var(--dash-text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Statut Actuel</div>
+                {% if facture.statut == 'brouillon' %}
+                    <span style="background: rgba(148,163,184,0.15); color: #94a3b8; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 700; display: inline-block;">Brouillon</span>
+                {% elif facture.statut == 'emise' %}
+                    <span style="background: rgba(59,130,246,0.15); color: var(--dash-primary); padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 700; display: inline-block;">Émise (En attente)</span>
+                {% elif facture.statut == 'partiellement_payee' %}
+                    <span style="background: rgba(245,158,11,0.15); color: #f59e0b; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 700; display: inline-block;">Partiellement Payée</span>
+                {% elif facture.statut == 'payee' %}
+                    <span style="background: rgba(16,185,129,0.15); color: var(--dash-success); padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 700; display: inline-block;">✓ Intégralement Payée</span>
+                {% endif %}
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <div style="font-size: 12px; color: var(--dash-text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Client</div>
+                <div style="font-weight: 600;">{{ facture.client.get_full_name|default:facture.client.username }}</div>
+                <div style="font-size: 13px; color: var(--dash-text-muted);">{{ facture.client.email }}</div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <div style="font-size: 12px; color: var(--dash-text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Dates</div>
+                <div style="font-size: 14px;"><strong>Émission :</strong> {{ facture.date_emission|date:"d M Y" }}</div>
+                <div style="font-size: 14px;"><strong>Échéance :</strong> <span style="{% if facture.est_en_retard %}color: var(--dash-danger); font-weight: bold;{% endif %}">{{ facture.date_echeance|date:"d M Y" }}</span></div>
+            </div>
+            
+            {% if facture.prestation %}
+            <div style="margin-bottom: 15px;">
+                <div style="font-size: 12px; color: var(--dash-text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">Prestation Liée</div>
+                <a href="#" style="font-size: 14px; color: var(--dash-primary); text-decoration: none;">{{ facture.prestation.titre }}</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="dash-panel" style="border: 2px solid {% if facture.reste_a_payer == 0 %}var(--dash-success){% else %}var(--dash-warning){% endif %};">
+            <div class="dash-panel-header">
+                <h2 class="dash-panel-title">Suivi des Paiements</h2>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--dash-border);">
+                <div style="font-size: 13px; color: var(--dash-text-muted);">Déjà payé :</div>
+                <div style="font-weight: 700; color: var(--dash-success);">{{ facture.montant_paye|floatformat:0 }} FCFA</div>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <div style="font-size: 14px; font-weight: 600;">Reste à payer :</div>
+                <div style="font-size: 20px; font-weight: 800; color: {% if facture.reste_a_payer == 0 %}var(--dash-success){% else %}var(--dash-danger){% endif %};">{{ facture.reste_a_payer|floatformat:0 }} FCFA</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'enregistrement de paiement -->
+<div id="modal-paiement" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: var(--dash-bg); padding: 30px; border-radius: 12px; width: 400px; max-width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+        <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 18px; display: flex; justify-content: space-between;">
+            Enregistrer un paiement
+            <span class="material-symbols-outlined" style="cursor: pointer; color: var(--dash-text-muted);" onclick="document.getElementById('modal-paiement').style.display='none'">close</span>
+        </h3>
+        
+        <form method="post" action="{% url 'admin_facture_paiement' facture.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="payer">
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px;">Montant du paiement (FCFA)</label>
+                <input type="number" step="0.01" name="montant" max="{{ facture.reste_a_payer|stringformat:'s' }}" value="{{ facture.reste_a_payer|stringformat:'s' }}" required
+                    style="width: 100%; padding: 10px; border: 1px solid var(--dash-border); border-radius: 6px; font-size: 16px; font-weight: bold;">
+                <small style="color: var(--dash-text-muted);">Max: {{ facture.reste_a_payer|floatformat:0 }} FCFA</small>
+            </div>
+            
+            <button type="submit" class="dash-btn dash-btn-primary" style="width: 100%; justify-content: center; padding: 12px; background: var(--dash-success); border: none;">
+                Valider le paiement
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

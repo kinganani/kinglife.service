@@ -1,0 +1,94 @@
+{% extends base_template %}
+{% load static %}
+
+{% block title %}Bilan & Soldes Clients - KINGLIFE Admin{% endblock %}
+{% block page_title %}Bilan & Soldes Clients 💰{% endblock %}
+{% block page_subtitle %}Suivi comptable global et état des dettes par client.{% endblock %}
+
+{% block dashboard_content %}
+
+<!-- Résumé Global Entreprise -->
+<div class="dash-grid" style="margin-bottom: 24px;">
+    <div class="dash-card" style="border-top: 3px solid var(--dash-text-muted);">
+        <div style="font-size: 12px; color: var(--dash-text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Total Facturé (TTC)</div>
+        <div style="font-size: 26px; font-weight: 800;">{{ total_entreprise_facture|floatformat:0 }} <span style="font-size:16px;">FCFA</span></div>
+    </div>
+    <div class="dash-card" style="border-top: 3px solid var(--dash-success);">
+        <div style="font-size: 12px; color: var(--dash-text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Total Encaissé</div>
+        <div style="font-size: 26px; font-weight: 800; color: var(--dash-success);">{{ total_entreprise_percu|floatformat:0 }} <span style="font-size:16px;">FCFA</span></div>
+    </div>
+    <div class="dash-card" style="border-top: 3px solid var(--dash-danger); background: rgba(239, 68, 68, 0.02);">
+        <div style="font-size: 12px; color: var(--dash-danger); text-transform: uppercase; font-weight: 800; margin-bottom: 4px;">Reste à Recouvrer</div>
+        <div style="font-size: 28px; font-weight: 900; color: var(--dash-danger);">{{ total_entreprise_restant|floatformat:0 }} <span style="font-size:16px;">FCFA</span></div>
+    </div>
+</div>
+
+<!-- Table des Soldes par Client -->
+<div class="dash-panel">
+    <div class="dash-panel-header">
+        <h2 class="dash-panel-title">Balance par Client</h2>
+    </div>
+
+    {% if soldes_clients %}
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--dash-border);">
+                    <th style="padding: 12px 10px; text-align: left; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Client</th>
+                    <th style="padding: 12px 10px; text-align: center; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Factures</th>
+                    <th style="padding: 12px 10px; text-align: right; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Total Facturé</th>
+                    <th style="padding: 12px 10px; text-align: right; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Déjà Payé</th>
+                    <th style="padding: 12px 10px; text-align: right; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Solde (Dette)</th>
+                    <th style="padding: 12px 10px; text-align: center; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Progression</th>
+                    <th style="padding: 12px 10px; text-align: center; font-size: 12px; text-transform: uppercase; color: var(--dash-text-muted); font-weight: 700;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in soldes_clients %}
+                <tr style="border-bottom: 1px solid var(--dash-border); transition: background 0.15s; {% if item.solde_restant > 0 %}background: rgba(239, 68, 68, 0.01);{% endif %}" onmouseover="this.style.background='var(--dash-bg)'" onmouseout="this.style.background='{% if item.solde_restant > 0 %}rgba(239, 68, 68, 0.01){% else %}{% endif %}'">
+                    <td style="padding: 14px 10px;">
+                        <div style="font-weight: 700;">{{ item.client.get_full_name|default:item.client.username }}</div>
+                        <div style="font-size: 12px; color: var(--dash-text-muted);">{{ item.client.email }}</div>
+                    </td>
+                    <td style="padding: 14px 10px; text-align: center;">
+                        <span style="font-weight: 700;">{{ item.nombre_factures }}</span>
+                        {% if item.factures_impayees > 0 %}
+                        <span style="display:inline-block; background: var(--dash-danger); color: white; border-radius: 10px; padding: 2px 6px; font-size: 10px; font-weight: bold; margin-left: 5px;" title="Factures non soldées">{{ item.factures_impayees }} en attente</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 14px 10px; text-align: right; font-weight: 600; color: var(--dash-text-main);">
+                        {{ item.montant_total|floatformat:0 }} FCFA
+                    </td>
+                    <td style="padding: 14px 10px; text-align: right; font-weight: 600; color: var(--dash-success);">
+                        {{ item.montant_paye|floatformat:0 }} FCFA
+                    </td>
+                    <td style="padding: 14px 10px; text-align: right; font-weight: 800; font-size: 15px; color: {% if item.solde_restant > 0 %}var(--dash-danger){% else %}var(--dash-text-muted){% endif %};">
+                        {{ item.solde_restant|floatformat:0 }} FCFA
+                    </td>
+                    <td style="padding: 14px 10px; vertical-align: middle;">
+                        <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+                            <div style="width: 100px; height: 8px; background: rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden;">
+                                <div style="height: 100%; width: {{ item.pourcentage_paye }}%; background: {% if item.pourcentage_paye == 100 %}var(--dash-success){% elif item.pourcentage_paye > 50 %}var(--dash-primary){% else %}var(--dash-warning){% endif %}; border-radius: 4px;"></div>
+                            </div>
+                            <span style="font-size: 11px; font-weight: 700; color: var(--dash-text-muted); width: 30px;">{{ item.pourcentage_paye }}%</span>
+                        </div>
+                    </td>
+                    <td style="padding: 14px 10px; text-align: center;">
+                        <a href="{% url 'admin_factures' %}?client={{ item.client.username }}" class="dash-btn dash-btn-outline" style="padding: 6px 12px; font-size: 12px;">
+                            Voir factures
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="padding: 50px; text-align: center; color: var(--dash-text-muted);">
+        <span class="material-symbols-outlined" style="font-size: 48px; opacity: 0.3;">account_balance</span>
+        <p style="margin-top: 10px;">Aucune donnée financière pour le moment.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

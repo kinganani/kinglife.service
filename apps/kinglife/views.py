@@ -861,3 +861,198 @@ def marquer_notifications_lues(request):
         
     Notification.objects.filter(utilisateur=request.user, lue=False).update(lue=True)
     return JsonResponse({'success': True})
+
+@login_required
+def admin_factures(request):
+    """Liste de toutes les factures (pour le staff)."""
+    if not (request.user.is_staff or request.user.is_superuser):
+        messages.error(request, 'Accès refusé.')
+        return redirect('/')
+
+    from decimal import Decimal
+    from django.db.models import Sum
+
+    statut_filter = request.GET.get('statut', '')
+    client_filter = request.GET.get('client', '')
+
+    factures = Facture.objects.all().order_by('-date_emission')
+    
+    if statut_filter:
+        factures = factures.filter(statut=statut_filter)
+    if client_filter:
+        factures = factures.filter(client__username__icontains=client_filter)
+
+    stats = {
+        'total': factures.count(),
+        'brouillon': factures.filter(statut='brouillon').count(),
+        'emises': factures.filter(statut='emise').count(),
+        'partielles': factures.filter(statut='partiellement_payee').count(),
+        'payees': factures.filter(statut='payee').count(),
+        'montant_total': factures.aggregate(Sum('montant_ttc'))['montant_ttc__sum'] or Decimal('0'),
+        'montant_percu': factures.aggregate(Sum('montant_paye'))['montant_paye__sum'] or Decimal('0'),
+    }
+
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    
+    return render(request, 'kinglife/admin_factures.html', {
+        'factures': factures,
+        'stats': stats,
+        'statut_filter': statut_filter,
+        'client_filter': client_filter,
+        'statut_choices': Facture.STATUT_CHOICES,
+        'base_template': base_template,
+    })
+
+@login_required
+def admin_facture_detail(request, facture_id):
+    """Vue de détail et d'édition d'une facture."""
+    if not (request.user.is_staff or request.user.is_superuser):
+        messages.error(request, 'Accès refusé.')
+        return redirect('/')
+
+    from .models import Facture, LigneFacture
+    facture = get_object_or_404(Facture, id=facture_id)
+    
+    if request.method == 'POST' and facture.statut == 'brouillon':
+        ligne_id = request.POST.get('ligne_id')
+        quantite_livree = request.POST.get('quantite_livree')
+        prix_unitaire = request.POST.get('prix_unitaire')
+        
+        if ligne_id and quantite_livree and prix_unitaire:
+            try:
+                ligne = get_object_or_404(LigneFacture, id=ligne_id, facture=facture)
+                ligne.quantite_livree = Decimal(quantite_livree)
+                ligne.prix_unitaire = Decimal(prix_unitaire)
+                ligne.save()
+                
+                # Mettre à jour les totaux de la facture
+                facture.mettre_a_jour_totaux()
+                
+                messages.success(request, f"Ligne '{ligne.description}' mise à jour.")
+            except Exception as e:
+                messages.error(request, f"Erreur de mise à jour: {e}")
+        
+        return redirect('admin_facture_detail', facture_id=facture.id)
+
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    return render(request, 'kinglife/admin_facture_detail.html', {
+        'facture': facture,
+        'base_template': base_template,
+    })
+
+@login_required
+def admin_facture_paiement(request, facture_id):
+    """Permet d'émettre la facture ou d'enregistrer un paiement."""
+    if not (request.user.is_staff or request.user.is_superuser):
+        return redirect('/')
+
+    facture = get_object_or_404(Facture, id=facture_id)
+    
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        
+        if action == 'emettre' and facture.statut == 'brouillon':
+            facture.statut = 'emise'
+            facture.save()
+            
+            from .models import Notification
+            Notification.objects.create(
+                utilisateur=facture.client,
+                titre="Nouvelle Facture",
+                message=f"La facture {facture.numero} a été émise et est disponible sur votre espace.",
+                type_notif='facture'
+            )
+            
+            messages.success(request, "Facture émise avec succès. Le client a été notifié.")
+            
+        elif action == 'payer' and facture.statut in ['emise', 'partiellement_payee']:
+            montant = request.POST.get('montant')
+            try:
+                montant_decimal = Decimal(montant)
+                if montant_decimal > 0:
+                    facture.enregistrer_paiement(montant_decimal)
+                    messages.success(request, f"Paiement de {montant_decimal} FCFA enregistré.")
+                else:
+                    messages.error(request, "Le montant doit être positif.")
+            except:
+                messages.error(request, "Montant invalide.")
+
+    return redirect('admin_facture_detail', facture_id=facture.id)
+
+@login_required
+def admin_facture_liste_achats(request, facture_id):
+    """Génère une vue imprimable de la liste d'achats pour aller au marché (sans prix de vente)."""
+    if not (request.user.is_staff or request.user.is_superuser):
+        messages.error(request, 'Accès refusé.')
+        return redirect('/')
+
+    facture = get_object_or_404(Facture, id=facture_id)
+    lignes = facture.lignes.all()
+
+    return render(request, 'kinglife/facture_liste_achats.html', {
+        'facture': facture,
+        'lignes': lignes,
+    })
+
+
+@login_required
+def admin_soldes_clients(request):
+    """Vue comptable : affiche le solde financier global par client."""
+    if not (request.user.is_staff or request.user.is_superuser):
+        messages.error(request, 'Accès refusé.')
+        return redirect('/')
+
+    from django.contrib.auth.models import User
+    from django.db.models import Sum
+    from decimal import Decimal
+
+    # On récupère tous les clients qui ont au moins une facture
+    clients_avec_factures = User.objects.filter(factures__isnull=False).distinct().order_by('username')
+    
+    soldes_clients = []
+    total_entreprise_facture = Decimal('0')
+    total_entreprise_percu = Decimal('0')
+    total_entreprise_restant = Decimal('0')
+
+    for client in clients_avec_factures:
+        # On somme uniquement les factures émises, partiellement payées ou payées
+        factures = Facture.objects.filter(
+            client=client,
+            statut__in=['emise', 'partiellement_payee', 'payee']
+        )
+        
+        montant_total = factures.aggregate(s=Sum('montant_ttc'))['s'] or Decimal('0')
+        montant_paye = factures.aggregate(s=Sum('montant_paye'))['s'] or Decimal('0')
+        solde_restant = montant_total - montant_paye
+
+        if montant_total > 0:
+            pourcentage_paye = (montant_paye / montant_total) * 100
+        else:
+            pourcentage_paye = 0
+
+        soldes_clients.append({
+            'client': client,
+            'nombre_factures': factures.count(),
+            'factures_impayees': factures.filter(statut__in=['emise', 'partiellement_payee']).count(),
+            'montant_total': montant_total,
+            'montant_paye': montant_paye,
+            'solde_restant': solde_restant,
+            'pourcentage_paye': min(100, int(pourcentage_paye)),
+        })
+
+        total_entreprise_facture += montant_total
+        total_entreprise_percu += montant_paye
+        total_entreprise_restant += solde_restant
+
+    # Trier par solde restant décroissant (ceux qui doivent le plus d'argent en premier)
+    soldes_clients = sorted(soldes_clients, key=lambda x: x['solde_restant'], reverse=True)
+
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+
+    return render(request, 'kinglife/admin_soldes.html', {
+        'soldes_clients': soldes_clients,
+        'total_entreprise_facture': total_entreprise_facture,
+        'total_entreprise_percu': total_entreprise_percu,
+        'total_entreprise_restant': total_entreprise_restant,
+        'base_template': base_template,
+    })
