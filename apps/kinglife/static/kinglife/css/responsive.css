@@ -4,15 +4,33 @@
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   DESKTOP & LARGE TABLETS (max-width: 1200px)
+   DESKTOP & LARGE TABLETS (max-width: 1250px)
    -------------------------------------------------------------------------- */
-@media (max-width: 1200px) {
+@media (max-width: 1250px) {
     .container {
         padding: 0 24px;
     }
 
     .business-cards-grid {
         gap: 20px;
+    }
+    
+    /* Compression de la navbar pour éviter qu'elle passe sur 2 lignes quand l'utilisateur est connecté */
+    .nav-menu {
+        gap: 15px !important;
+    }
+    
+    .nav-link {
+        font-size: 14px !important;
+    }
+    
+    .header-actions {
+        gap: 8px !important;
+    }
+    
+    .header-btn {
+        padding: 8px 12px !important;
+        font-size: 13px !important;
     }
 }
 
