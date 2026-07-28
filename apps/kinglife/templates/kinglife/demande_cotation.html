@@ -1,50 +1,69 @@
 {% extends 'kinglife/base.html' %}
 {% load static %}
 
-{% block title %}Demande de Cotation - KINGLIFE SHAL U{% endblock %}
+{% block title %}Mon Panier de Cotation - KINGLIFE SHAL U{% endblock %}
 
 {% block content %}
 <!-- Page Hero Banner -->
 <section class="page-hero">
     <div class="container">
-        <h1>Demande de Cotation / Devis</h1>
-        <p>Sélectionnez vos besoins maritimes, articles et prestations pour recevoir une cotation sur-mesure</p>
+        <h1>Mon Panier de Cotation</h1>
+        <p>Vérifiez vos articles, ajustez les quantités et validez votre demande de devis</p>
     </div>
 </section>
 
-<!-- Demande Form Section -->
+<!-- Cart Section -->
 <section style="padding: 90px 0; background-color: var(--color-light-bg);">
     <div class="container">
         <div style="max-width: 900px; margin: 0 auto; background: var(--color-white); padding: 50px; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md);">
-            <form method="post">
-                {% csrf_token %}
-                <h2 style="font-size: 24px; color: var(--color-text-dark); margin-bottom: 24px; font-family: var(--font-heading);">1. Sélectionner les produits / prestations</h2>
-                
-                <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px;">
-                    {% for article in articles %}
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--color-light-bg); border-radius: var(--border-radius-sm); border: 1px solid var(--color-border-light);">
-                        <label style="display: flex; align-items: center; gap: 12px; font-weight: 600; cursor: pointer; color: var(--color-text-dark);">
-                            <input type="checkbox" name="article_ids" value="{{ article.id }}">
-                            {{ article.nom }} <span style="font-size: 13px; color: var(--color-text-muted); font-weight: normal;">({{ article.categorie.nom }})</span>
-                        </label>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 13px; color: var(--color-text-muted);">Qté :</span>
-                            <input type="number" name="quantite_{{ article.id }}" value="1" min="1" class="form-v2-input" style="width: 80px; padding: 6px 10px;">
+            {% if not articles_in_cart %}
+                <div style="text-align: center; padding: 40px 0;">
+                    <h2 style="font-size: 24px; color: var(--color-text-dark); margin-bottom: 16px;">Votre panier est vide</h2>
+                    <p style="color: var(--color-text-muted); margin-bottom: 24px;">Vous n'avez pas encore sélectionné d'articles pour votre cotation.</p>
+                    <a href="{% url 'catalogue' %}" class="btn-primary">Retourner au catalogue</a>
+                </div>
+            {% else %}
+                <form method="post">
+                    {% csrf_token %}
+                    <h2 style="font-size: 24px; color: var(--color-text-dark); margin-bottom: 24px; font-family: var(--font-heading);">1. Vos articles sélectionnés</h2>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px;">
+                        {% for item in articles_in_cart %}
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--color-light-bg); border-radius: var(--border-radius-sm); border: 1px solid var(--color-border-light);">
+                            <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
+                                {% if item.article.image %}
+                                    <img src="{{ item.article.image.url }}" alt="{{ item.article.nom }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                                {% else %}
+                                    <div style="width: 60px; height: 60px; background: #e2e8f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #64748b;">Pas d'image</div>
+                                {% endif %}
+                                <div>
+                                    <h4 style="margin: 0; font-size: 16px; color: var(--color-text-dark);">{{ item.article.nom }}</h4>
+                                    <span style="font-size: 12px; color: var(--color-text-muted);">{{ item.article.categorie.nom }} • Unité: {{ item.article.unite }}</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 20px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label style="font-size: 13px; color: var(--color-text-muted); margin: 0;">Qté :</label>
+                                    <input type="number" name="quantite_{{ item.article.id }}" value="{{ item.quantite }}" min="1" class="form-v2-input" style="width: 80px; padding: 8px; text-align: center;">
+                                </div>
+                                <a href="{% url 'remove_from_cart' item.article.id %}" style="color: #dc2626; font-size: 13px; font-weight: 600; text-decoration: none;" onclick="return confirm('Retirer cet article ?');">Supprimer</a>
+                            </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
 
-                <h2 style="font-size: 24px; color: var(--color-text-dark); margin-bottom: 16px; font-family: var(--font-heading);">2. Remarques & Spécifications Navire / Escale</h2>
-                <div class="form-v2-group full-width" style="margin-bottom: 30px;">
-                    <textarea name="remarques" class="form-v2-input" rows="5" placeholder="Nom du navire, IMO, port d'escale, date d'arrivée souhaitée ou précisions sur l'avitaillement..."></textarea>
-                </div>
+                    <h2 style="font-size: 24px; color: var(--color-text-dark); margin-bottom: 16px; font-family: var(--font-heading);">2. Informations Navire / Escale</h2>
+                    <div class="form-v2-group full-width" style="margin-bottom: 30px;">
+                        <textarea name="remarques" class="form-v2-input" rows="5" placeholder="Nom du navire, IMO, port d'escale, date d'arrivée souhaitée ou précisions importantes..." required></textarea>
+                        <small style="color: var(--color-text-muted); margin-top: 8px; display: block;">Merci de préciser les informations du navire pour que nous puissions établir le devis correctement.</small>
+                    </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <a href="/catalogue/" class="btn-outline">← Parcourir le catalogue</a>
-                    <button type="submit" class="btn-primary">Transmettre la demande de cotation →</button>
-                </div>
-            </form>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                        <a href="{% url 'catalogue' %}" class="btn-outline">← Continuer vos achats</a>
+                        <button type="submit" class="btn-primary" style="padding: 16px 32px; font-size: 16px;">Demander le devis officiel →</button>
+                    </div>
+                </form>
+            {% endif %}
         </div>
     </div>
 </section>

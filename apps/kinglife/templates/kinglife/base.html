@@ -45,6 +45,12 @@
                     {% if user.is_staff or user.is_superuser %}
                         <a href="/admin/" class="header-btn">Espace Admin</a>
                     {% else %}
+                        <a href="{% url 'demande_cotation' %}" class="header-btn" style="position: relative; margin-right: 10px;">
+                            Panier 
+                            {% if request.session.cart %}
+                                <span style="background: #dc2626; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; position: absolute; top: -5px; right: -10px; font-weight: bold;">{{ request.session.cart|length }}</span>
+                            {% endif %}
+                        </a>
                         <a href="/dashboard/" class="header-btn">Mon Espace</a>
                     {% endif %}
                     <a href="/logout/" class="header-btn">Déconnexion</a>

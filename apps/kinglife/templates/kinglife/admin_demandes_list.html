@@ -1,0 +1,100 @@
+{% extends 'kinglife/base.html' %}
+{% load static %}
+
+{% block title %}Gestion des Demandes de Cotation - Admin{% endblock %}
+
+{% block content %}
+<section style="padding: 90px 0; background-color: var(--color-light-bg); min-height: calc(100vh - 80px);">
+    <div class="container">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h1 style="font-size: 28px; color: var(--color-ocean-dark);">Interface de Tarification (Admin)</h1>
+            <a href="/admin/" class="btn-outline">Retour au Panel Django</a>
+        </div>
+
+        <!-- Demandes en attente -->
+        <div style="background: var(--color-white); padding: 30px; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-sm); margin-bottom: 40px;">
+            <h2 style="font-size: 20px; color: #d97706; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #d97706;"></span>
+                Demandes en Attente de Prix ({{ demandes_attente.count }})
+            </h2>
+            
+            {% if demandes_attente %}
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--color-light-bg); text-align: left;">
+                                <th style="padding: 12px; border-bottom: 2px solid var(--color-border-light);">ID</th>
+                                <th style="padding: 12px; border-bottom: 2px solid var(--color-border-light);">Client (Navire)</th>
+                                <th style="padding: 12px; border-bottom: 2px solid var(--color-border-light);">Date</th>
+                                <th style="padding: 12px; border-bottom: 2px solid var(--color-border-light);">Articles</th>
+                                <th style="padding: 12px; border-bottom: 2px solid var(--color-border-light);">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for demande in demandes_attente %}
+                            <tr style="border-bottom: 1px solid var(--color-border-light);">
+                                <td style="padding: 12px; font-weight: bold;">#{{ demande.id }}</td>
+                                <td style="padding: 12px;">{{ demande.client.first_name }} {{ demande.client.last_name }} <br><span style="font-size: 12px; color: var(--color-text-muted);">({{ demande.client.email }})</span></td>
+                                <td style="padding: 12px;">{{ demande.date_demande|date:"d/m/Y H:i" }}</td>
+                                <td style="padding: 12px;"><span style="background: var(--color-ocean-dark); color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">{{ demande.lignes.count }} ligne(s)</span></td>
+                                <td style="padding: 12px;">
+                                    <a href="{% url 'admin_tarifer_demande' demande.id %}" class="btn-primary" style="padding: 6px 12px; font-size: 13px;">Tarifer (Excel View) →</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p style="color: var(--color-text-muted); text-align: center; padding: 20px;">Aucune demande en attente.</p>
+            {% endif %}
+        </div>
+
+        <!-- Historique Récent -->
+        <div style="background: var(--color-white); padding: 30px; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-sm);">
+            <h2 style="font-size: 20px; color: var(--color-text-dark); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #10b981;"></span>
+                Historique Récent
+            </h2>
+            
+            {% if demandes_traitees %}
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--color-light-bg); text-align: left;">
+                                <th style="padding: 12px; border-bottom: 2px solid var(--color-border-light);">ID</th>
+                                <th style="padding: 12px; border-bottom: 2px solid var(--color-border-light);">Client</th>
+                                <th style="padding: 12px; border-bottom: 2px solid var(--color-border-light);">Statut</th>
+                                <th style="padding: 12px; border-bottom: 2px solid var(--color-border-light);">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for demande in demandes_traitees %}
+                            <tr style="border-bottom: 1px solid var(--color-border-light);">
+                                <td style="padding: 12px; font-weight: bold;">#{{ demande.id }}</td>
+                                <td style="padding: 12px;">{{ demande.client.first_name }}</td>
+                                <td style="padding: 12px;">
+                                    {% if demande.statut == 'acceptee' %}
+                                        <span style="color: #10b981; font-weight: bold;">Acceptée</span>
+                                    {% elif demande.statut == 'envoyee' %}
+                                        <span style="color: #3b82f6;">Envoyée au client</span>
+                                    {% else %}
+                                        <span>{{ demande.get_statut_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 12px;">
+                                    <a href="{% url 'admin_tarifer_demande' demande.id %}" class="btn-outline" style="padding: 4px 10px; font-size: 12px;">Revoir</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p style="color: var(--color-text-muted); text-align: center; padding: 20px;">Aucun historique récent.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

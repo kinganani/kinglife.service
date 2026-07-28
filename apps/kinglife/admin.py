@@ -60,3 +60,32 @@ class ContactAdmin(admin.ModelAdmin):
     list_editable = ['traite']
     date_hierarchy = 'date_envoi'
     readonly_fields = ['date_envoi']
+
+from .models import DemandeCotation, LigneCotation, Cotation, Prestation, Facture, Paiement
+
+class LigneCotationInline(admin.TabularInline):
+    model = LigneCotation
+    extra = 0
+
+@admin.register(DemandeCotation)
+class DemandeCotationAdmin(admin.ModelAdmin):
+    list_display = ['id', 'client', 'date_demande', 'statut']
+    list_filter = ['statut', 'date_demande']
+    inlines = [LigneCotationInline]
+
+@admin.register(Cotation)
+class CotationAdmin(admin.ModelAdmin):
+    list_display = ['numero', 'demande', 'montant_total', 'statut', 'date_creation']
+    list_filter = ['statut']
+
+@admin.register(Prestation)
+class PrestationAdmin(admin.ModelAdmin):
+    list_display = ['titre', 'client', 'statut', 'montant', 'date_debut']
+
+@admin.register(Facture)
+class FactureAdmin(admin.ModelAdmin):
+    list_display = ['numero', 'client', 'statut', 'montant_ttc', 'date_emission']
+
+@admin.register(Paiement)
+class PaiementAdmin(admin.ModelAdmin):
+    list_display = ['facture', 'montant', 'mode_paiement', 'date_paiement']

@@ -47,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
         prevBtn.addEventListener('click', () => {
             cardsGrid.scrollBy({ left: -300, behavior: 'smooth' });
         });
+    }
+
     // Mobile Navbar Toggle
     const mobileToggle = document.querySelector('.mobile-toggle');
     const navMenu = document.querySelector('.nav-menu');

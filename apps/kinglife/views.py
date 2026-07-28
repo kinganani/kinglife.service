@@ -128,24 +128,50 @@ def catalogue(request):
 
 
 @login_required
+def add_to_cart(request, article_id):
+    """Ajouter un article au panier (en session)"""
+    cart = request.session.get('cart', {})
+    article_id_str = str(article_id)
+    if article_id_str not in cart:
+        cart[article_id_str] = 1 # Quantité par défaut
+    else:
+        cart[article_id_str] += 1
+    request.session['cart'] = cart
+    messages.success(request, 'Article ajouté au panier de cotation.')
+    return redirect(request.META.get('HTTP_REFERER', 'catalogue'))
+
+@login_required
+def remove_from_cart(request, article_id):
+    """Retirer un article du panier"""
+    cart = request.session.get('cart', {})
+    article_id_str = str(article_id)
+    if article_id_str in cart:
+        del cart[article_id_str]
+        request.session['cart'] = cart
+        messages.info(request, 'Article retiré du panier.')
+    return redirect('demande_cotation')
+
+@login_required
 def demande_cotation(request):
-    """Soumettre une demande de cotation"""
-    articles = Article.objects.filter(publie=True)
-    services_list = Service.objects.filter(publie=True)
+    """Soumettre une demande de cotation (Panier)"""
+    cart = request.session.get('cart', {})
     
     if request.method == 'POST':
+        if not cart:
+            messages.error(request, 'Votre panier est vide.')
+            return redirect('catalogue')
+            
         remarques = request.POST.get('remarques', '')
         demande = DemandeCotation.objects.create(
             client=request.user,
             remarques=remarques
         )
         
-        # Traiter les articles sélectionnés
-        article_ids = request.POST.getlist('article_ids')
-        for art_id in article_ids:
-            quantite = request.POST.get(f'quantite_{art_id}', 1)
+        # Mettre à jour les quantités avec celles du formulaire et créer les lignes
+        for article_id_str in cart.keys():
+            quantite = request.POST.get(f'quantite_{article_id_str}', 1)
             try:
-                article = Article.objects.get(id=art_id)
+                article = Article.objects.get(id=int(article_id_str))
                 LigneCotation.objects.create(
                     demande=demande,
                     article=article,
@@ -154,12 +180,24 @@ def demande_cotation(request):
             except Article.DoesNotExist:
                 pass
                 
-        messages.success(request, 'Votre demande de cotation a été transmise avec succès.')
+        # Vider le panier
+        request.session['cart'] = {}
+        messages.success(request, 'Votre demande de cotation a été transmise avec succès. Notre équipe vous répondra avec les tarifs.')
         return redirect('dashboard')
         
+    # Récupérer les articles du panier pour l'affichage (GET)
+    articles_in_cart = []
+    if cart:
+        article_ids = [int(k) for k in cart.keys()]
+        articles_qs = Article.objects.filter(id__in=article_ids)
+        for art in articles_qs:
+            articles_in_cart.append({
+                'article': art,
+                'quantite': cart[str(art.id)]
+            })
+            
     context = {
-        'articles': articles,
-        'services': services_list,
+        'articles_in_cart': articles_in_cart,
     }
     return render(request, 'kinglife/demande_cotation.html', context)
 
@@ -172,6 +210,63 @@ def cotation_detail(request, cotation_id):
 
 
 from django.contrib.admin.views.decorators import staff_member_required
+
+@login_required
+@staff_member_required
+def admin_demandes_list(request):
+    """Tableau de bord Admin pour voir toutes les demandes de cotation"""
+    demandes_attente = DemandeCotation.objects.filter(statut='en_attente').order_by('date_demande')
+    demandes_traitees = DemandeCotation.objects.exclude(statut='en_attente').order_by('-date_demande')[:50]
+    
+    return render(request, 'kinglife/admin_demandes_list.html', {
+        'demandes_attente': demandes_attente,
+        'demandes_traitees': demandes_traitees
+    })
+
+@login_required
+@staff_member_required
+def admin_tarifer_demande(request, demande_id):
+    """L'interface Excel-like pour que l'admin saisisse les prix"""
+    demande = get_object_or_404(DemandeCotation, id=demande_id)
+    lignes = demande.lignes.all()
+    
+    if request.method == 'POST':
+        montant_total = Decimal('0.00')
+        
+        for ligne in lignes:
+            prix = request.POST.get(f'prix_{ligne.id}')
+            if prix and prix.strip():
+                try:
+                    prix_decimal = Decimal(prix.replace(',', '.'))
+                    ligne.prix_propose = prix_decimal
+                    ligne.save()
+                    montant_total += prix_decimal * Decimal(ligne.quantite)
+                except:
+                    pass
+                    
+        # Générer la Cotation officielle
+        import uuid
+        numero_cotation = f"COT-{uuid.uuid4().hex[:6].upper()}"
+        cotation, created = Cotation.objects.get_or_create(
+            demande=demande,
+            defaults={
+                'numero': numero_cotation,
+                'montant_total': montant_total,
+                'statut': 'envoyee'
+            }
+        )
+        if not created:
+            cotation.montant_total = montant_total
+            cotation.statut = 'envoyee'
+            cotation.save()
+            
+        demande.statut = 'envoyee'
+        demande.save()
+        
+        messages.success(request, f'Cotation {cotation.numero} générée et envoyée au client avec succès !')
+        return redirect('admin_demandes_list')
+        
+    return render(request, 'kinglife/admin_tarifer_demande.html', {'demande': demande, 'lignes': lignes})
 
 @login_required
 @staff_member_required
