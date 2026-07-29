@@ -14,20 +14,20 @@
     .business-cards-grid {
         gap: 20px;
     }
-    
+
     /* Compression de la navbar pour éviter qu'elle passe sur 2 lignes quand l'utilisateur est connecté */
     .nav-menu {
         gap: 15px !important;
     }
-    
+
     .nav-link {
         font-size: 14px !important;
     }
-    
+
     .header-actions {
         gap: 8px !important;
     }
-    
+
     .header-btn {
         padding: 8px 12px !important;
         font-size: 13px !important;
@@ -131,8 +131,9 @@
         width: 100%;
         transition: all 0.2s ease;
     }
-    
-    .nav-link:hover, .nav-link.active {
+
+    .nav-link:hover,
+    .nav-link.active {
         color: var(--color-ocean-dark);
         background: var(--color-light-bg);
         padding-left: 35px;
@@ -146,7 +147,8 @@
     .floating-lang-widget {
         bottom: 20px;
         left: 20px;
-        z-index: 997; /* Behind the sidebar */
+        z-index: 997;
+        /* Behind the sidebar */
     }
 
     .header-actions {
@@ -164,8 +166,9 @@
         padding: 30px;
         gap: 12px;
         z-index: 999;
-        background: var(--color-white); /* To cover any links scrolling behind it */
-        box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+        background: var(--color-white);
+        /* To cover any links scrolling behind it */
+        box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
     }
 
     .header-actions.active .header-btn,
@@ -177,13 +180,13 @@
         font-size: 15px;
         border-radius: 8px;
     }
-    
+
     .header-actions.active .header-btn {
         background: var(--color-light-bg);
         color: var(--color-text-dark);
         border: 1px solid var(--color-border-light);
     }
-    
+
     .header-actions.active .header-btn:hover {
         background: var(--color-border-light);
     }
@@ -200,8 +203,10 @@
         border: none;
         font-size: 22px;
         cursor: pointer;
-        position: relative; /* REQUIRED for z-index to work */
-        z-index: 1000;      /* Keep above the nav-menu */
+        position: relative;
+        /* REQUIRED for z-index to work */
+        z-index: 1000;
+        /* Keep above the nav-menu */
         transition: var(--transition);
     }
 
@@ -230,16 +235,18 @@
     /* Services & About Pages */
     .service-row {
         flex-direction: column !important;
+        align-items: stretch !important; /* Force items to take full width */
     }
 
     .service-row > div:first-child {
         width: 100% !important;
-        height: 300px !important;
-        min-height: 300px !important;
+        height: 250px !important;
+        min-height: 250px !important;
         padding: 0 !important;
     }
     
     .service-row > div:first-child img {
+        position: absolute;
         top: 0;
         left: 0;
         width: 100% !important;
