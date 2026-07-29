@@ -139,12 +139,12 @@
                         </td>
 
                         <!-- Unit -->
-                        <td class="ct-td ct-td--unit">
+                        <td class="ct-td ct-td--unit" data-label="Unité">
                             <span class="ct-unit-badge">{{ article.unite|upper }}</span>
                         </td>
 
                         <!-- Price -->
-                        <td class="ct-td ct-td--price">
+                        <td class="ct-td ct-td--price" data-label="Prix">
                             {% if article.prix_unitaire %}
                                 <span class="ct-price">{{ article.prix_unitaire }}</span>
                                 <span class="ct-price-curr">USD</span>
@@ -154,7 +154,7 @@
                         </td>
 
                         <!-- Qty -->
-                        <td class="ct-td ct-td--qty">
+                        <td class="ct-td ct-td--qty" data-label="Quantité">
                             <div class="ct-qty-wrap">
                                 <button class="ct-qty-btn" onclick="ctChangeQty({{ article.id }}, -1)" tabindex="-1">−</button>
                                 <input type="number"
@@ -787,7 +787,74 @@
     .ct-current-cat { max-width: 100px; }
     .ct-search-input { width: 110px; }
     .ct-page-title { font-size: 22px; }
-    .ct-th--price .ct-th--qty .ct-th--action { padding: 12px 10px; }
+
+    /* Responsive Table to Cards */
+    .ct-table-card {
+        background: transparent;
+        box-shadow: none;
+        overflow-x: hidden;
+    }
+    .ct-table, .ct-table tbody, .ct-table tr, .ct-table td {
+        display: block;
+        width: 100%;
+    }
+    .ct-table thead { display: none; }
+    
+    .ct-row {
+        background: #fff !important;
+        margin-bottom: 16px;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        padding: 16px;
+        border: 1px solid #e2e8f0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .ct-td {
+        padding: 6px 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left !important;
+        border: none !important;
+    }
+    .ct-td::before {
+        content: attr(data-label);
+        font-size: 12px;
+        font-weight: 800;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .ct-td--num { display: none; }
+    
+    .ct-td--photo {
+        align-self: center;
+        margin-bottom: 8px;
+    }
+    .ct-td--photo::before { display: none; }
+    .ct-thumb-wrap { width: 80px; height: 80px; }
+    
+    .ct-td--name {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        border-bottom: 1px solid #f1f5f9 !important;
+        padding-bottom: 14px !important;
+        margin-bottom: 8px;
+    }
+    .ct-td--name::before { display: none; }
+    .ct-article-name { font-size: 16px; }
+    
+    .ct-td--action {
+        margin-top: 8px;
+        border-top: 1px solid #f1f5f9 !important;
+        padding-top: 16px !important;
+    }
+    .ct-td--action::before { display: none; }
+    .ct-add-btn { width: 100%; justify-content: center; padding: 12px; }
 }
 </style>
 
