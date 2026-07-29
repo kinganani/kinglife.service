@@ -10,7 +10,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}KINGLIFE SHAL U - Services Maritimes & Logistiques{% endblock %}</title>
     <!-- VAPID public key for WebPush notifications -->
-    <meta name="vapid-key" content="BJ4iNXUZBrhY_hjNW0gaiSGhDrYb1ARJAk-Q7ezyiyHyPeuZxtPPob-zuxeuUAhQxlqHgETkmwkN8w2Qh5kRPFk">
+    <meta name="vapid-key"
+        content="BJ4iNXUZBrhY_hjNW0gaiSGhDrYb1ARJAk-Q7ezyiyHyPeuZxtPPob-zuxeuUAhQxlqHgETkmwkN8w2Qh5kRPFk">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,21 +34,23 @@
 <body>
     {% block preloader %}{% endblock %}
 
-    <!-- PWA Install Notification Banner (WhatsApp Style) -->
-    <div id="pwa-install-widget" class="pwa-notification-widget hidden">
-        <div class="pwa-notification-content">
-            <div class="pwa-notification-icon">
-                <img src="{% static 'kinglife/images/logo.png' %}" alt="App Icon">
-            </div>
-            <div class="pwa-notification-text">
-                <h4>Kinglife SHAL U</h4>
-                <p>Installez l'application pour un accès rapide et des notifications.</p>
-            </div>
+
+    <!-- PWA Install Native-Style Banner -->
+    <div id="pwa-install-widget" class="pwa-native-banner hidden">
+        <div class="pwa-native-icon">
+            <img src="{% static 'kinglife/images/logo.png' %}" alt="Kinglife">
         </div>
-        <div class="pwa-notification-actions">
-            <button type="button" id="pwa-close-btn" class="pwa-btn pwa-btn-secondary">Plus tard</button>
-            <button type="button" id="pwa-install-btn" class="pwa-btn pwa-btn-primary">Installer</button>
+        <div class="pwa-native-content">
+            <div class="pwa-native-title">Application Kinglife</div>
+            <div class="pwa-native-subtitle">kinglife-shal-u.com</div>
         </div>
+        <div class="pwa-native-divider"></div>
+        <button type="button" class="pwa-native-btn" id="pwa-install-btn">
+            Installer
+        </button>
+        <button type="button" class="pwa-native-close" id="pwa-close-btn" aria-label="Fermer">
+            &times;
+        </button>
     </div>
 
     <!-- Header Navigation Bar -->
@@ -110,14 +113,16 @@
         <!-- Compact Floating Trigger Button -->
         <button type="button" class="floating-lang-trigger" id="langWidgetTrigger" onclick="toggleLangWidget()"
             title="Changer la langue / Switch language">
-            <span class="lang-trigger-icon"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">language</span></span>
+            <span class="lang-trigger-icon"><span class="material-symbols-outlined"
+                    style="vertical-align: middle; font-size: inherit;">language</span></span>
             <span class="lang-trigger-label" id="currentLangLabel">FR</span>
             <span class="lang-trigger-arrow">▲</span>
         </button>
 
         <!-- Unfoldable Popover Menu -->
         <div class="floating-lang-popover" id="langWidgetPopover">
-            <div class="popover-header"><span class="material-symbols-outlined" style="vertical-align: middle; font-size: inherit;">language</span> Langue / Language</div>
+            <div class="popover-header"><span class="material-symbols-outlined"
+                    style="vertical-align: middle; font-size: inherit;">language</span> Langue / Language</div>
             <button type="button" class="lang-option-btn active" onclick="changeAppLanguage('fr', 'FR')">
                 <span> Français</span>
             </button>
@@ -254,8 +259,8 @@
     </div>
     {% endif %}
 
-    <!-- Main JavaScript File -->
-    <script src="{% static 'kinglife/js/main.js' %}"></script>
+    <!-- JavaScript Files -->
+    <script src="{% static 'kinglife/js/main.js' %}?v=3"></script>
     <script src="{% static 'kinglife/js/toast.js' %}"></script>
 
     <!-- Instant.page for lightning-fast preloading -->

@@ -77,22 +77,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* PWA Install Prompt Logic */
 let deferredPrompt;
+
+// Let the browser handle the native mini-infobar automatically by NOT preventing default.
 window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
+    // We intentionally DO NOT call e.preventDefault() here.
+    // This allows Chrome to automatically show its native install banner/infobar
+    // at the bottom or top of the screen when the page loads, as requested.
     deferredPrompt = e;
 
-    // Show standard widget
-    const pwaWidget = document.getElementById('pwa-install-widget');
-    if (pwaWidget && !localStorage.getItem('pwa_prompt_dismissed')) {
-        setTimeout(() => {
-            pwaWidget.classList.remove('hidden');
-            // Force reflow
-            void pwaWidget.offsetWidth;
-            pwaWidget.classList.add('show');
-        }, 2000); // 2 seconds after visiting
-    }
-
-    // Show button directly in preloader
+    // Keep the preloader install button functional if it exists
     const preloaderInstallBtn = document.getElementById('preloader-pwa-install-btn');
     if (preloaderInstallBtn) {
         preloaderInstallBtn.style.display = 'inline-block';
@@ -100,9 +93,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const pwaWidget = document.getElementById('pwa-install-widget');
-    const installBtn = document.getElementById('pwa-install-btn');
-    const closeBtn = document.getElementById('pwa-close-btn');
     const preloaderInstallBtn = document.getElementById('preloader-pwa-install-btn');
 
     // Preloader Install Button
@@ -114,41 +104,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 deferredPrompt = null;
                 preloaderInstallBtn.style.display = 'none';
 
-                // Instantly hide preloader after they decide
                 const preloader = document.getElementById('kinglife-preloader');
                 if (preloader) {
                     preloader.style.opacity = '0';
                     setTimeout(() => { preloader.style.display = 'none'; }, 500);
                 }
             }
-        });
-    }
-
-    // Standard Widget Install Button
-    if (installBtn && pwaWidget) {
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const choiceResult = await deferredPrompt.userChoice;
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the A2HS prompt');
-                } else {
-                    console.log('User dismissed the A2HS prompt');
-                }
-                deferredPrompt = null;
-                
-                // Hide banner
-                pwaWidget.classList.remove('show');
-                setTimeout(() => pwaWidget.classList.add('hidden'), 400);
-            }
-        });
-    }
-
-    if (closeBtn && pwaWidget) {
-        closeBtn.addEventListener('click', () => {
-            pwaWidget.classList.remove('show');
-            setTimeout(() => pwaWidget.classList.add('hidden'), 400);
-            localStorage.setItem('pwa_prompt_dismissed', 'true');
         });
     }
 });

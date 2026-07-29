@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from django.db.models import Count, Q
 from .models import Service, Actualite, Realisation, Page, Contact, CategorieProduit, Article, DemandeCotation, LigneCotation, Cotation, Prestation, Facture, Paiement
 from .utils import creer_notification, send_html_email
+from django.conf import settings
 
 
 def home(request):

@@ -1738,30 +1738,151 @@ color: var(--color-prussian-blue);
 margin-bottom: 3px;
 }
 
-/* WhatsApp-Style PWA Notification Banner */
+/* PWA Modal Overlay */
 .pwa-notification-widget {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(7, 25, 42, 0.85);
+    /* Dark overlay */
+    z-index: 999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+    backdrop-filter: blur(4px);
+}
+
+.pwa-notification-widget.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal Card */
+.pwa-modal-card {
+    background: #ffffff;
+    width: 90%;
+    max-width: 380px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-top: 4px solid var(--color-navy-dark);
+}
+
+.pwa-notification-widget.show .pwa-modal-card {
+    transform: scale(1) translateY(0);
+}
+
+/* PWA Native Style Banner */
+.pwa-native-banner {
     position: fixed;
     top: 20px;
     left: 50%;
     transform: translateX(-50%) translateY(-150%);
-    width: 90%;
-    max-width: 450px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 2px 10px rgba(0, 0, 0, 0.05);
-    z-index: 9999;
-    padding: 16px;
+    width: max-content;
+    max-width: 90%;
+    background-color: #303134; /* Chrome dark theme notification color */
+    border-radius: 24px; /* More rounded, like a pill */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    z-index: 999999999; /* Ensure it hovers over EVERYTHING including navbar */
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    padding: 8px 16px;
     gap: 12px;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
     opacity: 0;
-    border-left: 4px solid var(--color-navy-dark);
+    visibility: hidden;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease, visibility 0.4s;
 }
 
-.pwa-notification-widget.show {
+.pwa-native-banner.show {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
+    visibility: visible;
+}
+
+.pwa-native-banner.hidden {
+    display: none !important;
+}
+
+.pwa-native-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pwa-native-icon img {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    object-fit: contain;
+    background-color: #1a73e8;
+    padding: 2px;
+}
+
+.pwa-native-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 150px;
+}
+
+.pwa-native-title {
+    color: #e3e3e3;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.pwa-native-subtitle {
+    color: #9aa0a6;
+    font-size: 12px;
+}
+
+.pwa-native-divider {
+    width: 1px;
+    height: 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 0 4px;
+}
+
+.pwa-native-btn {
+    background: transparent;
+    border: none;
+    color: #8ab4f8; /* Chrome blue action color */
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.2s;
+    white-space: nowrap;
+}
+
+.pwa-native-btn:hover {
+    color: #aecbfa;
+}
+
+.pwa-native-close {
+    background: transparent;
+    border: none;
+    color: #9aa0a6;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    transition: color 0.2s;
+}
+
+.pwa-native-close:hover {
+    color: #ffffff;
 }
 
 .pwa-notification-widget.hidden {
