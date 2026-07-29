@@ -127,7 +127,7 @@ def catalogue(request):
     """Page 1 : Grille des catégories — le client choisit sa catégorie"""
     categories = CategorieProduit.objects.annotate(
         nb_articles=Count('articles', filter=Q(articles__publie=True))
-    ).order_by('ordre', 'nom')
+    ).filter(nb_articles__gt=0).order_by('ordre', 'nom')
     
     cart_count = len(request.session.get('cart', {}))
     
@@ -142,7 +142,7 @@ def catalogue_categorie(request, cat_id):
     categorie = get_object_or_404(CategorieProduit, id=cat_id)
     toutes_categories = CategorieProduit.objects.annotate(
         nb_articles=Count('articles', filter=Q(articles__publie=True))
-    ).order_by('ordre', 'nom')
+    ).filter(nb_articles__gt=0).order_by('ordre', 'nom')
     
     query = request.GET.get('q', '')
     articles = Article.objects.filter(publie=True, categorie=categorie)
