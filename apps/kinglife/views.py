@@ -129,6 +129,56 @@ def catalogue(request):
         nb_articles=Count('articles', filter=Q(articles__publie=True))
     ).filter(nb_articles__gt=0).order_by('ordre', 'nom')
     
+    # Pre-calculate a slideshow of 4 images for each category
+    for cat in categories:
+        cat.slideshow = []
+        if cat.image:
+            cat.slideshow.append(cat.image.url)
+            
+        # Use the specific user images for Avitaillement / Ship Chandler
+        if "avitaillement" in cat.nom.lower() or "chandler" in cat.nom.lower():
+            avi_imgs = [
+                '/static/kinglife/img/categories/1.jpg',
+                '/static/kinglife/img/categories/2.jpg',
+                '/static/kinglife/img/categories/3.jpg',
+                '/static/kinglife/img/categories/4.jpg'
+            ]
+            for img in avi_imgs:
+                if img not in cat.slideshow:
+                    cat.slideshow.append(img)
+                    
+        # Use the specific user images for Bunker Supply
+        elif "bunker" in cat.nom.lower() or "fuel" in cat.nom.lower():
+            bunker_imgs = [
+                '/static/kinglife/img/bunker/1.jpg',
+                '/static/kinglife/img/bunker/2.jpg',
+                '/static/kinglife/img/bunker/3.jpg'
+            ]
+            for img in bunker_imgs:
+                if img not in cat.slideshow:
+                    cat.slideshow.append(img)
+                    
+        # Grab images from articles in this category
+        arts = cat.articles.filter(publie=True).exclude(image='').exclude(image__isnull=True)[:4]
+        for art in arts:
+            if art.image.url not in cat.slideshow:
+                cat.slideshow.append(art.image.url)
+                
+        # Fill the rest with defaults so we always have at least 4
+        defaults = [
+            "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?w=800&q=80",
+            "https://images.unsplash.com/photo-1605333396914-25651cb9df20?w=800&q=80",
+            "https://images.unsplash.com/photo-1588612543949-8664ec624896?w=800&q=80",
+            "https://images.unsplash.com/photo-1493925410384-84f842e616fb?w=800&q=80"
+        ]
+        i = 0
+        while len(cat.slideshow) < 4 and i < len(defaults):
+            if defaults[i] not in cat.slideshow:
+                cat.slideshow.append(defaults[i])
+            i += 1
+            
+        cat.slideshow = cat.slideshow[:4]  # ensure exactly 4
+    
     cart_count = len(request.session.get('cart', {}))
     
     return render(request, 'kinglife/catalogue.html', {
