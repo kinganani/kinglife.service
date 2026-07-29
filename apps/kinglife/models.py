@@ -140,6 +140,23 @@ class Contact(models.Model):
         return f"{self.nom} - {self.sujet}"
 
 
+class MessageInterne(models.Model):
+    """Messages envoyés par l'admin au client via le Dashboard"""
+    client = models.ForeignKey(User, on_delete=models.CASCADE, related_name='messages_recus')
+    contact_d_origine = models.ForeignKey(Contact, on_delete=models.SET_NULL, null=True, blank=True, related_name='reponses')
+    sujet = models.CharField(max_length=200)
+    contenu = models.TextField()
+    liste_prix_incluse = models.BooleanField(default=False)
+    date_envoi = models.DateTimeField(auto_now_add=True)
+    lu = models.BooleanField(default=False)
+    
+    class Meta:
+        ordering = ['-date_envoi']
+    
+    def __str__(self):
+        return f"Message à {self.client.username}: {self.sujet}"
+
+
 class DemandeCotation(models.Model):
     """Demandes de cotation des clients"""
     STATUT_CHOICES = [

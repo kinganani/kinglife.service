@@ -38,7 +38,7 @@
                         <span style="color: var(--color-ocean-bright); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px;">Service Exclusif</span>
                         <h3 style="font-size: 26px; color: var(--color-text-dark); margin-bottom: 16px;">{{ service.nom }}</h3>
                         <p style="color: var(--color-text-muted); line-height: 1.7; margin-bottom: 24px; font-size: 15px;">{{ service.description }}</p>
-                        <a href="{% url 'service_detail' service.id %}" class="btn-primary">En savoir plus</a>
+                        <a href="{% url 'catalogue' %}" class="btn-primary">Consulter le catalogue</a>
                     </div>
                 </div>
                 {% endfor %}
@@ -55,7 +55,7 @@
                     <span style="color: var(--color-ocean-bright); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 12px;">Ship Chandler</span>
                     <h3 style="font-size: 26px; color: var(--color-text-dark); margin-bottom: 16px;">Avitaillement Maritime</h3>
                     <p style="color: var(--color-text-muted); line-height: 1.7; margin-bottom: 24px; font-size: 15px;">Fourniture complète de provisions vivres, eau douce, carburant et matériels pour navires. Une logistique fluide pour garantir un approvisionnement sans faille lors de vos escales.</p>
-                    <a href="#" class="btn-primary">En savoir plus</a>
+                    <a href="{% url 'catalogue' %}" class="btn-primary">Consulter le catalogue</a>
                 </div>
             </div>
 

@@ -1,0 +1,85 @@
+{% extends base_template %}
+
+{% block title %}Boîte de réception | Administration{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-panel">
+    <div class="dash-panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h2 class="dash-panel-title">Messages & Demandes de Contact</h2>
+        
+        <div style="display: flex; gap: 10px;">
+            <a href="?filtre=tous" class="dash-btn {% if filtre == 'tous' %}dash-btn-primary{% else %}dash-btn-outline{% endif %}"
+               hx-get="?filtre=tous" hx-target="#dashboard-content" hx-push-url="true" style="padding: 6px 12px; font-size: 14px;">Tous</a>
+            <a href="?filtre=non_lus" class="dash-btn {% if filtre == 'non_lus' %}dash-btn-primary{% else %}dash-btn-outline{% endif %}"
+               hx-get="?filtre=non_lus" hx-target="#dashboard-content" hx-push-url="true" style="padding: 6px 12px; font-size: 14px;">Non lus</a>
+            <a href="?filtre=lus" class="dash-btn {% if filtre == 'lus' %}dash-btn-primary{% else %}dash-btn-outline{% endif %}"
+               hx-get="?filtre=lus" hx-target="#dashboard-content" hx-push-url="true" style="padding: 6px 12px; font-size: 14px;">Traités</a>
+        </div>
+    </div>
+    
+    {% if messages_page %}
+    <div style="overflow-x: auto;">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>Statut</th>
+                    <th>Expéditeur</th>
+                    <th>Sujet</th>
+                    <th>Date</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for msg in messages_page %}
+                <tr style="{% if not msg.traite %}background: rgba(var(--dash-primary-rgb), 0.05);{% endif %}">
+                    <td>
+                        {% if msg.traite %}
+                            <span class="dash-badge secondary"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: text-bottom;">check_circle</span> Traité</span>
+                        {% else %}
+                            <span class="dash-badge accent"><span class="material-symbols-outlined" style="font-size: 16px; vertical-align: text-bottom;">mark_email_unread</span> Nouveau</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; color: var(--dash-text);">{{ msg.nom }}</div>
+                        <div style="color: var(--dash-text-muted); font-size: 13px;">{{ msg.email }}</div>
+                    </td>
+                    <td style="font-weight: {% if not msg.traite %}600{% else %}400{% endif %};">{{ msg.sujet }}</td>
+                    <td style="color: var(--dash-text-muted);">{{ msg.date_envoi|date:"d M Y H:i" }}</td>
+                    <td style="text-align: right;">
+                        <a href="{% url 'admin_message_detail' msg.id %}" class="dash-btn dash-btn-primary" style="padding: 6px 12px; font-size: 13px;" title="Lire et Répondre" 
+                           hx-get="{% url 'admin_message_detail' msg.id %}" 
+                           hx-target="#dashboard-content" 
+                           hx-push-url="true">
+                            <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle;">reply</span> Répondre
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="padding: 40px; text-align: center; color: var(--dash-text-muted); background: #f8fafc; border-radius: var(--dash-radius-sm); margin: 20px;">
+        <div style="font-size: 40px; margin-bottom: 15px;"><span class="material-symbols-outlined" style="font-size: inherit;">inbox</span></div>
+        <p>Aucun message ne correspond à ce filtre.</p>
+    </div>
+    {% endif %}
+    
+    <!-- Pagination -->
+    {% if messages_page.has_other_pages %}
+    <div style="padding: 20px; border-top: 1px solid var(--dash-border); display: flex; justify-content: center; gap: 5px;">
+        {% if messages_page.has_previous %}
+        <a class="dash-btn dash-btn-outline" style="padding: 6px 12px;" href="?filtre={{ filtre }}&page={{ messages_page.previous_page_number }}">&laquo; Précédent</a>
+        {% endif %}
+        
+        {% for i in messages_page.paginator.page_range %}
+            <a class="dash-btn {% if messages_page.number == i %}dash-btn-primary{% else %}dash-btn-outline{% endif %}" style="padding: 6px 12px;" href="?filtre={{ filtre }}&page={{ i }}">{{ i }}</a>
+        {% endfor %}
+        
+        {% if messages_page.has_next %}
+        <a class="dash-btn dash-btn-outline" style="padding: 6px 12px;" href="?filtre={{ filtre }}&page={{ messages_page.next_page_number }}">Suivant &raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

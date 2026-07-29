@@ -29,6 +29,11 @@ urlpatterns = [
     path('espace-admin/', views.admin_hub, name='admin_hub'),
     path('notifications/marquer-lues/', views.marquer_notifications_lues, name='marquer_notifications_lues'),
     
+    # Gestion Messages Admin
+    path('espace-admin/messages/', views.admin_messages, name='admin_messages'),
+    path('espace-admin/messages/<int:msg_id>/', views.admin_message_detail, name='admin_message_detail'),
+    path('espace-admin/messages/<int:msg_id>/repondre/', views.admin_message_reply, name='admin_message_reply'),
+    
     # Gestion Catalogue
     path('espace-admin/catalogue/', views.admin_catalogue, name='admin_catalogue'),
     path('espace-admin/catalogue/article/nouveau/', views.admin_article_form, name='admin_article_create'),

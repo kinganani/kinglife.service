@@ -601,11 +601,12 @@ def logout_view(request):
 @login_required
 def dashboard(request):
     """Tableau de bord client avec historique complet"""
-    from .models import DemandeCotation, Cotation, Facture, Prestation
+    from .models import DemandeCotation, Cotation, Facture, Prestation, MessageInterne
     demandes = DemandeCotation.objects.filter(client=request.user).order_by('-date_demande')
     cotations = Cotation.objects.filter(demande__client=request.user).order_by('-date_creation')
     prestations = Prestation.objects.filter(client=request.user).order_by('-date_debut')
     factures = Facture.objects.filter(client=request.user).order_by('-date_emission')
+    messages_internes = MessageInterne.objects.filter(client=request.user).order_by('-date_envoi')
     
     # Calcul des totaux financiers
     total_factures = sum(f.montant_ttc for f in factures if f.statut != 'annulee')
@@ -617,6 +618,7 @@ def dashboard(request):
         'cotations': cotations,
         'prestations': prestations,
         'factures': factures,
+        'messages_internes': messages_internes,
         'total_factures': total_factures,
         'total_paye': total_paye,
         'solde_du': solde_du,
@@ -661,7 +663,7 @@ def admin_hub(request):
             'date': c.date_envoi,
             'type': 'Nouveau message',
             'desc': f"Message de {c.nom}",
-            'url': "#"
+            'url': f"/espace-admin/messages/{c.id}/"
         })
     
     activites.sort(key=lambda x: x['date'], reverse=True)
@@ -674,6 +676,114 @@ def admin_hub(request):
         'base_template': base_template,
     }
     return render(request, 'kinglife/admin_hub.html', context)
+
+
+@login_required
+@staff_member_required
+def admin_messages(request):
+    """Boîte de réception des messages (Admin)"""
+    messages_list = Contact.objects.all()
+    
+    # Filter by read/unread if requested
+    filtre = request.GET.get('filtre', 'tous')
+    if filtre == 'non_lus':
+        messages_list = messages_list.filter(traite=False)
+    elif filtre == 'lus':
+        messages_list = messages_list.filter(traite=True)
+        
+    paginator = Paginator(messages_list, 15)
+    page = request.GET.get('page')
+    messages_page = paginator.get_page(page)
+    
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    return render(request, 'kinglife/admin_messages.html', {
+        'messages_page': messages_page,
+        'filtre': filtre,
+        'base_template': base_template,
+    })
+
+
+@login_required
+@staff_member_required
+def admin_message_detail(request, msg_id):
+    """Détail d'un message Contact"""
+    msg = get_object_or_404(Contact, id=msg_id)
+    if not msg.traite:
+        msg.traite = True
+        msg.save()
+        
+    base_template = 'kinglife/dashboard_partial.html' if request.headers.get('HX-Request') == 'true' else 'kinglife/dashboard_base.html'
+    
+    # Trouver si un User correspond à cet email
+    from django.contrib.auth.models import User
+    client_user = User.objects.filter(email__iexact=msg.email).first()
+    
+    return render(request, 'kinglife/admin_message_detail.html', {
+        'msg': msg,
+        'client_user': client_user,
+        'base_template': base_template,
+    })
+
+
+@login_required
+@staff_member_required
+def admin_message_reply(request, msg_id):
+    """Gérer la réponse à un message"""
+    if request.method == 'POST':
+        msg = get_object_or_404(Contact, id=msg_id)
+        sujet = request.POST.get('sujet')
+        contenu = request.POST.get('contenu')
+        inclure_prix = request.POST.get('inclure_prix') == 'on'
+        
+        from django.contrib.auth.models import User
+        client_user = User.objects.filter(email__iexact=msg.email).first()
+        
+        # 1. Sauvegarder dans la DB (Espace Client) si le client a un compte
+        if client_user:
+            MessageInterne.objects.create(
+                client=client_user,
+                contact_d_origine=msg,
+                sujet=sujet,
+                contenu=contenu,
+                liste_prix_incluse=inclure_prix
+            )
+            
+        # 2. Préparer l'email
+        from django.core.mail import EmailMultiAlternatives
+        from django.template.loader import render_to_string
+        from django.utils.html import strip_tags
+        from django.conf import settings
+        
+        # Récupérer les catégories et articles si liste de prix
+        categories_prix = None
+        if inclure_prix:
+            categories_prix = CategorieProduit.objects.filter(articles__publie=True).distinct()
+            
+        html_content = render_to_string('kinglife/emails/reply_price_list.html', {
+            'msg': msg,
+            'sujet': sujet,
+            'contenu': contenu,
+            'inclure_prix': inclure_prix,
+            'categories_prix': categories_prix,
+        })
+        text_content = strip_tags(html_content)
+        
+        email = EmailMultiAlternatives(
+            subject=f"Re: {sujet}",
+            body=text_content,
+            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'contact@kinglifeshalu.com'),
+            to=[msg.email],
+            reply_to=[request.user.email] if request.user.email else None
+        )
+        email.attach_alternative(html_content, "text/html")
+        email.send(fail_silently=True)
+        
+        msg.traite = True
+        msg.save()
+        messages.success(request, f"Réponse envoyée à {msg.email} avec succès.")
+        return redirect('admin_messages')
+    
+    return redirect('admin_message_detail', msg_id=msg_id)
 
 @login_required
 def admin_catalogue(request):

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px; background-color: #f8f9fa; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .header { background: #004d99; color: #fff; padding: 20px; text-align: center; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .content { padding: 30px; }
+        .message-box { white-space: pre-wrap; font-size: 16px; margin-bottom: 30px; }
+        
+        .price-list { margin-top: 30px; }
+        .price-list h2 { color: #004d99; border-bottom: 2px solid #004d99; padding-bottom: 10px; margin-bottom: 20px; }
+        .category-title { background: #e9ecef; padding: 10px 15px; margin: 20px 0 10px; border-radius: 4px; font-weight: bold; color: #1e293b; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8f9fa; font-weight: 600; color: #64748b; }
+        .price { font-weight: bold; color: #004d99; text-align: right; }
+        .qty-unit { color: #64748b; font-size: 0.9em; }
+        
+        .footer { background: #1e293b; color: #94a3b8; text-align: center; padding: 20px; font-size: 12px; }
+        .footer a { color: #38bdf8; text-decoration: none; }
+        
+        .quote-box { background: #f1f5f9; border-left: 4px solid #cbd5e1; padding: 15px; margin: 20px 0; color: #475569; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>KINGLIFE SHAL U</h1>
+            <p style="margin:5px 0 0; opacity:0.8;">Maritime Supplies & Services</p>
+        </div>
+        
+        <div class="content">
+            <p>Bonjour <strong>{{ msg.nom }}</strong>,</p>
+            
+            <div class="message-box">
+{{ contenu }}
+            </div>
+            
+            {% if inclure_prix and categories_prix %}
+            <div class="price-list">
+                <h2>Liste de Prix du Catalogue</h2>
+                <p>Veuillez trouver ci-dessous nos tarifs actuels à titre indicatif. Pour une cotation exacte incluant les frais de livraison à bord, merci de finaliser votre demande sur notre plateforme.</p>
+                
+                {% for cat in categories_prix %}
+                    <div class="category-title">{{ cat.nom }}</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Article / Produit</th>
+                                <th>Description</th>
+                                <th style="text-align: right;">Prix Unitaire</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for article in cat.articles.all %}
+                                {% if article.publie %}
+                                <tr>
+                                    <td><strong>{{ article.nom }}</strong></td>
+                                    <td>{{ article.description|truncatewords:15 }}</td>
+                                    <td class="price">
+                                        {% if article.prix %}
+                                            {{ article.prix }} FCFA <span class="qty-unit">/ {{ article.unite_mesure }}</span>
+                                        {% else %}
+                                            <span style="color:#64748b; font-weight:normal;">Sur devis</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endfor %}
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="https://www.kinglifeshalu.com/catalogue/" style="display:inline-block; padding:12px 24px; background:#004d99; color:white; text-decoration:none; border-radius:4px; font-weight:bold;">
+                        Préparer une commande
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="quote-box">
+                <strong>Rappel de votre message :</strong><br>
+                "{{ msg.message }}"
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>KINGLIFE SHAL U</strong> - Lome, Togo</p>
+            <p>Ceci est un email automatique, mais vous pouvez y répondre pour continuer notre échange.</p>
+            <p><a href="https://www.kinglifeshalu.com">Visitez notre site web</a></p>
+        </div>
+    </div>
+</body>
+</html>

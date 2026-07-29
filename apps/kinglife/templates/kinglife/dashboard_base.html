@@ -94,7 +94,10 @@
                     class="nav-item {% if '/admin-cotations/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">request_quote</i> <span>Tarification</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{% url 'admin_messages' %}" 
+                   class="nav-item {% if '/messages/' in request.path %}active{% endif %}"
+                   hx-get="{% url 'admin_messages' %}" hx-target="#dashboard-main" hx-swap="innerHTML"
+                   hx-push-url="true">
                     <i class="material-symbols-outlined">mail</i> <span>Messages</span>
                 </a>
                 {% endif %}

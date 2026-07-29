@@ -254,7 +254,24 @@ body.dashboard-body {
     margin: 0;
 }
 
-/* Modern Tables */
+.dash-table-container {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border-radius: var(--dash-radius-sm);
+    /* For a nice custom scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+.dash-table-container::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.dash-table-container::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+
 .dash-table {
     width: 100%;
     border-collapse: separate;
@@ -262,7 +279,11 @@ body.dashboard-body {
 }
 
 .dash-table th {
-    padding: 0 20px 10px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #f8fafc; /* solid color to hide scrolling rows underneath */
+    padding: 10px 20px;
     font-size: 13px;
     font-weight: 600;
     color: var(--dash-text-light);

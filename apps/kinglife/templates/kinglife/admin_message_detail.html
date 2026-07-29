@@ -1,0 +1,92 @@
+{% extends base_template %}
+
+{% block title %}Message de {{ msg.nom }} | Administration{% endblock %}
+
+{% block dashboard_content %}
+<div class="dash-panel-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 class="dash-panel-title">Lecture du Message</h2>
+    <a href="{% url 'admin_messages' %}" class="dash-btn dash-btn-outline"
+       hx-get="{% url 'admin_messages' %}" hx-target="#dashboard-content" hx-push-url="true">
+        <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px; margin-right: 5px;">arrow_back</span> Retour
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px;">
+    <!-- Message reçu -->
+    <div class="dash-panel">
+        <div class="dash-panel-header" style="padding-bottom: 20px; border-bottom: 1px solid var(--dash-border); margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h4 style="margin: 0 0 10px 0; color: var(--dash-primary); font-size: 18px;">{{ msg.sujet }}</h4>
+                    <p style="margin: 0; color: var(--dash-text-muted); font-size: 14px;">
+                        De: <strong style="color: var(--dash-text);">{{ msg.nom }}</strong> &lt;{{ msg.email }}&gt;<br>
+                        {% if msg.telephone %}Tél: {{ msg.telephone }}{% endif %}
+                    </p>
+                </div>
+                <div style="text-align: right;">
+                    <small style="color: var(--dash-text-muted);">{{ msg.date_envoi|date:"d/m/Y H:i" }}</small><br>
+                    {% if client_user %}
+                        <span class="dash-badge secondary" style="margin-top: 10px; display: inline-block;">
+                            <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: text-bottom;">person_check</span> Client Enregistré
+                        </span>
+                    {% else %}
+                        <span class="dash-badge" style="background: #e2e8f0; color: #64748b; margin-top: 10px; display: inline-block;">Visiteur</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div style="background: #f8fafc; padding: 20px; border-radius: var(--dash-radius-sm); border: 1px solid #e2e8f0;">
+            <p style="margin: 0; white-space: pre-wrap; font-size: 15px; line-height: 1.6; color: var(--dash-text);">{{ msg.message }}</p>
+        </div>
+    </div>
+
+    <!-- Formulaire de réponse -->
+    <div class="dash-panel" style="border-top: 4px solid var(--dash-primary);">
+        <div class="dash-panel-header">
+            <h3 class="dash-panel-title" style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined">reply</span> Répondre au client
+            </h3>
+        </div>
+        
+        <form action="{% url 'admin_message_reply' msg.id %}" method="post" style="margin-top: 15px;">
+            {% csrf_token %}
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--dash-text);">À :</label>
+                <input type="text" value="{{ msg.email }}" disabled style="width: 100%; padding: 10px 15px; border: 1px solid var(--dash-border); border-radius: var(--dash-radius-sm); background: #f1f5f9; color: var(--dash-text-muted);">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--dash-text);">Sujet de la réponse :</label>
+                <input type="text" name="sujet" value="Re: {{ msg.sujet }}" required style="width: 100%; padding: 10px 15px; border: 1px solid var(--dash-border); border-radius: var(--dash-radius-sm); outline: none;">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--dash-text);">Votre message :</label>
+                <textarea name="contenu" rows="6" required placeholder="Tapez votre réponse ici..." style="width: 100%; padding: 15px; border: 1px solid var(--dash-border); border-radius: var(--dash-radius-sm); outline: none; font-family: inherit; resize: vertical;"></textarea>
+                {% if client_user %}
+                    <div style="font-size: 13px; color: #10b981; margin-top: 8px; display: flex; align-items: center; gap: 5px;">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">info</span> Ce message s'affichera également dans le tableau de bord du client.
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div style="margin-bottom: 25px; background: #f8fafc; padding: 15px; border-radius: var(--dash-radius-sm); border: 1px solid #e2e8f0;">
+                <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" id="inclure_prix" name="inclure_prix" style="margin-top: 4px; transform: scale(1.2);">
+                    <div>
+                        <span style="font-weight: 600; color: var(--dash-primary); display: flex; align-items: center; gap: 5px;">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">receipt_long</span> Joindre la Liste de Prix Automatique
+                        </span>
+                        <span style="display: block; font-size: 12px; color: var(--dash-text-muted); margin-top: 4px;">Un tableau HTML de vos produits et prix sera généré et inclus à la suite de votre e-mail.</span>
+                    </div>
+                </label>
+            </div>
+            
+            <button type="submit" class="dash-btn dash-btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 16px;">
+                <span class="material-symbols-outlined" style="margin-right: 8px;">send</span> Envoyer la réponse
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
