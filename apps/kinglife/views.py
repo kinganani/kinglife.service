@@ -9,7 +9,7 @@ from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.db.models import Count, Q
-from .models import Service, Actualite, Realisation, Page, Contact, CategorieProduit, Article, DemandeCotation, LigneCotation, Cotation, Prestation, Facture, Paiement, PushSubscription
+from .models import Service, Actualite, Realisation, Page, Contact, CategorieProduit, Article, DemandeCotation, LigneCotation, Cotation, Prestation, Facture, Paiement, PushSubscription, Notification
 from .utils import creer_notification, send_html_email
 from django.conf import settings
 
@@ -1468,7 +1468,7 @@ def get_notifications_api(request):
 @csrf_exempt
 @login_required
 def quick_reply_api(request):
-    """Permet de répondre immédiatement à une notification (ex: réponse client ou message admin)"""
+    """Permet de répondre immédiatement à une notification avec création systématique d'un MessageInterne"""
     if request.method == 'POST':
         try:
             data = json.loads(request.body) if request.body else request.POST
@@ -1482,15 +1482,16 @@ def quick_reply_api(request):
             if notif_id:
                 notif = Notification.objects.filter(id=notif_id).first()
 
+            from .models import MessageInterne
+
             if request.user.is_staff or request.user.is_superuser:
                 # Réponse Admin -> Client
                 target_user = notif.utilisateur if notif and notif.utilisateur else None
 
                 if target_user:
-                    from .models import MessageInterne
                     MessageInterne.objects.create(
                         client=target_user,
-                        sujet=f"Réponse rapide: {notif.titre if notif else 'KINGLIFE'}",
+                        sujet=f"Réponse admin : {notif.titre if notif else 'KINGLIFE'}",
                         contenu=reponse_texte
                     )
                     creer_notification(
@@ -1510,8 +1511,13 @@ def quick_reply_api(request):
                     )
             else:
                 # Réponse Client -> Admins
+                MessageInterne.objects.create(
+                    client=request.user,
+                    sujet=f"Réponse client à : {notif.titre if notif else 'Notification KINGLIFE'}",
+                    contenu=reponse_texte
+                )
                 creer_notification(
-                    titre=f"💬 Réponse rapide de {request.user.username}",
+                    titre=f"💬 Réponse rapide de {request.user.first_name or request.user.username}",
                     message=reponse_texte,
                     is_for_admin=True,
                     lien='/espace-admin/messages/',
@@ -1522,7 +1528,7 @@ def quick_reply_api(request):
                 notif.lue = True
                 notif.save()
 
-            return JsonResponse({'status': 'success', 'message': 'Votre réponse rapide a été transmise avec succès !'})
+            return JsonResponse({'status': 'success', 'message': 'Votre réponse a été enregistrée et transmise !'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 

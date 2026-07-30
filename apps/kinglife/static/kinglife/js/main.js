@@ -1,4 +1,60 @@
-/* KINGLIFE SHAL U - Main JavaScript Interactivity */
+// PWA Deferred Installation Prompt Handler
+let deferredPwaPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPwaPrompt = e;
+    console.log("PWA install prompt captured");
+});
+
+function triggerPwaInstallPrompt() {
+    if (deferredPwaPrompt) {
+        deferredPwaPrompt.prompt();
+        deferredPwaPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                if (typeof showToast === 'function') showToast("🎉 Merci d'avoir installé l'application KINGLIFE !", "success");
+            }
+            deferredPwaPrompt = null;
+        });
+    } else {
+        if (typeof showToast === 'function') {
+            showToast("📱 Pour installer l'application : Cliquez sur le menu de votre navigateur (3 points ou Partager) puis 'Ajouter à l'écran d'accueil'.", "info", 8000);
+        } else {
+            alert("📱 Pour installer l'application : Cliquez sur le menu de votre navigateur puis 'Ajouter à l'écran d'accueil'.");
+        }
+    }
+}
+
+function markSingleSiteNotifRead(notifId) {
+    const card = document.getElementById('site-notif-card-' + notifId) || document.getElementById('notif-card-' + notifId);
+    if (card) {
+        card.style.transition = 'opacity 0.3s, transform 0.3s';
+        card.style.opacity = '0.3';
+    }
+
+    fetch("/notifications/marquer-lues/", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': (typeof getCookie === 'function') ? getCookie('csrftoken') : '',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ notif_id: notifId })
+    }).then(res => res.json()).then(data => {
+        if (card) card.remove();
+        const badge = document.getElementById('site-notif-badge') || document.getElementById('notif-badge');
+        if (badge && typeof data.unread_count !== 'undefined') {
+            if (data.unread_count > 0) {
+                badge.innerText = data.unread_count;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        if (typeof showToast === 'function') showToast("✓ Notification marquée comme lue", "info", 2000);
+    });
+}
+function markSingleNotifRead(notifId) {
+    markSingleSiteNotifRead(notifId);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     // Header Scroll Effect

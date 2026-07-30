@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre cotation KINGLIFE N° {{ cotation.numero }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+            color: #333333;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        .email-header {
+            background: linear-gradient(135deg, #07192a 0%, #0a2540 100%);
+            padding: 30px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .email-header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .email-body {
+            padding: 30px;
+        }
+        .greeting {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0a2540;
+            margin-bottom: 15px;
+        }
+        .message-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555555;
+            margin-bottom: 25px;
+        }
+        .cotation-summary-box {
+            background-color: #f8fafc;
+            border-left: 4px solid #1a56c4;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 25px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .summary-row.total {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+            margin-top: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #0a2540;
+        }
+        .btn-action {
+            display: block;
+            width: 200px;
+            margin: 25px auto;
+            padding: 14px 20px;
+            background-color: #1a56c4;
+            color: #ffffff !important;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 700;
+            border-radius: 8px;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(26, 86, 196, 0.3);
+        }
+        .email-footer {
+            background-color: #f1f5f9;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <h1>KINGLIFE SHAL U SARL</h1>
+            <p style="margin: 5px 0 0 0; font-size: 13px; opacity: 0.8;">Avitaillement maritime & Logistique offshore</p>
+        </div>
+
+        <div class="email-body">
+            <div class="greeting">Bonjour {{ client.first_name|default:client.username }},</div>
+            
+            <div class="message-content">
+                Nous avons le plaisir de vous informer que votre demande de cotation a été traitée par nos équipes. Votre devis officiel <strong>N° {{ cotation.numero }}</strong> est prêt et disponible sur votre espace client.
+            </div>
+
+            <div class="cotation-summary-box">
+                <div class="summary-row">
+                    <span>N° Cotation :</span>
+                    <strong>{{ cotation.numero }}</strong>
+                </div>
+                <div class="summary-row">
+                    <span>Date d'émission :</span>
+                    <span>{{ cotation.date_creation|date:"d/m/Y" }}</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Montant Total :</span>
+                    <span>{{ cotation.montant_total }} €</span>
+                </div>
+            </div>
+
+            <a href="{{ site_url }}/cotation/{{ cotation.id }}/" class="btn-action">Consulter mon devis</a>
+
+            <div class="message-content" style="font-size: 13px; margin-top: 20px;">
+                Vous pouvez accepter, télécharger ou solliciter des ajustements directement depuis votre tableau de bord.
+            </div>
+        </div>
+
+        <div class="email-footer">
+            <p style="margin: 0 0 5px 0;"><strong>KINGLIFE SHAL U SARL</strong> — Support Logistique & Avitaillement Maritime 24/7</p>
+            <p style="margin: 0;">Email : kinganani20@gmail.com | Tél : +228 99 50 10 85</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -95,10 +95,10 @@
                     class="nav-item {% if '/admin-cotations/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">request_quote</i> <span>Tarification</span>
                 </a>
-                <a href="{% url 'admin_messages' %}" 
-                   class="nav-item {% if '/messages/' in request.path %}active{% endif %}"
-                   hx-get="{% url 'admin_messages' %}" hx-target="#dashboard-main" hx-swap="innerHTML"
-                   hx-push-url="true">
+                <a href="{% url 'admin_messages' %}"
+                    class="nav-item {% if '/messages/' in request.path %}active{% endif %}"
+                    hx-get="{% url 'admin_messages' %}" hx-target="#dashboard-main" hx-swap="innerHTML"
+                    hx-push-url="true">
                     <i class="material-symbols-outlined">mail</i> <span>Messages</span>
                 </a>
                 {% endif %}
@@ -132,8 +132,7 @@
                             style="background: none; border: none; cursor: pointer; color: var(--dash-text-main); position: relative; padding: 5px;">
                             <i class="material-symbols-outlined" style="font-size: 28px;">notifications</i>
                             {% if unread_notifications_count > 0 %}
-                            <span id="notif-badge"
-                                style="position: absolute; top: 0; right: 0; background: #ef4444; color: white; font-size: 11px; font-weight: bold; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">{{ unread_notifications_count }}</span>
+                            <span id="notif-badge" style="position: absolute; top: 0; right: 0; background: #ef4444; color: white; font-size: 11px; font-weight: bold; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">{{ unread_notifications_count }}</span>
                             {% endif %}
                         </button>
 
@@ -142,17 +141,21 @@
                             style="display: none; position: absolute; top: 44px; right: 0; width: 360px; max-width: 90vw; background: white; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); border: 1px solid var(--dash-border); z-index: 1000; overflow: hidden;">
                             <div
                                 style="padding: 14px 18px; border-bottom: 1px solid var(--dash-border); display: flex; align-items: center; justify-content: space-between; background: #f8fafc;">
-                                <div style="font-weight: 700; color: var(--dash-text-main); font-size: 14px; display: flex; align-items: center; gap: 6px;">
-                                    <i class="material-symbols-outlined" style="font-size: 18px; color: #1a56c4;">notifications</i> Notifications
+                                <div
+                                    style="font-weight: 700; color: var(--dash-text-main); font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                                    <i class="material-symbols-outlined"
+                                        style="font-size: 18px; color: #1a56c4;">notifications</i> Notifications
                                 </div>
-                                <button type="button" onclick="markAllNotifsRead()" style="background: none; border: none; color: #1a56c4; font-size: 12px; font-weight: 600; cursor: pointer;">
+                                <button type="button" onclick="markAllNotifsRead()"
+                                    style="background: none; border: none; color: #1a56c4; font-size: 12px; font-weight: 600; cursor: pointer;">
                                     Tout marquer comme lu
                                 </button>
                             </div>
                             <div id="notif-items-list" style="max-height: 380px; overflow-y: auto;">
                                 {% if unread_notifications %}
                                 {% for notif in unread_notifications %}
-                                <div id="notif-card-{{ notif.id }}" style="padding: 14px 16px; border-bottom: 1px solid var(--dash-border); transition: background 0.2s; position: relative;">
+                                <div id="notif-card-{{ notif.id }}"
+                                    style="padding: 14px 16px; border-bottom: 1px solid var(--dash-border); transition: background 0.2s; position: relative;">
                                     <div style="display: flex; align-items: flex-start; gap: 12px;">
                                         <div
                                             style="width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; 
@@ -166,40 +169,56 @@
                                             </i>
                                         </div>
                                         <div style="flex-grow: 1;">
-                                            <div style="font-size: 13px; font-weight: 700; color: var(--dash-text-main); margin-bottom: 2px;">
+                                            <div
+                                                style="font-size: 13px; font-weight: 700; color: var(--dash-text-main); margin-bottom: 2px;">
                                                 {{ notif.titre }}
                                             </div>
-                                            <div style="font-size: 12px; color: var(--dash-text-muted); line-height: 1.4; margin-bottom: 8px;">
+                                            <div
+                                                style="font-size: 12px; color: var(--dash-text-muted); line-height: 1.4; margin-bottom: 8px;">
                                                 {{ notif.message }}
                                             </div>
-                                            
+
                                             <!-- Action Buttons -->
                                             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                                                <button type="button" onclick="toggleQuickReplyBox({{ notif.id }})" style="background: rgba(26, 86, 196, 0.08); color: #1a56c4; border: 1px solid rgba(26, 86, 196, 0.2); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
-                                                    <i class="material-symbols-outlined" style="font-size: 14px;">reply</i> Répondre
-                                                </button>
-                                                
+                                                {% if 'Installez' in notif.titre or 'PWA' in notif.titre %}
+                                                <!-- PWA Install Notification -->
+                                                <button type="button" onclick="triggerPwaInstallPrompt()" style="background: linear-gradient(135deg, #1a56c4 0%, #0d3b94 100%); color: white; border: none; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(26, 86, 196, 0.3);"><i class="material-symbols-outlined" style="font-size: 14px;">download</i> Installer l'application</button>
+                                                <button type="button" onclick="markSingleNotifRead({{ notif.id }})" style="background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;"><i class="material-symbols-outlined" style="font-size: 14px;">check</i> Lu</button>
+                                                {% elif 'cotation' in notif.titre|lower or 'devis' in notif.titre|lower or 'message' in notif.titre|lower %}
+                                                <!-- Interactive Message / Cotation Notification -->
+                                                <button type="button" onclick="toggleQuickReplyBox({{ notif.id }})" style="background: rgba(26, 86, 196, 0.08); color: #1a56c4; border: 1px solid rgba(26, 86, 196, 0.2); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;"><i class="material-symbols-outlined" style="font-size: 14px;">reply</i> Répondre</button>
                                                 {% if notif.lien %}
-                                                <a href="{{ notif.lien }}" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
-                                                    <i class="material-symbols-outlined" style="font-size: 14px;">open_in_new</i> Voir
-                                                </a>
+                                                <a href="{{ notif.lien }}" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><i class="material-symbols-outlined" style="font-size: 14px;">open_in_new</i> Voir</a>
                                                 {% endif %}
-
-                                                <button type="button" onclick="markSingleNotifRead({{ notif.id }})" style="background: none; border: none; color: #94a3b8; font-size: 11px; cursor: pointer; margin-left: auto;">
-                                                    ✓ Lu
-                                                </button>
+                                                <button type="button" onclick="markSingleNotifRead({{ notif.id }})" style="background: none; border: none; color: #94a3b8; font-size: 11px; cursor: pointer; margin-left: auto;">✓ Lu</button>
+                                                {% else %}
+                                                <!-- Informational Notification -->
+                                                {% if notif.lien %}
+                                                <a href="{{ notif.lien }}" style="background: #1a56c4; color: white; border: none; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><i class="material-symbols-outlined" style="font-size: 14px;">open_in_new</i> Consulter</a>
+                                                {% endif %}
+                                                <button type="button" onclick="markSingleNotifRead({{ notif.id }})" style="background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;"><i class="material-symbols-outlined" style="font-size: 14px;">check</i> Lu</button>
+                                                {% endif %}
                                             </div>
 
+                                            {% if 'PWA' not in notif.titre and 'Installez' not in notif.titre %}
                                             <!-- Inline Quick Reply Box -->
-                                            <div id="quick-reply-box-{{ notif.id }}" style="display: none; margin-top: 10px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
-                                                <textarea id="quick-reply-input-{{ notif.id }}" rows="2" placeholder="Écrivez votre réponse rapide..." style="width: 100%; padding: 8px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; resize: none; margin-bottom: 6px; box-sizing: border-box;"></textarea>
+                                            <div id="quick-reply-box-{{ notif.id }}"
+                                                style="display: none; margin-top: 10px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                                <textarea id="quick-reply-input-{{ notif.id }}" rows="2"
+                                                    placeholder="Écrivez votre réponse rapide..."
+                                                    style="width: 100%; padding: 8px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; resize: none; margin-bottom: 6px; box-sizing: border-box;"></textarea>
                                                 <div style="display: flex; justify-content: flex-end; gap: 6px;">
-                                                    <button type="button" onclick="toggleQuickReplyBox({{ notif.id }})" style="background: none; border: none; color: #64748b; font-size: 11px; padding: 4px 8px; cursor: pointer;">Annuler</button>
-                                                    <button type="button" onclick="submitQuickReply({{ notif.id }})" style="background: #1a56c4; color: white; border: none; padding: 5px 12px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
-                                                        <i class="material-symbols-outlined" style="font-size: 14px;">send</i> Envoyer
+                                                    <button type="button" onclick="toggleQuickReplyBox({{ notif.id }})"
+                                                        style="background: none; border: none; color: #64748b; font-size: 11px; padding: 4px 8px; cursor: pointer;">Annuler</button>
+                                                    <button type="button" id="btn-submit-dash-reply-{{ notif.id }}"
+                                                        onclick="submitQuickReply({{ notif.id }})"
+                                                        style="background: #1a56c4; color: white; border: none; padding: 5px 12px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                                                        <i class="material-symbols-outlined"
+                                                            style="font-size: 14px;">send</i> Envoyer
                                                     </button>
                                                 </div>
                                             </div>
+                                            {% endif %}
 
                                             <div style="font-size: 10px; color: #94a3b8; margin-top: 6px;">{{ notif.date_creation|timesince }}</div>
                                         </div>
@@ -207,7 +226,8 @@
                                 </div>
                                 {% endfor %}
                                 {% else %}
-                                <div style="padding: 24px; text-align: center; font-size: 13px; color: var(--dash-text-muted);">
+                                <div
+                                    style="padding: 24px; text-align: center; font-size: 13px; color: var(--dash-text-muted);">
                                     Aucune nouvelle notification.
                                 </div>
                                 {% endif %}
@@ -331,4 +351,5 @@
     </script>
     <script src="{% static 'kinglife/js/toast.js' %}"></script>
 </body>
+
 </html>
