@@ -29,9 +29,11 @@
 }
 
 body.dashboard-body {
-    background: #eef2f6; /* Soft light grayish-blue background */
+    background: #eef2f6;
+    /* Soft light grayish-blue background */
     margin: 0;
-    padding: 30px; /* Space around the floating panel */
+    padding: 30px;
+    /* Space around the floating panel */
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     color: var(--dash-text-main);
     overflow-x: hidden;
@@ -46,10 +48,13 @@ body.dashboard-body {
 .dashboard-wrapper {
     width: 100%;
     max-width: 1400px;
-    height: calc(100vh - 60px); /* Fill screen minus padding */
-    background: #ffffff; /* Solid white background */
+    height: calc(100vh - 60px);
+    /* Fill screen minus padding */
+    background: #ffffff;
+    /* Solid white background */
     border-radius: 30px;
-    box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08); /* Soft professional shadow */
+    box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+    /* Soft professional shadow */
     display: flex;
     overflow: hidden;
 }
@@ -63,7 +68,8 @@ body.dashboard-body {
 /* Sidebar */
 .dashboard-sidebar {
     width: 250px;
-    background: #2b3366; /* Deep professional indigo/navy */
+    background: #2b3366;
+    /* Deep professional indigo/navy */
     border-right: none;
     padding: 40px 20px;
     display: flex;
@@ -130,7 +136,8 @@ body.dashboard-body {
     height: 100%;
     overflow-y: auto;
     background: transparent;
-    position: relative; /* For HTMX loader overlay if needed */
+    position: relative;
+    /* For HTMX loader overlay if needed */
 }
 
 /* Top Header Area */
@@ -263,10 +270,12 @@ body.dashboard-body {
     scrollbar-width: thin;
     scrollbar-color: #cbd5e1 transparent;
 }
+
 .dash-table-container::-webkit-scrollbar {
     width: 6px;
     height: 6px;
 }
+
 .dash-table-container::-webkit-scrollbar-thumb {
     background-color: #cbd5e1;
     border-radius: 10px;
@@ -282,7 +291,8 @@ body.dashboard-body {
     position: sticky;
     top: 0;
     z-index: 10;
-    background: #f8fafc; /* solid color to hide scrolling rows underneath */
+    background: #f8fafc;
+    /* solid color to hide scrolling rows underneath */
     padding: 10px 20px;
     font-size: 13px;
     font-weight: 600;
@@ -465,8 +475,9 @@ body.dashboard-body {
         margin: 0;
     }
 
-    .sidebar-nav > div {
-        display: none; /* hide spacers and admin labels */
+    .sidebar-nav>div {
+        display: none;
+        /* hide spacers and admin labels */
     }
 
     .nav-item {
@@ -480,7 +491,8 @@ body.dashboard-body {
 
     .dashboard-main {
         padding: 20px;
-        padding-bottom: 90px; /* Space for bottom nav */
+        padding-bottom: 90px;
+        /* Space for bottom nav */
     }
 
     .dashboard-header {

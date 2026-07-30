@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -9,35 +9,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Tableau de bord - KINGLIFE SHAL U{% endblock %}</title>
-
-    <!-- VAPID public key for WebPush notifications -->
-    <meta name="vapid-key"
-        content="BJ4iNXUZBrhY_hjNW0gaiSGhDrYb1ARJAk-Q7ezyiyHyPeuZxtPPob-zuxeuUAhQxlqHgETkmwkN8w2Qh5kRPFk">
-
-    <!-- Include main site variables and fonts to keep the ecosystem -->
+    <meta name="vapid-key" content="BJ4iNXUZBrhY_hjNW0gaiSGhDrYb1ARJAk-Q7ezyiyHyPeuZxtPPob-zuxeuUAhQxlqHgETkmwkN8w2Qh5kRPFk">
     <link rel="stylesheet" href="{% static 'kinglife/css/style.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
-        rel="stylesheet" />
-
-    <!-- Include specific dashboard CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'kinglife/css/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'kinglife/css/toast.css' %}">
-
+    <script>
+        window._pwaPromptEvent = null;
+        window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); window._pwaPromptEvent = e; });
+    </script>
 </head>
-
 <body class="dashboard-body">
-
     <div class="dashboard-container">
 
         <!-- Sidebar -->
         <aside class="dashboard-sidebar">
-            <a href="/" class="sidebar-logo"
-                style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-                <img src="{% static 'kinglife/images/logo.png' %}" alt="Kinglife Logo"
-                    style="height: 32px; width: auto;">
+            <a href="/" class="sidebar-logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                <img src="{% static 'kinglife/images/logo.png' %}" alt="Kinglife Logo" style="height: 32px; width: auto;">
                 <span>KINGLIFE</span>
             </a>
 
@@ -45,72 +34,48 @@
                 <a href="/dashboard/" class="nav-item {% if request.path == '/dashboard/' %}active{% endif %}">
                     <i class="material-symbols-outlined">dashboard</i> <span>Vue d'ensemble</span>
                 </a>
-                <a href="{% url 'demande_cotation' %}"
-                    class="nav-item {% if '/demande-cotation/' in request.path %}active{% endif %}">
+                <a href="{% url 'demande_cotation' %}" class="nav-item {% if '/demande-cotation/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">add_shopping_cart</i> <span>Nouveau Devis</span>
                 </a>
 
                 {% if user.is_staff or user.is_superuser %}
-                <div
-                    style="margin: 20px 0 10px 20px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--dash-text-light); letter-spacing: 1px;">
-                    Administration</div>
-
-                <a href="{% url 'admin_hub' %}"
-                    class="nav-item {% if request.path == '/espace-admin/' %}active{% endif %}">
+                <div style="margin: 20px 0 10px 20px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--dash-text-light); letter-spacing: 1px;">Administration</div>
+                <a href="{% url 'admin_hub' %}" class="nav-item {% if request.path == '/espace-admin/' %}active{% endif %}">
                     <i class="material-symbols-outlined">monitoring</i> <span>Hub Admin</span>
                 </a>
-                <a href="{% url 'admin_catalogue' %}"
-                    class="nav-item {% if '/catalogue/' in request.path %}active{% endif %}"
-                    hx-get="{% url 'admin_catalogue' %}" hx-target="#dashboard-main" hx-swap="innerHTML"
-                    hx-push-url="true">
+                <a href="{% url 'admin_catalogue' %}" class="nav-item {% if '/catalogue/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">inventory_2</i> <span>Catalogue</span>
                 </a>
-                <a href="{% url 'admin_services' %}"
-                    class="nav-item {% if '/services/' in request.path %}active{% endif %}"
-                    hx-get="{% url 'admin_services' %}" hx-target="#dashboard-main" hx-swap="innerHTML"
-                    hx-push-url="true">
+                <a href="{% url 'admin_services' %}" class="nav-item {% if '/services/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">design_services</i> <span>Services</span>
                 </a>
-                <a href="{% url 'admin_actualites' %}"
-                    class="nav-item {% if '/actualites/' in request.path %}active{% endif %}"
-                    hx-get="{% url 'admin_actualites' %}" hx-target="#dashboard-main" hx-swap="innerHTML"
-                    hx-push-url="true">
-                    <i class="material-symbols-outlined">newspaper</i> <span>Actualités</span>
+                <a href="{% url 'admin_actualites' %}" class="nav-item {% if '/actualites/' in request.path %}active{% endif %}">
+                    <i class="material-symbols-outlined">newspaper</i> <span>Actualites</span>
                 </a>
-                <a href="{% url 'admin_realisations' %}"
-                    class="nav-item {% if '/realisations/' in request.path %}active{% endif %}"
-                    hx-get="{% url 'admin_realisations' %}" hx-target="#dashboard-main" hx-swap="innerHTML"
-                    hx-push-url="true">
-                    <i class="material-symbols-outlined">workspace_premium</i> <span>Réalisations</span>
+                <a href="{% url 'admin_realisations' %}" class="nav-item {% if '/realisations/' in request.path %}active{% endif %}">
+                    <i class="material-symbols-outlined">workspace_premium</i> <span>Realisations</span>
                 </a>
-                <a href="{% url 'admin_factures' %}"
-                    class="nav-item {% if '/espace-admin/factures' in request.path and 'achats' not in request.path %}active{% endif %}">
+                <a href="{% url 'admin_factures' %}" class="nav-item {% if '/espace-admin/factures' in request.path and 'achats' not in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">receipt_long</i> <span>Factures</span>
                 </a>
-                <a href="{% url 'admin_soldes_clients' %}"
-                    class="nav-item {% if '/espace-admin/comptabilite/soldes' in request.path %}active{% endif %}">
-                    <i class="material-symbols-outlined">account_balance_wallet</i> <span>Comptabilité</span>
+                <a href="{% url 'admin_soldes_clients' %}" class="nav-item {% if '/espace-admin/comptabilite/soldes' in request.path %}active{% endif %}">
+                    <i class="material-symbols-outlined">account_balance_wallet</i> <span>Comptabilite</span>
                 </a>
-                <a href="{% url 'admin_demandes_list' %}"
-                    class="nav-item {% if '/admin-cotations/' in request.path %}active{% endif %}">
+                <a href="{% url 'admin_demandes_list' %}" class="nav-item {% if '/admin-cotations/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">request_quote</i> <span>Tarification</span>
                 </a>
-                <a href="{% url 'admin_messages' %}"
-                    class="nav-item {% if '/messages/' in request.path %}active{% endif %}"
-                    hx-get="{% url 'admin_messages' %}" hx-target="#dashboard-main" hx-swap="innerHTML"
-                    hx-push-url="true">
+                <a href="{% url 'admin_messages' %}" class="nav-item {% if '/messages/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">mail</i> <span>Messages</span>
                 </a>
                 {% endif %}
 
-                <!-- Spacer -->
                 <div style="flex-grow: 1;"></div>
 
                 <a href="/" class="nav-item" style="color: var(--dash-text-light);">
                     <i class="material-symbols-outlined">language</i> <span>Retour au site</span>
                 </a>
                 <a href="/logout/" class="nav-item" style="color: var(--dash-danger);">
-                    <i class="material-symbols-outlined">logout</i> <span>Déconnexion</span>
+                    <i class="material-symbols-outlined">logout</i> <span>Deconnexion</span>
                 </a>
             </nav>
         </aside>
@@ -120,121 +85,18 @@
             <header class="dashboard-header">
                 <div class="dashboard-greeting">
                     <h1>{% block page_title %}Tableau de bord{% endblock %}</h1>
-                    <p>{% block page_subtitle %}Gérez vos activités maritimes et cotations en temps réel.{% endblock %}
-                    </p>
+                    <p>{% block page_subtitle %}Gerez vos activites maritimes et cotations en temps reel.{% endblock %}</p>
                 </div>
 
-                <!-- Action button (optional) -->
                 <div style="display: flex; align-items: center; gap: 20px;">
-                    <!-- Notification Bell -->
                     <div style="position: relative;">
-                        <button onclick="toggleNotifs()"
-                            style="background: none; border: none; cursor: pointer; color: var(--dash-text-main); position: relative; padding: 5px;">
+                        <button onclick="toggleNotifs()" style="background: none; border: none; cursor: pointer; color: var(--dash-text-main); position: relative; padding: 5px;">
                             <i class="material-symbols-outlined" style="font-size: 28px;">notifications</i>
                             {% if unread_notifications_count > 0 %}
                             <span id="notif-badge" style="position: absolute; top: 0; right: 0; background: #ef4444; color: white; font-size: 11px; font-weight: bold; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">{{ unread_notifications_count }}</span>
                             {% endif %}
                         </button>
-
-                        <!-- Dropdown -->
-                        <div id="notif-dropdown"
-                            style="display: none; position: absolute; top: 44px; right: 0; width: 360px; max-width: 90vw; background: white; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); border: 1px solid var(--dash-border); z-index: 1000; overflow: hidden;">
-                            <div
-                                style="padding: 14px 18px; border-bottom: 1px solid var(--dash-border); display: flex; align-items: center; justify-content: space-between; background: #f8fafc;">
-                                <div
-                                    style="font-weight: 700; color: var(--dash-text-main); font-size: 14px; display: flex; align-items: center; gap: 6px;">
-                                    <i class="material-symbols-outlined"
-                                        style="font-size: 18px; color: #1a56c4;">notifications</i> Notifications
-                                </div>
-                                <button type="button" onclick="markAllNotifsRead()"
-                                    style="background: none; border: none; color: #1a56c4; font-size: 12px; font-weight: 600; cursor: pointer;">
-                                    Tout marquer comme lu
-                                </button>
-                            </div>
-                            <div id="notif-items-list" style="max-height: 380px; overflow-y: auto;">
-                                {% if unread_notifications %}
-                                {% for notif in unread_notifications %}
-                                <div id="notif-card-{{ notif.id }}"
-                                    style="padding: 14px 16px; border-bottom: 1px solid var(--dash-border); transition: background 0.2s; position: relative;">
-                                    <div style="display: flex; align-items: flex-start; gap: 12px;">
-                                        <div
-                                            style="width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; 
-                                                {% if notif.type_notif == 'success' %}background: rgba(16, 185, 129, 0.12); color: #10b981;
-                                                {% elif notif.type_notif == 'warning' %}background: rgba(245, 158, 11, 0.12); color: #f59e0b;
-                                                {% else %}background: rgba(26, 86, 196, 0.12); color: #1a56c4;{% endif %}">
-                                            <i class="material-symbols-outlined" style="font-size: 18px;">
-                                                {% if notif.type_notif == 'success' %}check_circle
-                                                {% elif notif.type_notif == 'warning' %}warning
-                                                {% else %}info{% endif %}
-                                            </i>
-                                        </div>
-                                        <div style="flex-grow: 1;">
-                                            <div
-                                                style="font-size: 13px; font-weight: 700; color: var(--dash-text-main); margin-bottom: 2px;">
-                                                {{ notif.titre }}
-                                            </div>
-                                            <div
-                                                style="font-size: 12px; color: var(--dash-text-muted); line-height: 1.4; margin-bottom: 8px;">
-                                                {{ notif.message }}
-                                            </div>
-
-                                            <!-- Action Buttons -->
-                                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                                                {% if 'Installez' in notif.titre or 'PWA' in notif.titre %}
-                                                <!-- PWA Install Notification -->
-                                                <button type="button" onclick="triggerPwaInstallPrompt()" style="background: linear-gradient(135deg, #1a56c4 0%, #0d3b94 100%); color: white; border: none; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(26, 86, 196, 0.3);"><i class="material-symbols-outlined" style="font-size: 14px;">download</i> Installer l'application</button>
-                                                <button type="button" onclick="markSingleNotifRead({{ notif.id }})" style="background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;"><i class="material-symbols-outlined" style="font-size: 14px;">check</i> Lu</button>
-                                                {% elif 'cotation' in notif.titre|lower or 'devis' in notif.titre|lower or 'message' in notif.titre|lower %}
-                                                <!-- Interactive Message / Cotation Notification -->
-                                                <button type="button" onclick="toggleQuickReplyBox({{ notif.id }})" style="background: rgba(26, 86, 196, 0.08); color: #1a56c4; border: 1px solid rgba(26, 86, 196, 0.2); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;"><i class="material-symbols-outlined" style="font-size: 14px;">reply</i> Répondre</button>
-                                                {% if notif.lien %}
-                                                <a href="{{ notif.lien }}" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><i class="material-symbols-outlined" style="font-size: 14px;">open_in_new</i> Voir</a>
-                                                {% endif %}
-                                                <button type="button" onclick="markSingleNotifRead({{ notif.id }})" style="background: none; border: none; color: #94a3b8; font-size: 11px; cursor: pointer; margin-left: auto;">✓ Lu</button>
-                                                {% else %}
-                                                <!-- Informational Notification -->
-                                                {% if notif.lien %}
-                                                <a href="{{ notif.lien }}" style="background: #1a56c4; color: white; border: none; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"><i class="material-symbols-outlined" style="font-size: 14px;">open_in_new</i> Consulter</a>
-                                                {% endif %}
-                                                <button type="button" onclick="markSingleNotifRead({{ notif.id }})" style="background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;"><i class="material-symbols-outlined" style="font-size: 14px;">check</i> Lu</button>
-                                                {% endif %}
-                                            </div>
-
-                                            {% if 'PWA' not in notif.titre and 'Installez' not in notif.titre %}
-                                            <!-- Inline Quick Reply Box -->
-                                            <div id="quick-reply-box-{{ notif.id }}"
-                                                style="display: none; margin-top: 10px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
-                                                <textarea id="quick-reply-input-{{ notif.id }}" rows="2"
-                                                    placeholder="Écrivez votre réponse rapide..."
-                                                    style="width: 100%; padding: 8px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; resize: none; margin-bottom: 6px; box-sizing: border-box;"></textarea>
-                                                <div style="display: flex; justify-content: flex-end; gap: 6px;">
-                                                    <button type="button" onclick="toggleQuickReplyBox({{ notif.id }})"
-                                                        style="background: none; border: none; color: #64748b; font-size: 11px; padding: 4px 8px; cursor: pointer;">Annuler</button>
-                                                    <button type="button" id="btn-submit-dash-reply-{{ notif.id }}"
-                                                        onclick="submitQuickReply({{ notif.id }})"
-                                                        style="background: #1a56c4; color: white; border: none; padding: 5px 12px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
-                                                        <i class="material-symbols-outlined"
-                                                            style="font-size: 14px;">send</i> Envoyer
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            {% endif %}
-
-                                            <div style="font-size: 10px; color: #94a3b8; margin-top: 6px;">{{ notif.date_creation|timesince }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                                {% else %}
-                                <div
-                                    style="padding: 24px; text-align: center; font-size: 13px; color: var(--dash-text-muted);">
-                                    Aucune nouvelle notification.
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
                     </div>
-
                     {% block header_actions %}{% endblock %}
                 </div>
             </header>
@@ -242,6 +104,67 @@
             {% block dashboard_content %}
             {% endblock %}
         </main>
+    </div>
+
+    <!-- BACKDROP -->
+    <div id="notif-backdrop" onclick="toggleNotifs()" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 99998;"></div>
+
+    <!-- GLOBAL NOTIFICATION DROPDOWN - Root Level -->
+    <div id="notif-dropdown" style="display: none; position: fixed; top: 80px; right: 40px; width: 380px; max-width: 92vw; background: #ffffff; border-radius: 20px; box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22); border: 1px solid #e2e8f0; z-index: 99999; overflow: hidden;">
+        <div class="notif-drag-handle" style="display: none; width: 36px; height: 4px; background: #cbd5e1; border-radius: 4px; margin: 10px auto 4px;"></div>
+        <div style="padding: 14px 18px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; background: #f8fafc;">
+            <div style="font-weight: 700; color: #0f172a; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                <i class="material-symbols-outlined" style="font-size: 18px; color: #1a56c4;">notifications</i> Notifications
+            </div>
+            <button type="button" onclick="markAllNotifsRead()" style="background: none; border: none; color: #1a56c4; font-size: 12px; font-weight: 600; cursor: pointer;">
+                Tout marquer comme lu
+            </button>
+        </div>
+        <div id="notif-items-list" style="max-height: 420px; overflow-y: auto;">
+            {% if unread_notifications %}
+            {% for notif in unread_notifications %}
+            <div id="notif-card-{{ notif.id }}" style="padding: 14px 16px; border-bottom: 1px solid #f1f5f9; transition: background 0.2s;">
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; {% if notif.type_notif == 'success' %}background: rgba(16, 185, 129, 0.12); color: #10b981;{% elif notif.type_notif == 'warning' %}background: rgba(245, 158, 11, 0.12); color: #f59e0b;{% else %}background: rgba(26, 86, 196, 0.12); color: #1a56c4;{% endif %}">
+                        <i class="material-symbols-outlined" style="font-size: 18px;">{% if notif.type_notif == 'success' %}check_circle{% elif notif.type_notif == 'warning' %}warning{% else %}info{% endif %}</i>
+                    </div>
+                    <div style="flex-grow: 1; min-width: 0;">
+                        <div style="font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 2px;">{{ notif.titre }}</div>
+                        <div style="font-size: 12px; color: #64748b; line-height: 1.4; margin-bottom: 8px;">{{ notif.message }}</div>
+                        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                            {% if 'Installez' in notif.titre or 'PWA' in notif.titre %}
+                            <button type="button" onclick="triggerPwaInstallPrompt()" style="background: linear-gradient(135deg, #1a56c4, #0d3b94); color: white; border: none; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;"><i class="material-symbols-outlined" style="font-size: 14px;">download</i> Installer</button>
+                            <button type="button" onclick="markSingleNotifRead({{ notif.id }})" style="background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;">Lu</button>
+                            {% elif 'cotation' in notif.titre|lower or 'devis' in notif.titre|lower or 'message' in notif.titre|lower %}
+                            <button type="button" onclick="toggleQuickReplyBox({{ notif.id }})" style="background: rgba(26,86,196,0.08); color: #1a56c4; border: 1px solid rgba(26,86,196,0.2); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;"><i class="material-symbols-outlined" style="font-size: 14px;">reply</i> Repondre</button>
+                            {% if notif.lien %}<a href="{{ notif.lien }}" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 6px; font-size: 11px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Voir</a>{% endif %}
+                            <button type="button" onclick="markSingleNotifRead({{ notif.id }})" style="background: none; border: none; color: #94a3b8; font-size: 11px; cursor: pointer; margin-left: auto;">Lu</button>
+                            {% else %}
+                            {% if notif.lien %}<a href="{{ notif.lien }}" style="background: #1a56c4; color: white; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">Consulter</a>{% endif %}
+                            <button type="button" onclick="markSingleNotifRead({{ notif.id }})" style="background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;">Lu</button>
+                            {% endif %}
+                        </div>
+                        {% if 'PWA' not in notif.titre and 'Installez' not in notif.titre %}
+                        <div id="quick-reply-box-{{ notif.id }}" style="display: none; margin-top: 10px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <textarea id="quick-reply-input-{{ notif.id }}" rows="2" placeholder="Ecrivez votre reponse rapide..." style="width: 100%; padding: 8px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; resize: none; margin-bottom: 6px; box-sizing: border-box;"></textarea>
+                            <div style="display: flex; justify-content: flex-end; gap: 6px;">
+                                <button type="button" onclick="toggleQuickReplyBox({{ notif.id }})" style="background: none; border: none; color: #64748b; font-size: 11px; padding: 4px 8px; cursor: pointer;">Annuler</button>
+                                <button type="button" id="btn-submit-dash-reply-{{ notif.id }}" onclick="submitQuickReply({{ notif.id }})" style="background: #1a56c4; color: white; border: none; padding: 5px 12px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;"><i class="material-symbols-outlined" style="font-size: 14px;">send</i> Envoyer</button>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div style="font-size: 10px; color: #94a3b8; margin-top: 6px;">{{ notif.date_creation|timesince }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div style="padding: 32px 24px; text-align: center; color: #94a3b8;">
+                <i class="material-symbols-outlined" style="font-size: 40px; display: block; margin-bottom: 8px; color: #cbd5e1;">notifications_off</i>
+                Aucune nouvelle notification.
+            </div>
+            {% endif %}
+        </div>
     </div>
 
     <script>
@@ -262,48 +185,38 @@
 
         function toggleNotifs() {
             const dropdown = document.getElementById('notif-dropdown');
-            if (dropdown) {
-                dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-            }
+            const backdrop = document.getElementById('notif-backdrop');
+            if (!dropdown) return;
+            const isOpen = dropdown.style.display !== 'none';
+            dropdown.style.display = isOpen ? 'none' : 'block';
+            if (backdrop) backdrop.style.display = isOpen ? 'none' : 'block';
         }
 
         function toggleQuickReplyBox(notifId) {
             const box = document.getElementById('quick-reply-box-' + notifId);
-            if (box) {
-                box.style.display = box.style.display === 'none' ? 'block' : 'none';
-            }
+            if (box) box.style.display = box.style.display === 'none' ? 'block' : 'none';
         }
 
         function markAllNotifsRead() {
             fetch("{% url 'marquer_notifications_lues' %}", {
                 method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json'
-                }
-            }).then(res => res.json()).then(data => {
+                headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' }
+            }).then(r => r.json()).then(data => {
                 const badge = document.getElementById('notif-badge');
                 if (badge) badge.style.display = 'none';
                 const list = document.getElementById('notif-items-list');
-                if (list) {
-                    list.innerHTML = '<div style="padding: 24px; text-align: center; font-size: 13px; color: var(--dash-text-muted);">Toutes les notifications sont marquées comme lues.</div>';
-                }
+                if (list) list.innerHTML = '<div style="padding: 24px; text-align: center; color: #94a3b8;">Toutes les notifications sont lues.</div>';
             });
         }
 
         function markSingleNotifRead(notifId) {
             fetch("{% url 'marquer_notifications_lues' %}", {
                 method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' },
                 body: JSON.stringify({ notif_id: notifId })
-            }).then(res => res.json()).then(data => {
+            }).then(r => r.json()).then(data => {
                 const card = document.getElementById('notif-card-' + notifId);
-                if (card) {
-                    card.style.opacity = '0.5';
-                }
+                if (card) card.style.opacity = '0.5';
                 const badge = document.getElementById('notif-badge');
                 if (badge && data.unread_count === 0) badge.style.display = 'none';
             });
@@ -312,44 +225,42 @@
         function submitQuickReply(notifId) {
             const input = document.getElementById('quick-reply-input-' + notifId);
             if (!input || !input.value.trim()) return;
-
-            const text = input.value.trim();
-
-            fetch("/api/notifications/quick-reply/", {
+            fetch('/api/notifications/quick-reply/', {
                 method: 'POST',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ notif_id: notifId, reponse: text })
-            }).then(res => res.json()).then(data => {
+                headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Content-Type': 'application/json' },
+                body: JSON.stringify({ notif_id: notifId, reponse: input.value.trim() })
+            }).then(r => r.json()).then(data => {
                 if (data.status === 'success') {
-                    if (typeof showToast === 'function') {
-                        showToast("💬 Réponse rapide envoyée !", "success");
-                    } else {
-                        alert("💬 Réponse rapide envoyée !");
-                    }
+                    if (typeof showToast === 'function') showToast('Reponse envoyee !', 'success');
+                    else alert('Reponse envoyee !');
                     toggleQuickReplyBox(notifId);
                     markSingleNotifRead(notifId);
-                } else {
-                    alert("Erreur: " + data.message);
-                }
-            }).catch(err => {
-                console.error(err);
-                alert("Erreur d'envoi de la réponse rapide.");
-            });
+                } else { alert('Erreur: ' + data.message); }
+            }).catch(err => { console.error(err); alert("Erreur d'envoi."); });
         }
 
-        document.addEventListener('click', function (event) {
-            const dropdown = document.getElementById('notif-dropdown');
-            const button = event.target.closest('button[onclick="toggleNotifs()"]');
+        function triggerPwaInstallPrompt() {
+            const e = window._pwaPromptEvent;
+            if (e) { e.prompt(); }
+            else if (typeof showToast === 'function') showToast("Application deja installee.", "info");
+        }
 
-            if (dropdown && dropdown.style.display === 'block' && !button && !dropdown.contains(event.target)) {
-                dropdown.style.display = 'none';
+        function adjustNotifForMobile() {
+            const d = document.getElementById('notif-dropdown');
+            const h = d ? d.querySelector('.notif-drag-handle') : null;
+            if (!d) return;
+            if (window.innerWidth <= 768) {
+                Object.assign(d.style, { top: 'auto', bottom: '0', right: '0', left: '0', width: '100vw', maxWidth: '100vw', maxHeight: '82vh', borderRadius: '28px 28px 0 0', boxShadow: '0 -10px 40px rgba(0,0,0,0.3)' });
+                if (h) h.style.display = 'block';
+            } else {
+                Object.assign(d.style, { top: '80px', bottom: 'auto', right: '40px', left: 'auto', width: '380px', maxWidth: '92vw', maxHeight: '', borderRadius: '20px', boxShadow: '0 20px 50px rgba(15,23,42,0.22)' });
+                if (h) h.style.display = 'none';
             }
-        });
+        }
+        window.addEventListener('resize', adjustNotifForMobile);
+        adjustNotifForMobile();
     </script>
     <script src="{% static 'kinglife/js/toast.js' %}"></script>
+    <script src="{% static 'kinglife/js/main.js' %}"></script>
 </body>
-
 </html>
