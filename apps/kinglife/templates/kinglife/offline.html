@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hors ligne - KINGLIFE SHAL U</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #07192a 0%, #0a2540 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .offline-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 48px 32px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .offline-icon-wrapper {
+            width: 88px;
+            height: 88px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.4) 100%);
+            border: 2px solid rgba(59, 130, 246, 0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .offline-icon-wrapper i {
+            font-size: 44px;
+            color: #60a5fa;
+        }
+
+        .brand-logo-img {
+            height: 50px;
+            width: auto;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        p {
+            font-size: 15px;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .offline-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-retry {
+            background: linear-gradient(135deg, #1a56c4 0%, #1044a0 100%);
+            color: #ffffff;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-retry:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(26, 86, 196, 0.4);
+        }
+
+        .btn-home {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-home:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .cached-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-card">
+        <img src="{% static 'kinglife/images/logo.png' %}" alt="Kinglife Logo" class="brand-logo-img">
+
+        <div class="offline-icon-wrapper">
+            <i class="material-symbols-outlined">wifi_off</i>
+        </div>
+
+        <h1>Connexion internet interrompue</h1>
+        <p>Vous êtes actuellement en mode hors ligne. Certaines données sont sauvegardées dans votre cache local PWA pour vous permettre de continuer la navigation.</p>
+
+        <div class="offline-actions">
+            <button onclick="window.location.reload()" class="btn-retry">
+                <i class="material-symbols-outlined" style="font-size: 20px;">refresh</i>
+                Réessayer la connexion
+            </button>
+            <a href="/" class="btn-home">Retour aux pages en cache</a>
+        </div>
+
+        <div class="cached-badge">
+            <i class="material-symbols-outlined" style="font-size: 16px;">check_circle</i>
+            Mode Sauvegarde PWA Actif
+        </div>
+    </div>
+</body>
+</html>

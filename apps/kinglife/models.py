@@ -381,3 +381,22 @@ class Notification(models.Model):
         
     def __str__(self):
         return f"{self.titre} - {'Lue' if self.lue else 'Non lue'}"
+
+
+class PushSubscription(models.Model):
+    """Abonnement aux notifications Push navigateur"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='push_subscriptions', null=True, blank=True)
+    endpoint = models.TextField(unique=True)
+    p256dh = models.CharField(max_length=255)
+    auth = models.CharField(max_length=255)
+    user_agent = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Abonnement Push"
+        verbose_name_plural = "Abonnements Push"
+
+    def __str__(self):
+        username = self.user.username if self.user else "Anonyme"
+        return f"PushSub ({username}) - {self.endpoint[:40]}..."
+

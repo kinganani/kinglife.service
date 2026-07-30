@@ -52,57 +52,55 @@
 
             <!-- Right Side -->
             <div class="auth-right">
-                <h2>Sign in to your account</h2>
+                <h2>Connexion à votre espace</h2>
 
-
+                {% if messages %}
+                {% for message in messages %}
+                {% if message.tags == 'error' %}
+                <div style="background-color: rgba(220, 38, 38, 0.12); border: 1px solid rgba(220, 38, 38, 0.3); color: #dc2626; padding: 12px 14px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; text-align: left; display: flex; align-items: center; gap: 8px; font-weight: 500;">
+                    <span style="font-size: 16px;">⚠️</span>
+                    <div>{{ message }}</div>
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
 
                 {% if form.non_field_errors %}
-                <div
-                    style="background-color: rgba(220, 38, 38, 0.1); color: #dc2626; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+                <div style="background-color: rgba(220, 38, 38, 0.12); border: 1px solid rgba(220, 38, 38, 0.3); color: #dc2626; padding: 12px 14px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; text-align: left; font-weight: 500;">
                     {% for error in form.non_field_errors %}
-                    {{ error }}
+                    ⚠️ {{ error }}
                     {% endfor %}
                 </div>
                 {% endif %}
 
                 <form method="post">
                     {% csrf_token %}
+                    {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                    {% endif %}
+
                     <div class="form-v2-group" style="margin-bottom: 16px;">
-                        <label class="form-v2-label">Username</label>
-                        <input type="text" name="username" class="form-v2-input" placeholder="Enter username"
-                            value="{{ form.username.value|default_if_none:'' }}" required>
-                        {% if form.username.errors %}
-                        <div style="color: #dc2626; font-size: 12px; margin-top: 4px;">
-                            {% for error in form.username.errors %}
-                            {{ error }}
-                            {% endfor %}
-                        </div>
-                        {% endif %}
+                        <label class="form-v2-label">Nom d'utilisateur ou Email</label>
+                        <input type="text" name="username" class="form-v2-input" placeholder="Ex: admin ou exemple@email.com"
+                            value="{{ request.POST.username|default:'' }}" required autocomplete="username">
                     </div>
 
                     <div class="form-v2-group" style="margin-bottom: 16px;">
-                        <label class="form-v2-label">Password</label>
-                        <input type="password" name="password" class="form-v2-input" placeholder="Enter password"
-                            required>
-                        {% if form.password.errors %}
-                        <div style="color: #dc2626; font-size: 12px; margin-top: 4px;">
-                            {% for error in form.password.errors %}
-                            {{ error }}
-                            {% endfor %}
-                        </div>
-                        {% endif %}
+                        <label class="form-v2-label">Mot de passe</label>
+                        <input type="password" name="password" class="form-v2-input" placeholder="Entrez votre mot de passe"
+                            required autocomplete="current-password">
                     </div>
 
-                    <div
+                    <div class="remember-forgot-row"
                         style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; font-size: 13px;">
                         <label
                             style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--color-text-muted);">
-                            <input type="checkbox"> Se souvenir de moi
+                            <input type="checkbox" name="remember_me"> Se souvenir de moi
                         </label>
                         <a href="#" style="color: #1a56c4; font-weight: 500;">Mot de passe oublié ?</a>
                     </div>
 
-                    <button type="submit" class="btn-auth">Sign In</button>
+                    <button type="submit" class="btn-auth">Se connecter</button>
                 </form>
 
                 <div class="social-login-text">Sign In with</div>

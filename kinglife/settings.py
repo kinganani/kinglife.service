@@ -160,6 +160,7 @@ PWA_APP_ICONS_APPLE = [
 ]
 PWA_APP_DIR = 'ltr'
 PWA_APP_LANG = 'fr-FR'
+PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'apps', 'kinglife', 'templates', 'serviceworker.js')
 
 # --- Google Social Login ---
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')

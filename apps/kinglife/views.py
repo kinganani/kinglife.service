@@ -9,7 +9,7 @@ from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.db.models import Count, Q
-from .models import Service, Actualite, Realisation, Page, Contact, CategorieProduit, Article, DemandeCotation, LigneCotation, Cotation, Prestation, Facture, Paiement
+from .models import Service, Actualite, Realisation, Page, Contact, CategorieProduit, Article, DemandeCotation, LigneCotation, Cotation, Prestation, Facture, Paiement, PushSubscription
 from .utils import creer_notification, send_html_email
 from django.conf import settings
 
@@ -575,20 +575,63 @@ def google_login_api(request):
 
 
 def login_view(request):
-    """Connexion utilisateur"""
+    """Connexion utilisateur et administrateur avec vérification intelligente et messages d'erreur détaillés"""
     from django.contrib.auth.forms import AuthenticationForm
+    from django.contrib.auth import authenticate
+    from django.contrib.auth.models import User
+
+    next_url = request.GET.get('next', '')
+
+    if request.user.is_authenticated:
+        if request.user.is_staff or request.user.is_superuser:
+            return redirect('admin_hub')
+        return redirect('dashboard')
+
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
+        username_input = request.POST.get('username', '').strip()
+        password_input = request.POST.get('password', '')
+
+        # 1. Tenter la connexion par nom d'utilisateur standard
+        user = authenticate(request, username=username_input, password=password_input)
+
+        # 2. Si échec, vérifier si la saisie était une adresse email
+        if user is None and '@' in username_input:
+            user_by_email = User.objects.filter(email__iexact=username_input).first()
+            if user_by_email:
+                user = authenticate(request, username=user_by_email.username, password=password_input)
+
+        if user is not None:
+            if not user.is_active:
+                messages.error(request, "⚠️ Votre compte est désactivé. Veuillez contacter l'administration KINGLIFE.")
+                form = AuthenticationForm(request, data=request.POST)
+                return render(request, 'kinglife/login.html', {'form': form, 'next': next_url})
+
             login(request, user)
-            messages.success(request, 'Vous êtes connecté avec succès.')
+            messages.success(request, f"Connexion réussie. Bienvenue {user.first_name or user.username} !")
+
+            if next_url and next_url != '/logout/':
+                return redirect(next_url)
+
             if user.is_staff or user.is_superuser:
                 return redirect('admin_hub')
             return redirect('dashboard')
+
+        else:
+            # Message d'erreur ultra-précis selon la cause
+            if not username_input or not password_input:
+                messages.error(request, "Veuillez renseigner votre identifiant et votre mot de passe.")
+            else:
+                user_exists = User.objects.filter(Q(username__iexact=username_input) | Q(email__iexact=username_input)).exists()
+                if user_exists:
+                    messages.error(request, "Mot de passe incorrect. Veuillez vérifier votre mot de passe et réessayer.")
+                else:
+                    messages.error(request, f"Aucun compte trouvé avec l'identifiant '{username_input}'.")
+
+            form = AuthenticationForm(request, data=request.POST)
     else:
         form = AuthenticationForm()
-    return render(request, 'kinglife/login.html', {'form': form})
+
+    return render(request, 'kinglife/login.html', {'form': form, 'next': next_url})
 
 
 def logout_view(request):
@@ -1297,3 +1340,193 @@ def admin_soldes_clients(request):
         'total_entreprise_restant': total_entreprise_restant,
         'base_template': base_template,
     })
+
+
+@csrf_exempt
+def push_subscribe(request):
+    """API endpoint pour enregistrer un abonnement Web Push navigateur"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            subscription_data = data.get('subscription', {})
+            endpoint = subscription_data.get('endpoint')
+            keys = subscription_data.get('keys', {})
+            p256dh = keys.get('p256dh')
+            auth = keys.get('auth')
+
+            if not endpoint or not p256dh or not auth:
+                return JsonResponse({'status': 'error', 'message': 'Données d\'abonnement incomplètes'}, status=400)
+
+            user = request.user if request.user.is_authenticated else None
+            user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+            sub, created = PushSubscription.objects.update_or_create(
+                endpoint=endpoint,
+                defaults={
+                    'user': user,
+                    'p256dh': p256dh,
+                    'auth': auth,
+                    'user_agent': user_agent,
+                }
+            )
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Abonnement Push enregistré avec succès !',
+                'created': created
+            })
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'}, status=405)
+
+
+@csrf_exempt
+def push_test_notification(request):
+    """API endpoint pour tester immédiatement les notifications Push"""
+    if request.method == 'POST':
+        try:
+            user = request.user if request.user.is_authenticated else None
+
+            notif = creer_notification(
+                titre="🔔 Test Notification Push OK",
+                message="Félicitations ! Les notifications Push Web KINGLIFE SHAL U fonctionnent parfaitement sur votre appareil.",
+                utilisateur=user,
+                is_for_admin=False if user else True,
+                lien='/dashboard/',
+                type_notif='success'
+            )
+
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Notification Push de test envoyée ! Vérifiez vos notifications système/navigateur.',
+                'notif_id': notif.id
+            })
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'}, status=405)
+
+
+def offline_view(request):
+    """Page d'attente hors-ligne PWA"""
+    return render(request, 'kinglife/offline.html')
+
+
+@csrf_exempt
+@login_required
+def marquer_notifications_lues(request):
+    """Marque une notification spécifique ou toutes les notifications comme lues"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body) if request.body else {}
+            notif_id = data.get('notif_id') or request.POST.get('notif_id')
+
+            if request.user.is_staff or request.user.is_superuser:
+                qs = Notification.objects.filter(Q(is_for_admin=True) | Q(utilisateur=request.user))
+            else:
+                qs = Notification.objects.filter(utilisateur=request.user)
+
+            if notif_id:
+                qs.filter(id=notif_id).update(lue=True)
+            else:
+                qs.update(lue=True)
+
+            unread_count = qs.filter(lue=False).count()
+            return JsonResponse({'status': 'success', 'unread_count': unread_count})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'}, status=405)
+
+
+@login_required
+def get_notifications_api(request):
+    """Renvoie la liste dynamique des notifications avec métadonnées pour réponse rapide"""
+    if request.user.is_staff or request.user.is_superuser:
+        notifs = Notification.objects.filter(Q(is_for_admin=True) | Q(utilisateur=request.user))
+    else:
+        notifs = Notification.objects.filter(utilisateur=request.user)
+
+    notifs = notifs.order_by('-date_creation')[:20]
+
+    data = []
+    for n in notifs:
+        data.append({
+            'id': n.id,
+            'titre': n.titre,
+            'message': n.message,
+            'lien': n.lien or '#',
+            'lue': n.lue,
+            'type_notif': n.type_notif,
+            'date': n.date_creation.strftime('%d/%m/%Y à %H:%M'),
+        })
+
+    unread_count = notifs.filter(lue=False).count()
+    return JsonResponse({'status': 'success', 'notifications': data, 'unread_count': unread_count})
+
+
+@csrf_exempt
+@login_required
+def quick_reply_api(request):
+    """Permet de répondre immédiatement à une notification (ex: réponse client ou message admin)"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body) if request.body else request.POST
+            notif_id = data.get('notif_id')
+            reponse_texte = data.get('reponse', '').strip()
+
+            if not reponse_texte:
+                return JsonResponse({'status': 'error', 'message': 'Le message de réponse ne peut pas être vide'}, status=400)
+
+            notif = None
+            if notif_id:
+                notif = Notification.objects.filter(id=notif_id).first()
+
+            if request.user.is_staff or request.user.is_superuser:
+                # Réponse Admin -> Client
+                target_user = notif.utilisateur if notif and notif.utilisateur else None
+
+                if target_user:
+                    from .models import MessageInterne
+                    MessageInterne.objects.create(
+                        client=target_user,
+                        sujet=f"Réponse rapide: {notif.titre if notif else 'KINGLIFE'}",
+                        contenu=reponse_texte
+                    )
+                    creer_notification(
+                        titre=f"💬 Réponse de l'administration",
+                        message=reponse_texte,
+                        utilisateur=target_user,
+                        lien='/dashboard/',
+                        type_notif='info'
+                    )
+                else:
+                    creer_notification(
+                        titre=f"💬 Message général Admin",
+                        message=reponse_texte,
+                        is_for_admin=True,
+                        lien='/espace-admin/messages/',
+                        type_notif='info'
+                    )
+            else:
+                # Réponse Client -> Admins
+                creer_notification(
+                    titre=f"💬 Réponse rapide de {request.user.username}",
+                    message=reponse_texte,
+                    is_for_admin=True,
+                    lien='/espace-admin/messages/',
+                    type_notif='info'
+                )
+
+            if notif:
+                notif.lue = True
+                notif.save()
+
+            return JsonResponse({'status': 'success', 'message': 'Votre réponse rapide a été transmise avec succès !'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'}, status=405)
+
+
+

@@ -186,3 +186,99 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+
+/* ==========================================================================
+   WEB PUSH NOTIFICATION CLIENT & TEST BUTTON
+   ========================================================================== */
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+
+async function registerWebPushSubscription() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+    try {
+        const registration = await navigator.serviceWorker.ready;
+        let subscription = await registration.pushManager.getSubscription();
+
+        if (!subscription && Notification.permission === 'granted') {
+            const vapidPublicKey = 'BJ4iNXUZBrhY_hjNW0gaiSGhDrYb1ARJAk-Q7ezyiyHyPeuZxtPPob-zuxeuUAhQxlqHgETkmwkN8w2Qh5kRPFk';
+            const convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
+
+            subscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: convertedVapidKey
+            });
+        }
+
+        if (subscription) {
+            await fetch('/api/push/subscribe/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subscription: subscription })
+            });
+        }
+    } catch (err) {
+        console.warn('Notice WebPush subscription:', err);
+    }
+}
+
+async function requestPushPermissionAndSubscribe() {
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'default') {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+            await registerWebPushSubscription();
+        }
+    } else if (Notification.permission === 'granted') {
+        await registerWebPushSubscription();
+    }
+}
+
+async function testPushNotification() {
+    if ('Notification' in window && Notification.permission !== 'granted') {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+            alert("Veuillez autoriser les notifications dans votre navigateur pour tester la fonctionnalité !");
+            return;
+        }
+    }
+
+    await registerWebPushSubscription();
+
+    try {
+        const response = await fetch('/api/push/test/', { method: 'POST' });
+        const res = await response.json();
+        if (res.status === 'success') {
+            if (typeof showToast === 'function') {
+                showToast("🔔 Notification Push de test envoyée !", "success");
+            } else {
+                alert("🔔 Notification Push de test envoyée ! Regardez les notifications de votre appareil.");
+            }
+        } else {
+            alert("Notice : " + (res.message || "Impossible d'envoyer la notification"));
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Erreur lors du test de notification push.");
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    requestPushPermissionAndSubscribe();
+
+    document.querySelectorAll('.btn-test-push-notif').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            testPushNotification();
+        });
+    });
+});

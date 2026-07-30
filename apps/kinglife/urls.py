@@ -28,6 +28,11 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('espace-admin/', views.admin_hub, name='admin_hub'),
     path('notifications/marquer-lues/', views.marquer_notifications_lues, name='marquer_notifications_lues'),
+    path('api/notifications/list/', views.get_notifications_api, name='get_notifications_api'),
+    path('api/notifications/quick-reply/', views.quick_reply_api, name='quick_reply_api'),
+    path('api/push/subscribe/', views.push_subscribe, name='push_subscribe'),
+    path('api/push/test/', views.push_test_notification, name='push_test_notification'),
+    path('offline/', views.offline_view, name='offline'),
     
     # Gestion Messages Admin
     path('espace-admin/messages/', views.admin_messages, name='admin_messages'),
