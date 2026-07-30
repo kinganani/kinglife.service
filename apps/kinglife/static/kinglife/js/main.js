@@ -78,14 +78,19 @@ document.addEventListener('DOMContentLoaded', () => {
 /* PWA Install Prompt Logic */
 let deferredPrompt;
 
-// Let the browser handle the native mini-infobar automatically by NOT preventing default.
+// Capture beforeinstallprompt event
 window.addEventListener('beforeinstallprompt', (e) => {
-    // We intentionally DO NOT call e.preventDefault() here.
-    // This allows Chrome to automatically show its native install banner/infobar
-    // at the bottom or top of the screen when the page loads, as requested.
+    e.preventDefault();
     deferredPrompt = e;
 
-    // Keep the preloader install button functional if it exists
+    const pwaWidget = document.getElementById('pwa-install-widget');
+    if (pwaWidget && !sessionStorage.getItem('pwa_banner_dismissed')) {
+        setTimeout(() => {
+            pwaWidget.classList.remove('hidden');
+            pwaWidget.classList.add('show');
+        }, 1200);
+    }
+
     const preloaderInstallBtn = document.getElementById('preloader-pwa-install-btn');
     if (preloaderInstallBtn) {
         preloaderInstallBtn.style.display = 'inline-block';
@@ -93,9 +98,52 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const preloaderInstallBtn = document.getElementById('preloader-pwa-install-btn');
+    const pwaWidget = document.getElementById('pwa-install-widget');
+    const pwaInstallBtn = document.getElementById('pwa-install-btn');
+    const pwaCloseBtn = document.getElementById('pwa-close-btn');
+    const iosHint = document.getElementById('pwa-ios-instructions');
+
+    // Detect iOS
+    const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+    const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+
+    if (isIos && !isStandalone && pwaWidget && !sessionStorage.getItem('pwa_banner_dismissed')) {
+        setTimeout(() => {
+            pwaWidget.classList.remove('hidden');
+            pwaWidget.classList.add('show');
+            if (iosHint) iosHint.classList.remove('hidden');
+            if (pwaInstallBtn) pwaInstallBtn.style.display = 'none';
+        }, 1500);
+    }
+
+    // Install Button Click Handler
+    if (pwaInstallBtn) {
+        pwaInstallBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                if (pwaWidget) {
+                    pwaWidget.classList.remove('show');
+                    setTimeout(() => pwaWidget.classList.add('hidden'), 500);
+                }
+            } else {
+                alert("Pour installer l'application : utilisez le menu de votre navigateur (ex: 'Ajouter à l'écran d'accueil' ou 'Installer l'application').");
+            }
+        });
+    }
+
+    // Close Button Click Handler
+    if (pwaCloseBtn && pwaWidget) {
+        pwaCloseBtn.addEventListener('click', () => {
+            pwaWidget.classList.remove('show');
+            setTimeout(() => pwaWidget.classList.add('hidden'), 500);
+            sessionStorage.setItem('pwa_banner_dismissed', 'true');
+        });
+    }
 
     // Preloader Install Button
+    const preloaderInstallBtn = document.getElementById('preloader-pwa-install-btn');
     if (preloaderInstallBtn) {
         preloaderInstallBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
@@ -127,14 +175,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             setTimeout(() => {
-                // If button is showing, user is probably deciding. But after 5 seconds, fade it anyway
                 if (preloader.style.display !== 'none') {
                     preloader.style.opacity = '0';
                     setTimeout(() => { preloader.style.display = 'none'; }, 500);
                 }
-
                 sessionStorage.setItem('kinglife_preloader_shown', 'true');
-            }, 1000); // 20 seconds wait to give time to install PWA inside preloader
+            }, 1200);
         } else {
             preloader.style.display = 'none';
         }

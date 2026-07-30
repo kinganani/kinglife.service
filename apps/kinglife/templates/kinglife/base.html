@@ -3,11 +3,17 @@
 <html lang="fr">
 
 <head>
+    <!-- PWA Web App Manifest & Multi-Platform Meta Tags -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#0f172a">
-    <link rel="apple-touch-icon" href="/static/kinglife/images/logo.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="KINGLIFE">
+    <meta name="application-name" content="KINGLIFE SHAL U">
+    <link rel="apple-touch-icon" href="{% static 'kinglife/images/logo.png' %}">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="view-transition" content="same-origin">
     <title>{% block title %}KINGLIFE SHAL U - Services Maritimes & Logistiques{% endblock %}</title>
     <!-- VAPID public key for WebPush notifications -->
@@ -36,22 +42,29 @@
     {% block preloader %}{% endblock %}
 
 
-    <!-- PWA Install Native-Style Banner -->
+    <!-- PWA Install Native-Style Banner & Mobile Prompt -->
     <div id="pwa-install-widget" class="pwa-native-banner hidden">
         <div class="pwa-native-icon">
-            <img src="{% static 'kinglife/images/logo.png' %}" alt="Kinglife">
+            <img src="{% static 'kinglife/images/logo.png' %}" alt="Kinglife Logo">
         </div>
         <div class="pwa-native-content">
-            <div class="pwa-native-title">Application Kinglife</div>
-            <div class="pwa-native-subtitle">kinglife-shal-u.com</div>
+            <div class="pwa-native-title">Application KINGLIFE</div>
+            <div class="pwa-native-subtitle">Installez l'application pour un accès rapide & 24/7</div>
+            <div id="pwa-ios-instructions" class="pwa-ios-hint hidden">
+                Pour installer sur iPhone : appuyez sur <span class="material-symbols-outlined"
+                    style="vertical-align: middle; font-size:16px;">share</span> <strong>Partager</strong> puis
+                <strong>'Sur l'écran d'accueil'</strong> ⊕
+            </div>
         </div>
-        <div class="pwa-native-divider"></div>
-        <button type="button" class="pwa-native-btn" id="pwa-install-btn">
-            Installer
-        </button>
-        <button type="button" class="pwa-native-close" id="pwa-close-btn" aria-label="Fermer">
-            &times;
-        </button>
+        <div class="pwa-native-actions">
+            <button type="button" class="pwa-native-btn" id="pwa-install-btn">
+                <span class="material-symbols-outlined" style="vertical-align: middle; font-size:18px;">download</span>
+                Installer
+            </button>
+            <button type="button" class="pwa-native-close" id="pwa-close-btn" aria-label="Fermer">
+                &times;
+            </button>
+        </div>
     </div>
 
     <!-- Header Navigation Bar -->

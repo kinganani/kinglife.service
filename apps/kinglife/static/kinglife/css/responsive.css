@@ -235,17 +235,18 @@
     /* Services & About Pages */
     .service-row {
         flex-direction: column !important;
-        align-items: stretch !important; /* Force items to take full width */
+        align-items: stretch !important;
+        /* Force items to take full width */
     }
 
-    .service-row > div:first-child {
+    .service-row>div:first-child {
         width: 100% !important;
         height: 250px !important;
         min-height: 250px !important;
         padding: 0 !important;
     }
-    
-    .service-row > div:first-child img {
+
+    .service-row>div:first-child img {
         position: absolute;
         top: 0;
         left: 0;
@@ -254,7 +255,7 @@
         object-fit: cover !important;
     }
 
-    .service-row > div:last-child {
+    .service-row>div:last-child {
         width: 100% !important;
         padding: 30px 24px !important;
     }
