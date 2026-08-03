@@ -20,7 +20,7 @@ class Page(models.Model):
 
 
 class Service(models.Model):
-    """Services proposés par KINGLIFE SHAL U"""
+    """Services proposés par KINGLIFE SARL U"""
     CATEGORIES = [
         ('general_trade', 'General Trade'),
         ('import_export', 'Import - Export'),

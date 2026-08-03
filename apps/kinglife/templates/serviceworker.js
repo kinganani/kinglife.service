@@ -89,7 +89,7 @@ self.addEventListener('fetch', event => {
                     return cachedResponse;
                 }
                 const offlinePage = await caches.match('/offline/');
-                return offlinePage || new Response('Mode Hors-Ligne KINGLIFE SHAL U', {
+                return offlinePage || new Response('Mode Hors-Ligne KINGLIFE SARL U', {
                     headers: { 'Content-Type': 'text/html; charset=utf-8' }
                 });
             })
@@ -99,7 +99,7 @@ self.addEventListener('fetch', event => {
 /* Web Push Notification Listener */
 self.addEventListener('push', function(event) {
     let data = {
-        title: 'KINGLIFE SHAL U',
+        title: 'KINGLIFE SARL U',
         body: 'Nouvelle notification disponible.',
         url: '/',
         type: 'info'

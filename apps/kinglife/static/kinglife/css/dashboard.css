@@ -442,6 +442,7 @@ body.dashboard-body {
 
     .dashboard-wrapper {
         height: 100vh;
+        height: 100dvh;
         border-radius: 0;
     }
 
@@ -449,56 +450,184 @@ body.dashboard-body {
         flex-direction: column;
     }
 
+    /* ----------------------------------------------------------------------
+       CURVED MOBILE BOTTOM NAVBAR WITH ELEVATED CENTRAL LOGO BUTTON (IMAGE 2)
+       ---------------------------------------------------------------------- */
+@media (max-width: 768px) {
+    body.dashboard-body {
+        padding: 0;
+    }
+
+    .dashboard-wrapper {
+        height: 100vh;
+        height: 100dvh;
+        border-radius: 0;
+    }
+
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    /* ----------------------------------------------------------------------
+       CURVED MOBILE BOTTOM NAVBAR WITH HORIZONTALLY SCROLLABLE SINGLE LINE
+       ---------------------------------------------------------------------- */
     .dashboard-sidebar {
         position: fixed;
         bottom: 0;
         top: auto;
         left: 0;
-        width: 100%;
-        height: 70px;
-        flex-direction: row;
-        padding: 0;
-        z-index: 1000;
-        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
-        border-radius: 0;
+        right: 0;
+        width: 100vw;
+        height: 72px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 0 4px;
+        z-index: 9995;
+        background: linear-gradient(180deg, #0f172a 0%, #0b141a 100%);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 24px 24px 0 0; /* Curved top corners matching Image 2 */
+        box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.5);
+        box-sizing: border-box;
+        overflow: visible;
     }
 
     .sidebar-logo {
-        display: none;
+        display: none !important;
     }
 
-    .sidebar-nav {
-        flex-direction: row;
-        justify-content: space-around;
-        width: 100%;
+    /* Elevated Central Logo Circle Button (Image 2 style) */
+    .dash-mobile-logo-elevated {
+        display: flex !important;
+        position: absolute;
+        top: -24px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9998;
+    }
+
+    .dash-logo-circle-btn {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0284c7 0%, #0d3b94 100%);
+        box-shadow: 0 6px 20px rgba(2, 132, 199, 0.55), 0 0 0 4px #0f172a;
+        display: flex;
         align-items: center;
-        margin: 0;
+        justify-content: center;
+        text-decoration: none;
+        transition: transform 0.2s ease;
     }
 
-    .sidebar-nav>div {
-        display: none;
-        /* hide spacers and admin labels */
+    .dash-logo-circle-btn:active {
+        transform: scale(0.92);
+    }
+
+    .dash-logo-circle-btn img {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    }
+
+    /* SINGLE-LINE HORIZONTALLY SCROLLABLE CAROUSEL TRACK */
+    .sidebar-nav {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        scroll-snap-type: x mandatory !important;
+        scrollbar-width: none !important; /* Firefox */
+        -webkit-overflow-scrolling: touch !important; /* iOS smooth inertia scroll */
+        width: 100vw !important;
+        max-width: 100vw !important;
+        padding: 4px 16px !important;
+        gap: 12px !important;
+        box-sizing: border-box !important;
+    }
+
+    .sidebar-nav::-webkit-scrollbar {
+        display: none !important; /* Chrome / Safari / Edge */
+    }
+
+    .nav-item-header-label {
+        display: none !important;
+    }
+
+    .nav-item-spacer {
+        display: none !important;
     }
 
     .nav-item {
-        padding: 10px;
-        border-radius: 50%;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+        scroll-snap-align: center !important;
+        padding: 4px 10px !important;
+        border-radius: 14px !important;
+        gap: 3px !important;
+        text-decoration: none !important;
+        color: #94a3b8 !important;
+        background: none !important;
+        border: none !important;
+        cursor: pointer !important;
+        white-space: nowrap !important;
+        min-width: 68px !important;
+        transition: transform 0.15s ease, background 0.2s ease !important;
+        -webkit-tap-highlight-color: transparent !important;
     }
 
-    .nav-item.active {
-        background: rgba(255, 255, 255, 0.2);
+    .nav-item:active {
+        transform: scale(0.92) !important;
+    }
+
+    .nav-item i {
+        font-size: 22px !important;
+        color: #94a3b8 !important;
+        padding: 4px 16px !important;
+        border-radius: 20px !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .nav-item span {
+        display: block !important;
+        font-size: 10.5px !important;
+        font-weight: 600 !important;
+        color: #94a3b8 !important;
+        transition: color 0.2s ease !important;
+        line-height: 1.2 !important;
+        white-space: nowrap !important;
+    }
+
+    /* ACTIVE TAB STATE */
+    .nav-item.active i {
+        background: linear-gradient(135deg, rgba(2, 132, 199, 0.35) 0%, rgba(16, 185, 129, 0.35) 100%) !important;
+        color: #38bdf8 !important;
+        border: 1px solid rgba(56, 189, 248, 0.35) !important;
+        box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3) !important;
+    }
+
+    .nav-item.active span {
+        color: #ffffff !important;
+        font-weight: 800 !important;
     }
 
     .dashboard-main {
-        padding: 20px;
-        padding-bottom: 90px;
-        /* Space for bottom nav */
+        padding: 16px !important;
+        padding-bottom: 85px !important; /* Space for scrollable mobile bottom navbar */
     }
 
     .dashboard-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 15px;
+        gap: 12px;
     }
 
     .dash-table {
@@ -506,4 +635,55 @@ body.dashboard-body {
         overflow-x: auto;
         white-space: nowrap;
     }
+}
+
+/* Desktop styles for elevated logo button & spacers */
+@media (min-width: 769px) {
+    .dash-mobile-logo-elevated,
+    .nav-item-spacer,
+    .nav-item-mobile-only {
+        display: none !important;
+    }
+}
+
+/* Mobile Drawer Items Styling */
+.dash-drawer-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.dash-drawer-item i {
+    font-size: 20px;
+    color: #38bdf8;
+}
+
+.dash-drawer-item:hover, .dash-drawer-item:active {
+    background: rgba(2, 132, 199, 0.25);
+    border-color: rgba(56, 189, 248, 0.4);
+    transform: translateY(-1px);
+}
+
+.dash-drawer-logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 14px;
+    color: #fca5a5;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
 }

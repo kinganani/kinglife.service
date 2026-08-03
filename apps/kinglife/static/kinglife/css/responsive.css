@@ -1,5 +1,5 @@
 /* ==========================================================================
-   KINGLIFE SHAL U - CENTRALIZED RESPONSIVE CSS
+   KINGLIFE SARL U - CENTRALIZED RESPONSIVE CSS
    Complete mobile, tablet & desktop layout adaptations.
    ========================================================================== */
 
@@ -87,6 +87,13 @@
     }
 }
 
+/* Desktop default: hide mobile drawer auth section */
+@media (min-width: 993px) {
+    .mobile-drawer-auth {
+        display: none !important;
+    }
+}
+
 /* --------------------------------------------------------------------------
    TABLET PORTRAIT & NAVBAR BREAKPOINT (max-width: 992px)
    -------------------------------------------------------------------------- */
@@ -105,15 +112,16 @@
         width: 85vw;
         max-width: 350px;
         height: 100vh;
+        height: 100dvh;
         background: var(--color-white);
-        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
         z-index: 998;
         flex-direction: column;
         justify-content: flex-start;
         align-items: stretch;
-        padding: 100px 0 40px;
+        padding: 90px 0 30px;
         overflow-y: auto;
-        transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+        transition: right 0.35s cubic-bezier(0.77, 0, 0.175, 1);
     }
 
     .nav-menu.active {
@@ -122,21 +130,24 @@
     }
 
     .nav-link {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 600;
         color: var(--color-text-dark);
-        padding: 16px 30px;
-        border-bottom: 1px solid var(--color-border-light);
+        padding: 14px 24px;
+        border-bottom: 1px solid #f1f5f9;
         text-align: left;
         width: 100%;
         transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .nav-link:hover,
     .nav-link.active {
         color: var(--color-ocean-dark);
-        background: var(--color-light-bg);
-        padding-left: 35px;
+        background: #f8fafc;
+        padding-left: 28px;
         transform: none;
     }
 
@@ -144,51 +155,85 @@
         display: none;
     }
 
-    .floating-lang-widget {
-        bottom: 20px;
-        left: 20px;
-        z-index: 997;
-        /* Behind the sidebar */
+    /* Mobile Integrated Auth Section at bottom of drawer */
+    .mobile-drawer-auth {
+        display: flex !important;
+        flex-direction: column;
+        margin-top: auto;
+        padding: 20px 24px 30px;
+        border-top: 2px solid #f1f5f9;
+        background: #f8fafc;
+        gap: 12px;
+    }
+
+    .mobile-user-profile {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .mobile-user-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .mobile-user-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .mobile-user-btn-space,
+    .mobile-user-btn-admin {
+        background: #0f172a;
+        color: #ffffff;
+    }
+
+    .mobile-user-btn-cart {
+        background: #0284c7;
+        color: #ffffff;
+        position: relative;
+    }
+
+    .mobile-cart-badge-num {
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 900;
+        padding: 2px 7px;
+        border-radius: 999px;
+        margin-left: 4px;
+    }
+
+    .mobile-user-btn-logout {
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fca5a5;
+    }
+
+    .mobile-user-btn-login {
+        background: #f1f5f9;
+        color: #0f172a;
+        border: 1px solid #cbd5e1;
+    }
+
+    .mobile-user-btn-register {
+        background: #0284c7;
+        color: #ffffff;
     }
 
     .header-actions {
-        display: none;
-    }
-
-    .header-actions.active {
-        display: flex !important;
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        width: 85vw;
-        max-width: 350px;
-        flex-direction: column;
-        padding: 30px;
-        gap: 12px;
-        z-index: 999;
-        background: var(--color-white);
-        /* To cover any links scrolling behind it */
-        box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
-    }
-
-    .header-actions.active .header-btn,
-    .header-actions.active .btn-primary {
-        display: flex !important;
-        width: 100%;
-        justify-content: center;
-        padding: 14px 20px;
-        font-size: 15px;
-        border-radius: 8px;
-    }
-
-    .header-actions.active .header-btn {
-        background: var(--color-light-bg);
-        color: var(--color-text-dark);
-        border: 1px solid var(--color-border-light);
-    }
-
-    .header-actions.active .header-btn:hover {
-        background: var(--color-border-light);
+        display: none !important;
     }
 
     .mobile-toggle {
@@ -358,13 +403,12 @@
     .service-row {
         flex-direction: column !important;
         align-items: stretch !important;
-        /* Force items to take full width */
     }
 
     .service-row>div:first-child {
         width: 100% !important;
-        height: 250px !important;
-        min-height: 250px !important;
+        height: 230px !important;
+        min-height: 230px !important;
         padding: 0 !important;
     }
 
@@ -379,7 +423,17 @@
 
     .service-row>div:last-child {
         width: 100% !important;
-        padding: 30px 24px !important;
+        padding: 24px 20px !important;
+    }
+
+    .service-detail-card {
+        padding: 24px 18px !important;
+        border-radius: 16px !important;
+    }
+
+    .service-detail-img {
+        height: 220px !important;
+        margin-bottom: 20px !important;
     }
 
     .about-duo-cards {
@@ -388,6 +442,25 @@
 
     .about-image-wrapper {
         display: none !important;
+    }
+
+    /* Cart & Quote Form Responsiveness */
+    .cart-container-box {
+        padding: 24px 16px !important;
+        border-radius: 16px !important;
+    }
+
+    .cart-item-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 14px !important;
+    }
+
+    .cart-item-actions {
+        width: 100% !important;
+        justify-content: space-between !important;
+        border-top: 1px dashed #e2e8f0 !important;
+        padding-top: 10px !important;
     }
 }
 
@@ -480,7 +553,7 @@
     }
 
     .brand-logo {
-     font-size: 20px;
+        font-size: 20px;
     }
 
     .btn-pill-dark,
@@ -561,7 +634,190 @@
     from {
         transform: translateY(100%);
     }
+
     to {
         transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   MOBILE APP BOTTOM NAVIGATION BAR (WhatsApp & MD3 Native App Style)
+   ========================================================================== */
+.mobile-app-bottom-nav {
+    display: none;
+}
+
+@media (max-width: 992px) {
+    body {
+        padding-bottom: 74px !important;
+        /* Prevent content from being obscured by fixed bottom nav */
+    }
+
+    .mobile-app-bottom-nav {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100vw;
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.96) 0%, rgba(11, 20, 26, 0.99) 100%);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.45);
+        z-index: 9995;
+        padding: 6px 8px 4px;
+        box-sizing: border-box;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    .mobile-nav-items {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: #94a3b8;
+        flex: 1;
+        gap: 3px;
+        transition: transform 0.15s ease, color 0.2s ease;
+        position: relative;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 4px 0;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobile-nav-item:active {
+        transform: scale(0.92);
+    }
+
+    /* Icon Capsule / Pill Background Wrapper */
+    .mobile-nav-icon-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 54px;
+        height: 30px;
+        border-radius: 20px;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-nav-item .material-symbols-outlined {
+        font-size: 22px;
+        color: #94a3b8;
+        transition: all 0.2s ease;
+        font-variation-settings: 'FILL' 0, 'wght' 400;
+    }
+
+    .mobile-nav-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.1px;
+        color: #94a3b8;
+        transition: color 0.2s ease, font-weight 0.2s ease;
+        line-height: 1.2;
+    }
+
+    /* Active Tab Capsule Highlight (WhatsApp / MD3 Mobile App design) */
+    .mobile-nav-item.active .mobile-nav-icon-wrapper {
+        background: linear-gradient(135deg, rgba(2, 132, 199, 0.3) 0%, rgba(16, 185, 129, 0.35) 100%);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        box-shadow: 0 2px 10px rgba(2, 132, 199, 0.3);
+    }
+
+    .mobile-nav-item.active .material-symbols-outlined {
+        color: #38bdf8;
+        font-variation-settings: 'FILL' 1, 'wght' 600;
+    }
+
+    .mobile-nav-item.active .mobile-nav-label {
+        color: #ffffff;
+        font-weight: 800;
+    }
+
+    /* Notification Counter & Status Badges (WhatsApp Pill Badges) */
+    .mobile-nav-badge {
+        position: absolute;
+        top: -4px;
+        right: 4px;
+        background: #22c55e;
+        /* Green badge like reference image */
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 900;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 5px;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+        border: 2px solid #0b141a;
+        line-height: 1;
+        z-index: 2;
+    }
+
+    .mobile-nav-badge.badge-red {
+        background: #ef4444;
+    }
+
+    .mobile-nav-badge.badge-dot {
+        min-width: 10px;
+        width: 10px;
+        height: 10px;
+        padding: 0;
+        top: -1px;
+        right: 12px;
+    }
+
+    /* Native Home Gesture Bar Handle at Bottom */
+    .mobile-app-gesture-bar {
+        width: 125px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+        margin-top: 5px;
+        margin-bottom: 2px;
+    }
+
+    /* --------------------------------------------------------------------------
+       ULTRA COMPACT MOBILE FOOTER (HIDING REDUNDANT NAV LINKS PER USER REQUEST)
+       -------------------------------------------------------------------------- */
+    .footer-nav {
+        display: none !important; /* Hides .footer-nav links block on mobile */
+    }
+
+    .main-footer {
+        padding: 24px 16px 90px !important; /* Compact padding + space for mobile bottom navbar */
+    }
+
+    .footer-info {
+        font-size: 12.5px !important;
+        line-height: 1.6 !important;
+        margin-bottom: 14px !important;
+    }
+
+    .footer-bottom {
+        flex-direction: column !important;
+        gap: 12px !important;
+        text-align: center !important;
+        padding-top: 14px !important;
     }
 }

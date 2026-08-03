@@ -1,7 +1,7 @@
 {% extends 'kinglife/base.html' %}
 {% load static %}
 
-{% block title %}{{ actualite.titre }} - KINGLIFE SHAL U{% endblock %}
+{% block title %}{{ actualite.titre }} - KINGLIFE SARL U{% endblock %}
 
 {% block content %}
 <!-- Page Hero Banner -->
@@ -9,7 +9,7 @@
     <div class="container">
         <span style="background: var(--color-electric-blue); color: var(--color-white); padding: 4px 14px; border-radius: 4px; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: inline-block;">Communiqué Officiel</span>
         <h1 style="font-size: clamp(28px, 4vw, 40px); max-width: 900px; margin: 0 auto 12px;">{{ actualite.titre }}</h1>
-        <p>Publié le {{ actualite.date_publication|date:"d F Y" }} — KINGLIFE SHAL U</p>
+        <p>Publié le {{ actualite.date_publication|date:"d F Y" }} — KINGLIFE SARL U</p>
     </div>
 </section>
 

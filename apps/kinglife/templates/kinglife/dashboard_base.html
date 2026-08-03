@@ -1,4 +1,4 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -8,7 +8,7 @@
     <link rel="apple-touch-icon" href="/static/kinglife/images/logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Tableau de bord - KINGLIFE SHAL U{% endblock %}</title>
+    <title>{% block title %}Tableau de bord - KINGLIFE SARL U{% endblock %}</title>
     <meta name="vapid-key" content="BJ4iNXUZBrhY_hjNW0gaiSGhDrYb1ARJAk-Q7ezyiyHyPeuZxtPPob-zuxeuUAhQxlqHgETkmwkN8w2Qh5kRPFk">
     <link rel="stylesheet" href="{% static 'kinglife/css/style.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -30,50 +30,81 @@
                 <span>KINGLIFE</span>
             </a>
 
+            <!-- Central Elevated Circular Logo Action Button (Mobile view inspired by Image 2) -->
+            <div class="dash-mobile-logo-elevated">
+                <a href="/" class="dash-logo-circle-btn" title="KINGLIFE Site Principal">
+                    <img src="{% static 'kinglife/images/logo.png' %}" alt="Kinglife Logo">
+                </a>
+            </div>
+
             <nav class="sidebar-nav">
+                <!-- 1. Vue d'ensemble / Accueil -->
                 <a href="/dashboard/" class="nav-item {% if request.path == '/dashboard/' %}active{% endif %}">
                     <i class="material-symbols-outlined">dashboard</i> <span>Vue d'ensemble</span>
                 </a>
+
+                <!-- 2. Nouveau Devis -->
                 <a href="{% url 'demande_cotation' %}" class="nav-item {% if '/demande-cotation/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">add_shopping_cart</i> <span>Nouveau Devis</span>
                 </a>
 
                 {% if user.is_staff or user.is_superuser %}
-                <div style="margin: 20px 0 10px 20px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--dash-text-light); letter-spacing: 1px;">Administration</div>
+                <div class="nav-item-header-label" style="margin: 20px 0 10px 20px; font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--dash-text-light); letter-spacing: 1px;">Administration</div>
+                
+                <!-- 3. Hub Admin -->
                 <a href="{% url 'admin_hub' %}" class="nav-item {% if request.path == '/espace-admin/' %}active{% endif %}">
                     <i class="material-symbols-outlined">monitoring</i> <span>Hub Admin</span>
                 </a>
+
+                <!-- 4. Catalogue -->
                 <a href="{% url 'admin_catalogue' %}" class="nav-item {% if '/catalogue/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">inventory_2</i> <span>Catalogue</span>
                 </a>
+
+                <!-- 5. Services -->
                 <a href="{% url 'admin_services' %}" class="nav-item {% if '/services/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">design_services</i> <span>Services</span>
                 </a>
+
+                <!-- 6. Actualites -->
                 <a href="{% url 'admin_actualites' %}" class="nav-item {% if '/actualites/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">newspaper</i> <span>Actualites</span>
                 </a>
+
+                <!-- 7. Realisations -->
                 <a href="{% url 'admin_realisations' %}" class="nav-item {% if '/realisations/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">workspace_premium</i> <span>Realisations</span>
                 </a>
+
+                <!-- 8. Factures -->
                 <a href="{% url 'admin_factures' %}" class="nav-item {% if '/espace-admin/factures' in request.path and 'achats' not in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">receipt_long</i> <span>Factures</span>
                 </a>
+
+                <!-- 9. Comptabilite -->
                 <a href="{% url 'admin_soldes_clients' %}" class="nav-item {% if '/espace-admin/comptabilite/soldes' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">account_balance_wallet</i> <span>Comptabilite</span>
                 </a>
+
+                <!-- 10. Tarification -->
                 <a href="{% url 'admin_demandes_list' %}" class="nav-item {% if '/admin-cotations/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">request_quote</i> <span>Tarification</span>
                 </a>
+
+                <!-- 11. Messages -->
                 <a href="{% url 'admin_messages' %}" class="nav-item {% if '/messages/' in request.path %}active{% endif %}">
                     <i class="material-symbols-outlined">mail</i> <span>Messages</span>
                 </a>
                 {% endif %}
 
-                <div style="flex-grow: 1;"></div>
+                <div class="nav-item-spacer" style="flex-grow: 1;"></div>
 
+                <!-- 12. Retour au site -->
                 <a href="/" class="nav-item" style="color: var(--dash-text-light);">
-                    <i class="material-symbols-outlined">language</i> <span>Retour au site</span>
+                    <i class="material-symbols-outlined">language</i> <span>Retour site</span>
                 </a>
+
+                <!-- 13. Deconnexion -->
                 <a href="/logout/" class="nav-item" style="color: var(--dash-danger);">
                     <i class="material-symbols-outlined">logout</i> <span>Deconnexion</span>
                 </a>
@@ -245,6 +276,16 @@
             else if (typeof showToast === 'function') showToast("Application deja installee.", "info");
         }
 
+        function toggleDashMobileDrawer() {
+            const drawer = document.getElementById('dash-mobile-drawer');
+            const backdrop = document.getElementById('dash-drawer-backdrop');
+            if (drawer) {
+                const isHidden = (drawer.style.display === 'none' || !drawer.style.display);
+                drawer.style.display = isHidden ? 'block' : 'none';
+                if (backdrop) backdrop.style.display = isHidden ? 'block' : 'none';
+            }
+        }
+
         function adjustNotifForMobile() {
             const d = document.getElementById('notif-dropdown');
             const h = d ? d.querySelector('.notif-drag-handle') : null;
@@ -260,6 +301,69 @@
         window.addEventListener('resize', adjustNotifForMobile);
         adjustNotifForMobile();
     </script>
+
+    <!-- DASHBOARD MOBILE MENU BOTTOM SHEET DRAWER -->
+    <div id="dash-drawer-backdrop" onclick="toggleDashMobileDrawer()" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 99998;"></div>
+
+    <div id="dash-mobile-drawer" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; width: 100vw; background: #0f172a; border-radius: 28px 28px 0 0; border-top: 1px solid rgba(255,255,255,0.12); box-shadow: 0 -10px 40px rgba(0,0,0,0.5); z-index: 99999; padding: 20px 20px 30px; box-sizing: border-box; animation: slideUpNotif 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        <div style="width: 40px; height: 4px; background: rgba(255,255,255,0.25); border-radius: 4px; margin: 0 auto 16px;"></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+            <div style="font-size: 15px; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+                <i class="material-symbols-outlined" style="color: #38bdf8; font-size: 20px;">widgets</i> Menu Administration
+            </div>
+            <button type="button" onclick="toggleDashMobileDrawer()" style="background: rgba(255,255,255,0.1); border: none; color: #ffffff; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; max-height: 55vh; overflow-y: auto; padding-right: 2px;">
+            <a href="{% url 'admin_hub' %}" class="dash-drawer-item">
+                <i class="material-symbols-outlined">monitoring</i>
+                <span>Hub Admin</span>
+            </a>
+            <a href="{% url 'admin_catalogue' %}" class="dash-drawer-item">
+                <i class="material-symbols-outlined">inventory_2</i>
+                <span>Catalogue</span>
+            </a>
+            <a href="{% url 'admin_services' %}" class="dash-drawer-item">
+                <i class="material-symbols-outlined">design_services</i>
+                <span>Services</span>
+            </a>
+            <a href="{% url 'admin_actualites' %}" class="dash-drawer-item">
+                <i class="material-symbols-outlined">newspaper</i>
+                <span>Actualités</span>
+            </a>
+            <a href="{% url 'admin_realisations' %}" class="dash-drawer-item">
+                <i class="material-symbols-outlined">workspace_premium</i>
+                <span>Réalisations</span>
+            </a>
+            <a href="{% url 'admin_factures' %}" class="dash-drawer-item">
+                <i class="material-symbols-outlined">receipt_long</i>
+                <span>Factures</span>
+            </a>
+            <a href="{% url 'admin_soldes_clients' %}" class="dash-drawer-item">
+                <i class="material-symbols-outlined">account_balance_wallet</i>
+                <span>Comptabilité</span>
+            </a>
+            <a href="{% url 'admin_demandes_list' %}" class="dash-drawer-item">
+                <i class="material-symbols-outlined">request_quote</i>
+                <span>Tarification</span>
+            </a>
+            <a href="{% url 'admin_messages' %}" class="dash-drawer-item">
+                <i class="material-symbols-outlined">mail</i>
+                <span>Messages</span>
+            </a>
+            <a href="/" class="dash-drawer-item">
+                <i class="material-symbols-outlined">language</i>
+                <span>Retour au site</span>
+            </a>
+        </div>
+
+        <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08);">
+            <a href="/logout/" class="dash-drawer-logout-btn">
+                <i class="material-symbols-outlined" style="font-size: 18px;">logout</i> Déconnexion
+            </a>
+        </div>
+    </div>
+
     <script src="{% static 'kinglife/js/toast.js' %}"></script>
     <script src="{% static 'kinglife/js/main.js' %}"></script>
 </body>

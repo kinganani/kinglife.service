@@ -10,12 +10,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="KINGLIFE">
-    <meta name="application-name" content="KINGLIFE SHAL U">
+    <meta name="application-name" content="KINGLIFE SARL U">
     <link rel="apple-touch-icon" href="{% static 'kinglife/images/logo.png' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="view-transition" content="same-origin">
-    <title>{% block title %}KINGLIFE SHAL U - Services Maritimes & Logistiques{% endblock %}</title>
+    <title>{% block title %}KINGLIFE SARL U - Services Maritimes & Logistiques{% endblock %}</title>
     <!-- VAPID public key for WebPush notifications -->
     <meta name="vapid-key"
         content="BJ4iNXUZBrhY_hjNW0gaiSGhDrYb1ARJAk-Q7ezyiyHyPeuZxtPPob-zuxeuUAhQxlqHgETkmwkN8w2Qh5kRPFk">
@@ -33,7 +33,7 @@
     <!-- Custom Design System Stylesheet -->
     <link rel="stylesheet" href="{% static 'kinglife/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'kinglife/css/auth_contact.css' %}">
-    <link rel="stylesheet" href="{% static 'kinglife/css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'kinglife/css/responsive.css' %}?v=11">
     <link rel="stylesheet" href="{% static 'kinglife/css/toast.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
@@ -89,6 +89,44 @@
                 <a href="/actualites/"
                     class="nav-link {% if '/actualites/' in request.path %}active{% endif %}">Actualités</a>
                 <a href="/contact/" class="nav-link {% if '/contact/' in request.path %}active{% endif %}">Contact</a>
+
+                <!-- Integrated Mobile Auth & User Profile Section -->
+                <div class="mobile-drawer-auth">
+                    {% if user.is_authenticated %}
+                    <div class="mobile-user-profile">
+                        <span class="material-symbols-outlined"
+                            style="font-size: 22px; color: #0284c7;">account_circle</span>
+                        <span style="font-weight: 700; color: #0f172a; font-size: 14px;">{{
+                            user.get_full_name|default:user.username }}</span>
+                    </div>
+                    <div class="mobile-user-actions">
+                        {% if user.is_staff or user.is_superuser %}
+                        <a href="/espace-admin/" class="mobile-user-btn mobile-user-btn-admin">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">admin_panel_settings</span>
+                            Admin
+                        </a>
+                        {% else %}
+                        <a href="{% url 'demande_cotation' %}" class="mobile-user-btn mobile-user-btn-cart">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">shopping_cart</span> Panier
+                            {% if request.session.cart %}
+                            <span class="mobile-cart-badge-num">{{ request.session.cart|length }}</span>
+                            {% endif %}
+                        </a>
+                        <a href="/dashboard/" class="mobile-user-btn mobile-user-btn-space">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">dashboard</span> Mon Espace
+                        </a>
+                        {% endif %}
+                        <a href="/logout/" class="mobile-user-btn mobile-user-btn-logout">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">logout</span> Déconnexion
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="mobile-user-actions">
+                        <a href="/login/" class="mobile-user-btn mobile-user-btn-login">Connexion</a>
+                        <a href="/register/" class="mobile-user-btn mobile-user-btn-register">Inscription</a>
+                    </div>
+                    {% endif %}
+                </div>
             </nav>
 
             <div class="header-right-tools" style="display: flex; align-items: center; gap: 8px;">
@@ -176,10 +214,8 @@
                         </span>
                     </div>
                     <div style="flex-grow: 1;">
-                        <div style="font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 2px;">{{
-                            notif.titre }}</div>
-                        <div style="font-size: 12px; color: #64748b; line-height: 1.4; margin-bottom: 8px;">{{
-                            notif.message }}</div>
+                        <div style="font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 2px;">{{ notif.titre }}</div>
+                        <div style="font-size: 12px; color: #64748b; line-height: 1.4; margin-bottom: 8px;">{{ notif.message }}</div>
 
                         <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                             {% if 'Installez' in notif.titre or 'PWA' in notif.titre %}
@@ -204,18 +240,11 @@
 
                         {% if 'PWA' not in notif.titre and 'Installez' not in notif.titre %}
                         <!-- Inline Quick Reply Box -->
-                        <div id="site-quick-reply-box-{{ notif.id }}"
-                            style="display: none; margin-top: 10px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
-                            <textarea id="site-quick-reply-input-{{ notif.id }}" rows="2"
-                                placeholder="Écrivez votre réponse rapide..."
-                                style="width: 100%; padding: 8px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; resize: none; margin-bottom: 6px; box-sizing: border-box;"></textarea>
+                        <div id="site-quick-reply-box-{{ notif.id }}" style="display: none; margin-top: 10px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <textarea id="site-quick-reply-input-{{ notif.id }}" rows="2" placeholder="Écrivez votre réponse rapide..." style="width: 100%; padding: 8px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-family: inherit; resize: none; margin-bottom: 6px; box-sizing: border-box;"></textarea>
                             <div style="display: flex; justify-content: flex-end; gap: 6px;">
-                                <button type="button" onclick="toggleSiteQuickReplyBox({{ notif.id }})"
-                                    style="background: none; border: none; color: #64748b; font-size: 11px; padding: 4px 8px; cursor: pointer;">Annuler</button>
-                                <button type="button" id="btn-submit-reply-{{ notif.id }}"
-                                    onclick="submitSiteQuickReply({{ notif.id }})"
-                                    style="background: #1a56c4; color: white; border: none; padding: 5px 14px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer;">➢
-                                    Envoyer</button>
+                                <button type="button" onclick="toggleSiteQuickReplyBox({{ notif.id }})" style="background: none; border: none; color: #64748b; font-size: 11px; padding: 4px 8px; cursor: pointer;">Annuler</button>
+                                <button type="button" id="btn-submit-reply-{{ notif.id }}" onclick="submitSiteQuickReply({{ notif.id }})" style="background: #1a56c4; color: white; border: none; padding: 5px 14px; font-size: 11px; font-weight: 600; border-radius: 6px; cursor: pointer;">➢ Envoyer</button>
                             </div>
                         </div>
                         {% endif %}
@@ -348,16 +377,16 @@
             </div>
 
             <div class="footer-info">
-                <p><strong>KINGLIFE SHAL U SARL</strong> — Société spécialisée dans l'avitaillement maritime (Ship
+                <p><strong>KINGLIFE SARL U </strong> — Société spécialisée dans l'avitaillement maritime (Ship
                     Chandler), le transit, l'assistance aux navires et le support logistique offshore.</p>
                 <p>WhatsApp & Tél : <a href="https://wa.me/22899501085" target="_blank" style="color: inherit;">+228 99
                         50 10 85</a> / <a href="https://wa.me/22890828467" target="_blank" style="color: inherit;">+228
-                        90 82 84 67</a> | Email : <a href="mailto:kinganani20@gmail.com"
-                        style="color: inherit;">kinganani20@gmail.com</a></p>
+                        90 82 84 67</a> | Email : <a href="mailto:lifeking564@gmail.com"
+                        style="color: inherit;">lifeking564@gmail.com</a></p>
             </div>
 
             <div class="footer-bottom">
-                <p>Copyright © 2024 KINGLIFE SHAL U. Tous droits réservés.</p>
+                <p>Copyright © 2024 KINGLIFE SARL U. Tous droits réservés.</p>
                 <button class="back-to-top" title="Retour en haut de page">
                     ↑
                 </button>
@@ -472,6 +501,81 @@
             }
         });
     </script>
+
+    <!-- Native Mobile App Bottom Navigation Bar (WhatsApp / MD3 Style) -->
+    <nav class="mobile-app-bottom-nav" aria-label="Navigation mobile application">
+        <div class="mobile-nav-items">
+            <!-- 1. Accueil -->
+            <a href="/" class="mobile-nav-item {% if request.path == '/' %}active{% endif %}">
+                <div class="mobile-nav-icon-wrapper">
+                    <span class="material-symbols-outlined">home</span>
+                </div>
+                <span class="mobile-nav-label">Accueil</span>
+            </a>
+
+            <!-- 2. Services -->
+            <a href="/services/" class="mobile-nav-item {% if '/services/' in request.path %}active{% endif %}">
+                <div class="mobile-nav-icon-wrapper">
+                    <span class="material-symbols-outlined">design_services</span>
+                </div>
+                <span class="mobile-nav-label">Services</span>
+            </a>
+
+            <!-- 3. Catalogue -->
+            <a href="/catalogue/" class="mobile-nav-item {% if '/catalogue/' in request.path %}active{% endif %}">
+                <div class="mobile-nav-icon-wrapper">
+                    <span class="material-symbols-outlined">inventory_2</span>
+                </div>
+                <span class="mobile-nav-label">Catalogue</span>
+            </a>
+
+            <!-- 4. Devis / Panier (With Green Badge Counter like 39 in reference image) -->
+            <a href="{% url 'demande_cotation' %}"
+                class="mobile-nav-item {% if '/demande-cotation/' in request.path %}active{% endif %}">
+                <div class="mobile-nav-icon-wrapper">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    {% if request.session.cart %}
+                    <span class="mobile-nav-badge">{{ request.session.cart|length }}</span>
+                    {% endif %}
+                </div>
+                <span class="mobile-nav-label">Devis</span>
+            </a>
+
+            <!-- 5. Espace Client / Admin ou Menu Drawer -->
+            {% if user.is_authenticated %}
+            {% if user.is_staff or user.is_superuser %}
+            <a href="/espace-admin/" class="mobile-nav-item {% if '/espace-admin/' in request.path %}active{% endif %}">
+                <div class="mobile-nav-icon-wrapper">
+                    <span class="material-symbols-outlined">admin_panel_settings</span>
+                    {% if unread_notifications_count > 0 %}
+                    <span class="mobile-nav-badge badge-red">{{ unread_notifications_count }}</span>
+                    {% endif %}
+                </div>
+                <span class="mobile-nav-label">Admin</span>
+            </a>
+            {% else %}
+            <a href="/dashboard/" class="mobile-nav-item {% if '/dashboard/' in request.path %}active{% endif %}">
+                <div class="mobile-nav-icon-wrapper">
+                    <span class="material-symbols-outlined">account_circle</span>
+                    {% if unread_notifications_count > 0 %}
+                    <span class="mobile-nav-badge badge-red">{{ unread_notifications_count }}</span>
+                    {% endif %}
+                </div>
+                <span class="mobile-nav-label">Espace</span>
+            </a>
+            {% endif %}
+            {% else %}
+            <button type="button" class="mobile-nav-item" onclick="toggleMobileDrawerMenu()">
+                <div class="mobile-nav-icon-wrapper">
+                    <span class="material-symbols-outlined">menu</span>
+                </div>
+                <span class="mobile-nav-label">Menu</span>
+            </button>
+            {% endif %}
+        </div>
+        <!-- Bottom gesture bar handle (Android / iOS native bar handle) -->
+        <div class="mobile-app-gesture-bar"></div>
+    </nav>
 
     {% block extra_js %}{% endblock %}
 </body>

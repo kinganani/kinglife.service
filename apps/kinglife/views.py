@@ -15,7 +15,7 @@ from django.conf import settings
 
 
 def home(request):
-    """Page d'accueil KINGLIFE SHAL U"""
+    """Page d'accueil KINGLIFE SARL U"""
     services = Service.objects.filter(publie=True)[:6]
     actualites = Actualite.objects.filter(publie=True)[:3]
     realisations = Realisation.objects.all()[:3]
@@ -814,7 +814,7 @@ def admin_message_reply(request, msg_id):
         email = EmailMultiAlternatives(
             subject=f"Re: {sujet}",
             body=text_content,
-            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'contact@kinglifeshalu.com'),
+            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'contact@kinglifesarlu.com'),
             to=[msg.email],
             reply_to=[request.user.email] if request.user.email else None
         )
@@ -1389,7 +1389,7 @@ def push_test_notification(request):
 
             notif = creer_notification(
                 titre="🔔 Test Notification Push OK",
-                message="Félicitations ! Les notifications Push Web KINGLIFE SHAL U fonctionnent parfaitement sur votre appareil.",
+                message="Félicitations ! Les notifications Push Web KINGLIFE SARL U fonctionnent parfaitement sur votre appareil.",
                 utilisateur=user,
                 is_for_admin=False if user else True,
                 lien='/dashboard/',

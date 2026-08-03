@@ -1,7 +1,7 @@
 {% extends 'kinglife/base.html' %}
 {% load static %}
 
-{% block title %}{{ categorie.nom }} — Catalogue KINGLIFE SHAL U{% endblock %}
+{% block title %}{{ categorie.nom }} — Catalogue KINGLIFE SARL U{% endblock %}
 
 {% block content %}
 
@@ -238,8 +238,8 @@
     border-bottom: 1px solid rgba(226,232,240,0.8);
     padding: 10px 0;
     position: sticky;
-    top: 0;
-    z-index: 300;
+    top: 70px;
+    z-index: 95;
     box-shadow: 0 2px 16px rgba(0,0,0,0.06);
 }
 .ct-toolbar-inner {
@@ -783,11 +783,44 @@
 
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 768px) {
-    .ct-back-text, .ct-cart-text { display: none; }
-    .ct-current-cat { max-width: 100px; }
-    .ct-search-input { width: 110px; }
+    .ct-toolbar {
+        top: 60px;
+        padding: 8px 0;
+    }
+    .ct-toolbar-inner {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .ct-breadcrumb {
+        flex: 1;
+        min-width: 140px;
+    }
+    .ct-cat-pills {
+        order: 3;
+        width: 100%;
+        margin-top: 4px;
+    }
+    .ct-search-form {
+        order: 2;
+        flex: 1;
+        min-width: 130px;
+        padding: 6px 10px;
+    }
+    .ct-search-input {
+        width: 100%;
+        font-size: 12px;
+    }
+    .ct-cart-btn {
+        order: 1;
+        padding: 7px 12px;
+        font-size: 12px;
+    }
+    .ct-back-text, .ct-cart-text { display: inline-block !important; font-size: 12px; }
+    .ct-current-cat { max-width: 120px; font-size: 13px; }
     .ct-page-title { font-size: 22px; }
-    .ct-th--price .ct-th--qty .ct-th--action { padding: 12px 10px; }
+    .ct-table-card { border-radius: 14px; }
+    .ct-th { padding: 12px 8px; font-size: 10px; }
+    .ct-td { padding: 10px 8px; }
 }
 </style>
 

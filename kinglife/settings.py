@@ -130,7 +130,7 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 # PWA Settings
-PWA_APP_NAME = 'Kinglife SHAL U'
+PWA_APP_NAME = 'Kinglife SARL U'
 PWA_APP_DESCRIPTION = "Gestion des services maritimes et cotations."
 PWA_APP_THEME_COLOR = '#0f172a' # Couleur Ocean Dark (en-tête du tel)
 PWA_APP_BACKGROUND_COLOR = '#ffffff'

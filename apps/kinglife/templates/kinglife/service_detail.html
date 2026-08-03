@@ -1,7 +1,7 @@
 {% extends 'kinglife/base.html' %}
 {% load static %}
 
-{% block title %}{{ service.nom }} - KINGLIFE SHAL U{% endblock %}
+{% block title %}{{ service.nom }} - KINGLIFE SARL U{% endblock %}
 
 {% block content %}
 <!-- Page Hero Banner -->
@@ -14,10 +14,10 @@
 </section>
 
 <!-- Service Content Section -->
-<section style="padding: 90px 0; background-color: var(--color-light-bg);">
+<section style="padding: 60px 0; background-color: var(--color-light-bg);">
     <div class="container">
-        <div style="max-width: 900px; margin: 0 auto; background: var(--color-white); border-radius: var(--border-radius-lg); padding: 50px; box-shadow: var(--shadow-md);">
-            <div style="height: 380px; width: 100%; border-radius: var(--border-radius-md); overflow: hidden; margin-bottom: 36px; position: relative;">
+        <div class="service-detail-card" style="max-width: 900px; margin: 0 auto; background: var(--color-white); border-radius: var(--border-radius-lg); padding: 50px; box-shadow: var(--shadow-md);">
+            <div class="service-detail-img" style="height: 380px; width: 100%; border-radius: var(--border-radius-md); overflow: hidden; margin-bottom: 36px; position: relative;">
                 {% if service.image %}
                     <img src="{{ service.image.url }}" alt="{{ service.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
                 {% else %}
@@ -41,7 +41,7 @@
 
             <!-- Key Features / Highlights -->
             <div style="background-color: var(--color-light-bg); border-radius: var(--border-radius-md); padding: 30px; margin-bottom: 40px; border-left: 4px solid var(--color-ocean-bright);">
-                <h3 style="font-size: 18px; color: var(--color-text-dark); margin-bottom: 12px;">Pourquoi choisir KINGLIFE SHAL U pour ce service ?</h3>
+                <h3 style="font-size: 18px; color: var(--color-text-dark); margin-bottom: 12px;">Pourquoi choisir KINGLIFE SARL U pour ce service ?</h3>
                 <ul style="color: var(--color-text-muted); font-size: 15px; line-height: 1.7; list-style-type: disc; padding-left: 20px;">
                     <li>Intervention rapide en rade et à quai 24 heures sur 24.</li>
                     <li>Respect rigoureux des procédures de sécurité et des normes environnementales.</li>

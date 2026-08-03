@@ -1,7 +1,7 @@
 {% extends 'kinglife/base.html' %}
 {% load static %}
 
-{% block title %}Mon Panier de Cotation - KINGLIFE SHAL U{% endblock %}
+{% block title %}Mon Panier de Cotation - KINGLIFE SARL U{% endblock %}
 
 {% block content %}
 <!-- Page Hero Banner -->
@@ -13,9 +13,9 @@
 </section>
 
 <!-- Cart Section -->
-<section style="padding: 90px 0; background-color: var(--color-light-bg);">
+<section style="padding: 60px 0; background-color: var(--color-light-bg);">
     <div class="container">
-        <div style="max-width: 900px; margin: 0 auto; background: var(--color-white); padding: 50px; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md);">
+        <div class="cart-container-box" style="max-width: 900px; margin: 0 auto; background: var(--color-white); padding: 50px; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md);">
             {% if not articles_in_cart %}
                 <div style="text-align: center; padding: 40px 0;">
                     <h2 style="font-size: 24px; color: var(--color-text-dark); margin-bottom: 16px;">Votre panier est vide</h2>
@@ -29,7 +29,7 @@
                     
                     <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px;">
                         {% for item in articles_in_cart %}
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--color-light-bg); border-radius: var(--border-radius-sm); border: 1px solid var(--color-border-light);">
+                        <div class="cart-item-row" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--color-light-bg); border-radius: var(--border-radius-sm); border: 1px solid var(--color-border-light);">
                             <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
                                 {% if item.article.image %}
                                     <img src="{{ item.article.image.url }}" alt="{{ item.article.nom }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
@@ -41,7 +41,7 @@
                                     <span style="font-size: 12px; color: var(--color-text-muted);">{{ item.article.categorie.nom }} • Unité: {{ item.article.unite }}</span>
                                 </div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 20px;">
+                            <div class="cart-item-actions" style="display: flex; align-items: center; gap: 20px;">
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <label style="font-size: 13px; color: var(--color-text-muted); margin: 0;">Qté :</label>
                                     <input type="number" name="quantite_{{ item.article.id }}" value="{{ item.quantite }}" min="1" class="form-v2-input" style="width: 80px; padding: 8px; text-align: center;">

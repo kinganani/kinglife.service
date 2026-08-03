@@ -3,10 +3,10 @@ from apps.kinglife.models import Service, CategorieProduit, Article, Actualite, 
 
 
 class Command(BaseCommand):
-    help = 'Alimente la base de données avec des informations réelles et complètes pour KINGLIFE SHAL U'
+    help = 'Alimente la base de données avec des informations réelles et complètes pour KINGLIFE SARL U'
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.SUCCESS("Début du peuplement des données KINGLIFE SHAL U..."))
+        self.stdout.write(self.style.SUCCESS("Début du peuplement des données KINGLIFE SARL U..."))
 
         # 1. PEUPLEMENT DES 12 SERVICES MARITIMES
         services_data = [
@@ -108,7 +108,7 @@ class Command(BaseCommand):
             {
                 'slug': 'historique',
                 'titre': 'Notre Historique',
-                'contenu': 'Fondée à Port-Gentil, KINGLIFE SHAL U s’est rapidement développée pour devenir un acteur incontournable des services maritimes et logistiques au Gabon et dans le Golfe de Guinée. Grâce à la rigueur de sa chaîne logistique et à son expertise en avitaillement et transit, l’entreprise a su bâtir des partenariats durables avec de grands armateurs et opérateurs offshore internationaux.'
+                'contenu': 'Fondée à Port-Gentil, KINGLIFE SARL U s’est rapidement développée pour devenir un acteur incontournable des services maritimes et logistiques au Gabon et dans le Golfe de Guinée. Grâce à la rigueur de sa chaîne logistique et à son expertise en avitaillement et transit, l’entreprise a su bâtir des partenariats durables avec de grands armateurs et opérateurs offshore internationaux.'
             },
             {
                 'slug': 'mission',
@@ -169,7 +169,7 @@ class Command(BaseCommand):
         Actualite.objects.get_or_create(
             titre="Excellence opérationnelle : Nouveau service d'avitaillement haute capacité",
             defaults={
-                'contenu': "KINGLIFE SHAL U renforce sa flotte de barges pour le ravitaillement rapide des navires cargo et pétroliers en rade au large de Port-Gentil. Ce nouveau service permet de réduire de 40% le temps d'escale.",
+                'contenu': "KINGLIFE SARL U renforce sa flotte de barges pour le ravitaillement rapide des navires cargo et pétroliers en rade au large de Port-Gentil. Ce nouveau service permet de réduire de 40% le temps d'escale.",
                 'resume': "Renforcement de notre flotte de barges pour un avitaillement ultra-rapide des navires.",
             }
         )

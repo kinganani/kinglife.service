@@ -56,6 +56,20 @@ function markSingleNotifRead(notifId) {
     markSingleSiteNotifRead(notifId);
 }
 
+// Global Mobile Side Drawer Toggle for Bottom Nav & Header
+function toggleMobileDrawerMenu() {
+    const navMenu = document.querySelector('.nav-menu');
+    const headerActions = document.querySelector('.header-actions');
+    const mobileToggle = document.querySelector('.mobile-toggle');
+
+    if (navMenu) {
+        const isOpen = navMenu.classList.toggle('active');
+        if (headerActions) headerActions.classList.toggle('active');
+        if (mobileToggle) mobileToggle.innerHTML = isOpen ? '✕' : '☰';
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // Header Scroll Effect
     const header = document.querySelector('.main-header');
@@ -108,22 +122,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mobile Navbar Toggle
     const mobileToggle = document.querySelector('.mobile-toggle');
     const navMenu = document.querySelector('.nav-menu');
-    const headerActions = document.querySelector('.header-actions');
 
     if (mobileToggle && navMenu) {
         mobileToggle.addEventListener('click', () => {
-            const isOpen = navMenu.classList.toggle('active');
-            if (headerActions) headerActions.classList.toggle('active');
-            mobileToggle.innerHTML = isOpen ? '✕' : '☰';
-            document.body.style.overflow = isOpen ? 'hidden' : '';
+            toggleMobileDrawerMenu();
         });
 
-        // Close mobile menu when clicking a nav link
-        document.querySelectorAll('.nav-link').forEach(link => {
+        // Close mobile menu when clicking a nav link or mobile auth button
+        document.querySelectorAll('.nav-link, .mobile-user-btn').forEach(link => {
             link.addEventListener('click', () => {
                 navMenu.classList.remove('active');
+                const headerActions = document.querySelector('.header-actions');
                 if (headerActions) headerActions.classList.remove('active');
-                mobileToggle.innerHTML = '☰';
+                if (mobileToggle) mobileToggle.innerHTML = '☰';
                 document.body.style.overflow = '';
             });
         });
