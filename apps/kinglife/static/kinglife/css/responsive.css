@@ -820,4 +820,25 @@
         text-align: center !important;
         padding-top: 14px !important;
     }
+
+    /* --------------------------------------------------------------------------
+       FLOATING LANGUAGE WIDGET & PWA POSITIONING ON MOBILE (ABOVE BOTTOM NAVBAR)
+       -------------------------------------------------------------------------- */
+    .floating-lang-widget {
+        bottom: 76px !important; /* Elevates above mobile bottom navbar so sidebar/tabs are unblocked! */
+        left: 12px !important;
+        z-index: 9990 !important;
+    }
+
+    .floating-lang-trigger {
+        padding: 7px 13px !important;
+        font-size: 12px !important;
+        border-radius: 30px !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .pwa-widget {
+        bottom: 76px !important;
+        right: 12px !important;
+    }
 }
